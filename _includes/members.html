@@ -1,11 +1,16 @@
-<div style="padding-top: 20px" class="ui container ">
-
-  <div class="ui stackable centered four cards">
-    {% assign essay_pages = site.pages | where: "type", "essay" | sort: "date" | reverse %}
-      {% for page in essay_pages %}
-        {% unless page.draft %}
-          {% include essay-card.html page=page %}
-        {% endunless %}
-      {% endfor %}
+<div class="ui card">
+  <div class="image">
+    <img src="https://react.semantic-ui.com/images/avatar/large/matthew.png" />
+  </div>
+  <div class="content">
+    <div class="header">Matthew</div>
+    <div class="meta"><span class="date">Joined in 2015</span></div>
+    <div class="description">Matthew is a musician living in Nashville.</div>
+  </div>
+  <div class="extra content">
+    <a>
+      <i aria-hidden="true" class="user icon"></i>
+      22 Friends
+    </a>
   </div>
 </div>
