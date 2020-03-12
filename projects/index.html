@@ -1,5 +1,625 @@
----
-layout: projects
----
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Control.io Beta</title>
+        <style>
+            body { margin: 0; }
+            canvas { display: block; }
+        </style>
+    </head>
+    <body>
+        <script src="js/three.js"></script>
+        <script>
+            //Web JS Project that implements THREE.js.
+            //Literally based off of tutorial:
+            //https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene
 
-{% include {{ site.theme-projects }} %}
+            var max_x = window.innerWidth;
+            var min_x = -max_x;
+            var max_y = window.innerHeight;
+            var min_y = -max_y;
+
+            var player_max_velocity = .05;
+            var players = []; //array of players
+            var player_radius = .07;
+
+            //used to set the bounds of the canvas.?
+            var canvas_multiplier = 335;
+
+            var debug = false;
+
+            /**
+             * Player
+             *
+             * Class that represents a Player
+             */
+            class Player {
+                constructor(color, name, keybinds) {
+                    this.coordsArray = [];
+                    this.linesArray = [];
+
+                    this.claimedShapesArray = [];
+
+                    this.name = name;
+
+                    this.color = color;
+
+                    this.prevLJ_X = 0;
+                    this.prevLJ_Y = 0;
+                    this.prevRJ_X = 0;
+                    this.prevRJ_Y = 0;
+
+                    this.keybinds = keybinds;
+
+                    this.geometry = new THREE.RingGeometry(player_radius, (player_radius + .03), 32);
+                    this.material = new THREE.MeshBasicMaterial({
+                        color: color,
+                        side: THREE.DoubleSide
+                    });
+                    this.player_object = new THREE.Mesh(this.geometry, this.material);
+
+                    // this.geometry = new THREE.CircleGeometry(player_radius, 32);
+                    // this.material = new THREE.MeshBasicMaterial({
+                    //     color: color
+                    // });
+                    // this.player_object = new THREE.Mesh(this.geometry, this.material);
+
+                    this.randomSpawn();
+                    this.newCoord();
+
+                    this.guidingLine = new GuidingLine(this.coordsArray[0].x, this.coordsArray[0].y, this.player_object.position.x, this.player_object.position.y, this.color);
+                };
+
+                randomSpawn() {
+                    var random_x = Math.floor(((Math.random() * Math.floor(max_x * 2)) - max_x))/canvas_multiplier;
+                    var random_y = Math.floor(((Math.random() * Math.floor(max_y * 2)) - max_y))/canvas_multiplier;
+                    this.player_object.position.x = random_x;
+                    this.player_object.position.y = random_y;
+                }
+
+                getPlayerObject () {
+                    return this.player_object;
+                };
+
+                moveUp () {
+                    // var player_y = this.player_object.position.y += player_max_velocity;
+                    // if (player_y <= max_y/canvas_multiplier) {
+                    //     this.player_object.position.y = player_y;
+                    // } else {
+                    //     this.player_object.position.y = max_y/canvas_multiplier;
+                    // }
+
+                    this.player_object.position.y += player_max_velocity;
+                }
+
+                moveDown () {
+                    // var player_y = this.player_object.position.y -= player_max_velocity;
+                    // if (player_y >= min_y/canvas_multiplier) {
+                    //     this.player_object.position.y = player_y;
+                    // } else {
+                    //     this.player_object.position.y = min_y/canvas_multiplier;
+                    // }
+
+                    this.player_object.position.y -= player_max_velocity;
+                }
+
+                moveLeft () {
+                    // var player_x = this.player_object.position.x -= player_max_velocity;
+                    // if (player_x >= min_x/canvas_multiplier) {
+                    //     this.player_object.position.x = player_x;
+                    // } else {
+                    //     this.player_object.position.x = min_x/canvas_multiplier;
+                    // }
+
+                    this.player_object.position.x -= player_max_velocity;
+                }
+
+                moveRight () {
+                    // var player_x = this.player_object.position.x += player_max_velocity;
+                    // if (player_x <= max_x/canvas_multiplier) {
+                    //     this.player_object.position.x = player_x;
+                    // } else {
+                    //     this.player_object.position.x = max_x/canvas_multiplier;
+                    // }
+
+                    this.player_object.position.x += player_max_velocity;
+                }
+
+                /*
+                 * moveX
+                 *
+                 * Intended for controllers.
+                 * Given a float modifier value, updates the player's position on the X axis for a frame.
+                 */
+                moveX (modifier) {
+                    var player_x = this.player_object.position.x + (player_max_velocity * modifier);
+                    this.player_object.position.x = player_x;
+                    
+                    this.guidingLine.guidingLineObject.geometry.vertices[1].x = player_x;
+                    this.guidingLine.guidingLineObject.geometry.verticesNeedUpdate = true;
+                    //TODO Constrain x axes movement to area
+                }
+
+                /*
+                 * moveY
+                 *
+                 * Intended for controllers.
+                 * Given a float modifier value, updates the player's position on the Y axis for a frame.
+                 */
+                moveY (modifier) {
+                    var player_y = this.player_object.position.y + (player_max_velocity * modifier);
+                    this.player_object.position.y = player_y;
+                    
+                    this.guidingLine.guidingLineObject.geometry.vertices[1].y = player_y;
+                    this.guidingLine.guidingLineObject.geometry.verticesNeedUpdate = true;
+                    //TODO Constrain y axes movement to area
+                }
+
+                newCoord() {
+                    if (this.coordsArray == undefined || this.coordsArray.length == 0) {
+                        this.coordsArray.push(new Coordinate(this.player_object.position.x, this.player_object.position.y, this.color));
+                    } else {
+                        var lastCoord = this.coordsArray[this.coordsArray.length - 1];
+
+                        this.coordsArray.push(new Coordinate(this.player_object.position.x, this.player_object.position.y, this.color));
+
+                        this.linesArray.push(new CoordinateLine(this.player_object.position.x, this.player_object.position.y, lastCoord.x, lastCoord.y, this.color));
+                        
+                        this.guidingLine.guidingLineObject.geometry.vertices[0].x = this.player_object.position.x;
+                        this.guidingLine.guidingLineObject.geometry.vertices[0].y = this.player_object.position.y;
+                    }
+                }
+
+                setPoly() {
+                    this.newCoord();
+
+                    this.claimedShapesArray.push(new Polygon(this.coordsArray, this.color));
+
+                    while (this.coordsArray.length > 0) {
+                        var n = this.coordsArray.pop();
+                        scene.remove(n.coordObject);
+                    }
+
+                    while (this.linesArray.length > 0) {
+                        var n = this.linesArray.pop();
+                        scene.remove(n.coordLineObject);
+                    }
+
+                    this.newCoord();
+                }
+
+                updatePos () {
+                    if (this.gamepad == undefined) {
+                        if (this.ALocked == false) {
+                            this.newCoord();
+                            this.ALocked = true;
+                        }
+
+                        if (this.BLocked == false) {
+                            this.setPoly();
+                            this.BLocked = true;
+                        }
+
+                        if (this.UpPressed) {
+                            this.moveUp();
+                        }
+                        if (this.DownPressed) {
+                            this.moveDown();
+                        }
+                        if (this.LeftPressed) {
+                            this.moveLeft();
+                        }
+                        if (this.RightPressed) {
+                            this.moveRight();
+                        }
+                    } else {
+                        if (this.ALocked == false && this.gamepad.buttons[0].pressed) {
+                            this.newCoord();
+                            this.ALocked = true;
+                        } else if (!this.gamepad.buttons[0].pressed) {
+                            this.ALocked = false;
+                        }
+
+                        if (this.BLocked == false && this.gamepad.buttons[1].pressed) {
+                            this.setPoly();
+                            this.BLocked = true;
+                        } else if (!this.gamepad.buttons[1].pressed) {
+                            this.BLocked = false;
+                        }
+
+                        this.currLJ_X = refineAxisValue(this.gamepad.axes[0]);
+                        this.currLJ_Y = refineAxisValue(this.gamepad.axes[1]);
+                        if (!(this.prevLJ_X == this.currLJ_X)) {
+                            this.prevLJ_X = this.currLJ_X;
+                        }
+                        if (!(this.prevLJ_Y == this.currLJ_Y)) {
+                            this.prevLJ_Y = this.currLJ_Y;
+                        }
+
+                        this.currRJ_X = refineAxisValue(this.gamepad.axes[2]);
+                        this.currRJ_Y = refineAxisValue(this.gamepad.axes[3]);
+                        if (!(this.prevRJ_X == this.currRJ_X)) {
+                            this.prevRJ_X = this.currRJ_X;
+                        }
+                        if (!(this.prevRJ_Y == this.currRJ_Y)) {
+                            this.prevRJ_Y = this.currRJ_Y;
+                        }
+
+                        this.moveY(-this.currLJ_Y);
+                        this.moveX(this.currLJ_X);
+                    }
+                }
+
+                keyDown (e) {
+                    switch(e.code) {
+                        case this.keybinds.up:
+                            this.UpPressed = true;
+                            break;
+                        case this.keybinds.down:
+                            this.DownPressed = true;
+                            break;
+                        case this.keybinds.left:
+                            this.LeftPressed = true;
+                            break;
+                        case this.keybinds.right:
+                            this.RightPressed = true;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+                keyUp (e) {
+                    switch(e.code) {
+                        case this.keybinds.abutton:
+                            this.ALocked = false;
+                            break;
+                        case this.keybinds.bbutton:
+                            this.BLocked = false;
+                            break;
+                        case this.keybinds.up:
+                            this.UpPressed = false;
+                            break;
+                        case this.keybinds.down:
+                            this.DownPressed = false;
+                            break;
+                        case this.keybinds.left:
+                            this.LeftPressed = false;
+                            break;
+                        case this.keybinds.right:
+                            this.RightPressed = false;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            };
+
+            class Coordinate {
+                constructor (x, y, color) {
+
+                    this.x = x;
+                    this.y = y;
+
+                    this.geometry = new THREE.CircleGeometry(player_radius, 32);
+                    this.material = new THREE.MeshBasicMaterial({
+                        color: color
+                    });
+                    this.coordObject = new THREE.Mesh(this.geometry, this.material);
+
+                    this.coordObject.position.x = this.x;
+                    this.coordObject.position.y = this.y;
+
+                    scene.add(this.coordObject);
+                }
+            }
+
+            class CoordinateLine {
+                constructor (x1, y1, x2, y2, color) {
+                    this.material = new THREE.LineBasicMaterial({
+                        color: color,
+                        linewidth: 3
+                    });
+
+                    this.geometry = new THREE.Geometry();
+
+                    this.geometry.vertices.push(
+                        new THREE.Vector3(x1, y1, 0),
+                        new THREE.Vector3(x2, y2, 0)
+                    );
+
+                    this.coordLineObject = new THREE.Line(this.geometry, this.material);
+                    scene.add(this.coordLineObject);
+                }
+            }
+
+            class GuidingLine {
+                constructor (x1, y1, x2, y2, color) {
+                    this.material = new THREE.LineDashedMaterial({
+                        color: color,
+                        linewidth: 3,
+                        scale: 1,
+                        dashSize: .04,
+                        gapSize: 2
+                    });
+
+                    this.geometry = new THREE.Geometry();
+
+                    this.geometry.vertices.push(
+                        new THREE.Vector3(x1, y1, 0),
+                        new THREE.Vector3(x2, y2, 0)
+                    );
+
+                    this.guidingLineObject = new THREE.Line(this.geometry, this.material);
+                    scene.add(this.guidingLineObject);
+                }
+            }
+
+            class Polygon {
+                constructor (coordsArray, color) {
+
+                    this.material = new THREE.MeshBasicMaterial({
+                        color: color
+                    });
+
+                    this.extrudeSettings = { 
+                        amount: 1, 
+                        bevelEnabled: false, 
+                        bevelSegments: 2, 
+                        steps: 2, 
+                        bevelSize: 1, 
+                        bevelThickness: 1 
+                    };
+
+                    this.polygonShape = new THREE.Shape();
+
+                    this.polygonShape.moveTo(coordsArray[0].x, coordsArray[0].y);
+                    var i = 1;
+                    while (i < coordsArray.length) {
+                        this.polygonShape.lineTo(coordsArray[i].x, coordsArray[i].y);
+                        i++;
+                    }
+
+                    this.geometry = new THREE.ShapeGeometry(this.polygonShape, this.extrudeSettings);
+
+                    this.mesh = new THREE.Mesh(this.geometry, this.material);
+
+                    scene.add(this.mesh);
+                }
+            }
+
+            class Gamepad {
+
+            }
+
+            var zoom_percent = 100;
+            var scene = new THREE.Scene();
+            var camera = new THREE.PerspectiveCamera( zoom_percent, max_x / max_y, 1, 1000 );
+            camera.position.z = 5;
+
+            var renderer = new THREE.WebGLRenderer();
+            renderer.setSize( max_x, max_y );
+            document.body.appendChild( renderer.domElement );
+
+            //detect gamepad connection
+            window.addEventListener('gamepadconnected', controllerConnectedEvent);
+            window.addEventListener('gamepaddisconnected', controllerDisconnectedEvent);
+
+            //detect keyboard control input
+            window.addEventListener('keydown', keyDownEvent);
+            window.addEventListener('keyup', keyUpEvent);
+
+            //Literally from https://developer.mozilla.org/en-US/docs/Web/API/Gamepad_API/Using_the_Gamepad_API
+            /**
+             * controllerConnectedEvent
+             * Detects when a gamepad is connected and announces it.
+             */
+            function controllerConnectedEvent(event) {
+                // console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
+                // event.gamepad.index, event.gamepad.id,
+                // event.gamepad.buttons.length, event.gamepad.axes.length);
+                //imagine spawning a player when they connect a gamepad though. Could make for a cool feature.
+
+                var i = 0;
+                while(i < players.length) {
+                    if (players[i].gamepad == undefined) {
+                        players[i].gamepad = event.gamepad;
+                        console.log("Gamepad connected and assigned to %s with index %d: %s. %d buttons, %d axes.",
+                            players[i].name, event.gamepad.index, event.gamepad.id, event.gamepad.buttons.length, event.gamepad.axes.length);
+                        break;
+                    }
+                    i++;
+                }
+            };
+
+            function controllerDisconnectedEvent(event) {
+                var i = 0;
+                while(i < players.length) {
+                    if (players[i].gamepad == event.gamepad) {
+                        players[i].gamepad = undefined;
+                        console.log("Gamepad disconnected from %s with index %d: %s. %d buttons, %d axes.",
+                            players[i].name, event.gamepad.index, event.gamepad.id, event.gamepad.buttons.length, event.gamepad.axes.length);
+                        break;
+                    }
+                    i++;
+                }
+            }
+
+            // window.addEventListener('resize', windowResizeEvent);
+            // removed the resize event since it would bug out the view of the play area
+            //probably should set the size proportionally
+            // function windowResizeEvent() {
+            //     renderer.setSize( max_x, max_y );
+            // }
+
+            function keyDownEvent(event) {
+                players.forEach(function (player) {
+                    player.keyDown(event);
+                });
+            }
+
+            function keyUpEvent(event) {
+                players.forEach(function (player) {
+                    player.keyUp(event);
+                });
+            }
+
+            function updatePos() {
+                players.forEach(function (player) {
+                    player.updatePos();
+                });
+            }
+
+            /**
+             * animate
+             *
+             * Starts the animation sequence. Methods within are called on each frame.
+             */
+            function animate() {
+                requestAnimationFrame(animate);
+
+                updatePos();
+                // gamepad_detect();
+
+                renderer.render(scene, camera);
+            }
+
+            //TODO assign a gamepad to a Player
+            function gamepad_detect() {
+                //TODO for each person, get the assigned gamepad
+                if (navigator.getGamepads) {
+                    var gp = navigator.getGamepads()[0];
+
+                    if (gp != undefined) {
+                        if (debug) {
+                            if (gp.buttons[0].value > 0 || gp.buttons[0].pressed == true) {
+                                console.log("AButton pressed.");
+                            }
+                            if (gp.buttons[1].value > 0 || gp.buttons[1].pressed == true) {
+                                console.log("BButton pressed.");
+                            }
+                            if (gp.buttons[2].value > 0 || gp.buttons[2].pressed == true) {
+                                console.log("XButton pressed.");
+                            }
+                            if (gp.buttons[3].value > 0 || gp.buttons[3].pressed == true) {
+                                console.log("YButton pressed.");
+                            }
+                            if (gp.buttons[4].value > 0 || gp.buttons[4].pressed == true) {
+                                console.log("LButton pressed.");
+                            }
+                            if (gp.buttons[5].value > 0 || gp.buttons[5].pressed == true) {
+                                console.log("RButton pressed.");
+                            }
+                            if (gp.buttons[6].value > 0 || gp.buttons[6].pressed == true) {
+                                console.log("LTrigger pressed.");
+                            }
+                            if (gp.buttons[7].value > 0 || gp.buttons[7].pressed == true) {
+                                console.log("RTrigger pressed.");
+                            }
+                            if (gp.buttons[8].value > 0 || gp.buttons[8].pressed == true) {
+                                console.log("BackButton pressed.");
+                            }
+                            if (gp.buttons[9].value > 0 || gp.buttons[9].pressed == true) {
+                                console.log("StartButton pressed.");
+                            }
+                            if (gp.buttons[10].value > 0 || gp.buttons[10].pressed == true) {
+                                console.log("LeftJoystickButton pressed.");
+                            }
+                            if (gp.buttons[11].value > 0 || gp.buttons[11].pressed == true) {
+                                console.log("RightJoystickButton pressed.");
+                            }
+                            if (gp.buttons[12].value > 0 || gp.buttons[12].pressed == true) {
+                                console.log("Up pressed.");
+                            }
+                            if (gp.buttons[13].value > 0 || gp.buttons[13].pressed == true) {
+                                console.log("Down pressed.");
+                            }
+                            if (gp.buttons[14].value > 0 || gp.buttons[14].pressed == true) {
+                                console.log("Left pressed.");
+                            }
+                            if (gp.buttons[15].value > 0 || gp.buttons[15].pressed == true) {
+                                console.log("Right pressed.");
+                            }
+                            if (gp.buttons[16].value > 0 || gp.buttons[16].pressed == true) {
+                                console.log("5 pressed.");
+                            }
+                        }
+
+                        //TODO move to Player class
+                        var currLJ_X = refineAxisValue(gp.axes[0]);
+                        var currLJ_Y = refineAxisValue(gp.axes[1]);
+                        if (!(players[0].prevLJ_X == currLJ_X)) {
+                            players[0].prevLJ_X = currLJ_X;
+                        }
+                        if (!(players[0].prevLJ_Y == currLJ_Y)) {
+                            players[0].prevLJ_Y = currLJ_Y;
+                        }
+
+                        var currRJ_X = refineAxisValue(gp.axes[2]);
+                        var currRJ_Y = refineAxisValue(gp.axes[3]);
+                        if (!(players[0].prevRJ_X == currRJ_X)) {
+                            players[0].prevRJ_X = currRJ_X;
+                        }
+                        if (!(players[0].prevRJ_Y == currRJ_Y)) {
+                            players[0].prevRJ_Y = currRJ_Y;
+                        }
+
+                        players[0].moveY(-currLJ_Y);
+                        players[0].moveX(currLJ_X);
+                    }
+                }
+            }
+
+            /**
+             * refineAxisValue
+             *
+             * Given a float value, returns a rounded float to the nearedst .00. If this
+             * value is within a .05 threshold or over 1, it returns the closest whole value
+             * to ensure maximum values/controller idle.
+             */
+            function refineAxisValue(float) {
+                var float_val = Math.floor(float * 100) / 100;
+                if ((float_val <= 0.05) && (float_val >= -0.05)) {
+                    return 0;
+                } else if ((float_val >= 0.95) && (float_val >= 1)) {
+                    return 1;
+                } else if ((float_val <= -0.95) && (float_val <= -1)) {
+                    return -1;
+                } else {
+                    return float_val;
+                }
+            }
+
+            /**
+             * init
+             *
+             * Initializes the game.
+             */
+            function init() {
+                addPlayers();
+            };
+
+            /**
+             * addPlayers
+             *
+             * Adds players to the game
+             */
+            function addPlayers() {
+                players.push(new Player(0x4d88d5, "Player 1", {up: "ArrowUp", down: "ArrowDown", left: "ArrowLeft", right: "ArrowRight", abutton: "Space", bbutton: "ShiftLeft"}));
+                players.push(new Player(0xff0000, "Player 2", {up: "KeyW", down: "KeyS", left: "KeyA", right: "KeyD"}));
+                players.push(new Player(0x009933, "Player 3", {up: "KeyI", down: "KeyK", left: "KeyJ", right: "KeyL", abutton: "KeyY", bbutton: "KeyU"}));
+                players.push(new Player(0xffff00, "Player 4", {up: "KeyG", down: "KeyB", left: "KeyV", right: "KeyN"}));
+                
+                players.forEach(function (player) {
+                    scene.add(player.getPlayerObject());
+                });
+            }
+
+            //initializes and animates the project
+            //run methods down here
+            init();
+            animate();
+        </script>
+    </body>
+</html>
