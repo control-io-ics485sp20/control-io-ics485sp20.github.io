@@ -6,14 +6,79 @@
         <style>
             body { margin: 0; }
             canvas { display: block; }
+            button {font-size:60px; border-radius: 5px;}
+
+            #btn { position: absolute;
+              top: 50%;
+              left: 50%;
+              border: none;
+              cursor: pointer;
+              text-align: center;}
+
+            button:hover {background-color: #999}
+
+            button:active {
+              background-color: #999;
+              transform: translateY(4px);
+            }
+
+            #btn1 { position: absolute;
+              top: 2%;
+              right: 1%;
+              border: none;
+              cursor: pointer;
+              text-align: center;}
+
         </style>
     </head>
     <body>
+
+    <div id ="btn">
+      <button class="button" onClick = "this.style.visibility= 'hidden';">Click to Start!</button>
+    </div>
+
+    <div id ="btn1">
+      <button>Timer<div id="timer"></div></button>
+    </div>
+
+
         <script src="js/three.js"></script>
         <script>
             //Web JS Project that implements THREE.js.
             //Literally based off of tutorial:
             //https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene
+
+            var on = 0;
+            var seconds=60;
+            var timer;
+            function myFunction() {
+              if(seconds < 60) {
+                document.getElementById("timer").innerHTML = seconds;
+              }
+              if (seconds >0 ) {
+                seconds--;
+              } else {
+                clearInterval(timer);
+                alert("Time Out");
+                on = 0;
+              }
+            }
+            document.getElementById("btn").onclick = function() {
+              on = 1;
+              if(!timer) {
+                timer = window.setInterval(function() {
+                  myFunction();
+                }, 1000);
+              }
+            }
+            //When a key is pressed in the text area, update the timer using myFunction
+
+            //If seconds are equal or greater than 0, countdown until 1 minute has passed
+            //Else, clear the timer and alert user of how many words they type per minute
+
+            document.getElementById("timer").innerHTML="1:00";
+
+
 
             var max_x = window.innerWidth;
             var min_x = -max_x;
@@ -455,13 +520,15 @@
 
             function keyDownEvent(event) {
                 players.forEach(function (player) {
-                    player.keyDown(event);
+                  if(on ==1) {
+                    player.keyDown(event);}
                 });
             }
 
             function keyUpEvent(event) {
                 players.forEach(function (player) {
-                    player.keyUp(event);
+                  if(on == 1) {
+                    player.keyUp(event);}
                 });
             }
 
