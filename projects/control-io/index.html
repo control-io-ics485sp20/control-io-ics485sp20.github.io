@@ -6,14 +6,75 @@
         <style>
             body { margin: 0; }
             canvas { display: block; }
+            button {font-size:60px; border-radius: 5px;}
+
+            #btn { position: absolute;
+              top: 50%;
+              left: 50%;
+              border: none;
+              cursor: pointer;
+              text-align: center;}
+
+            button:hover {background-color: #999}
+
+            button:active {
+              background-color: #999;
+              transform: translateY(4px);
+            }
+
+            #btn1 { position: absolute;
+              top: 2%;
+              right: 1%;
+              border: none;
+              cursor: pointer;
+              text-align: center;}
         </style>
     </head>
     <body>
+
+    <div id ="btn">
+      <button class="button" onClick = "this.style.visibility= 'hidden';">Click to Start!</button>
+    </div>
+
+    <div id ="btn1">
+      <button>Timer<div id="timer"></div></button>
+    </div>
+
         <script src="js/three.js"></script>
         <script>
             //Web JS Project that implements THREE.js.
             //Literally based off of tutorial:
             //https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene
+
+            var on = 0;
+            var seconds=60;
+            var timer;
+            function myFunction() {
+              if(seconds < 60) {
+                document.getElementById("timer").innerHTML = seconds;
+              }
+              if (seconds >0 ) {
+                seconds--;
+              } else {
+                clearInterval(timer);
+                alert("Time Out");
+                on = 0;
+              }
+            }
+            document.getElementById("btn").onclick = function() {
+              on = 1;
+              if(!timer) {
+                timer = window.setInterval(function() {
+                  myFunction();
+                }, 1000);
+              }
+            }
+            //When a key is pressed in the text area, update the timer using myFunction
+
+            //If seconds are equal or greater than 0, countdown until 1 minute has passed
+            //Else, clear the timer and alert user of how many words they type per minute
+
+            document.getElementById("timer").innerHTML="1:00";
 
             var max_x = window.innerWidth;
             var min_x = -max_x;
@@ -135,7 +196,7 @@
                 moveX (modifier) {
                     var player_x = this.player_object.position.x + (player_max_velocity * modifier);
                     this.player_object.position.x = player_x;
-                    
+
                     this.guidingLine.guidingLineObject.geometry.vertices[1].x = player_x;
                     this.guidingLine.guidingLineObject.geometry.verticesNeedUpdate = true;
                     //TODO Constrain x axes movement to area
@@ -150,7 +211,7 @@
                 moveY (modifier) {
                     var player_y = this.player_object.position.y + (player_max_velocity * modifier);
                     this.player_object.position.y = player_y;
-                    
+
                     this.guidingLine.guidingLineObject.geometry.vertices[1].y = player_y;
                     this.guidingLine.guidingLineObject.geometry.verticesNeedUpdate = true;
                     //TODO Constrain y axes movement to area
@@ -165,7 +226,7 @@
                         this.coordsArray.push(new Coordinate(this.player_object.position.x, this.player_object.position.y, this.color));
 
                         this.linesArray.push(new CoordinateLine(this.player_object.position.x, this.player_object.position.y, lastCoord.x, lastCoord.y, this.color));
-                        
+
                         this.guidingLine.guidingLineObject.geometry.vertices[0].x = this.player_object.position.x;
                         this.guidingLine.guidingLineObject.geometry.vertices[0].y = this.player_object.position.y;
                     }
@@ -363,13 +424,13 @@
                         color: color
                     });
 
-                    this.extrudeSettings = { 
-                        amount: 1, 
-                        bevelEnabled: false, 
-                        bevelSegments: 2, 
-                        steps: 2, 
-                        bevelSize: 1, 
-                        bevelThickness: 1 
+                    this.extrudeSettings = {
+                        amount: 1,
+                        bevelEnabled: false,
+                        bevelSegments: 2,
+                        steps: 2,
+                        bevelSize: 1,
+                        bevelThickness: 1
                     };
 
                     this.polygonShape = new THREE.Shape();
@@ -454,15 +515,17 @@
             // }
 
             function keyDownEvent(event) {
-                players.forEach(function (player) {
-                    player.keyDown(event);
-                });
+              players.forEach(function (player) {
+                if(on ==1) {
+                  player.keyDown(event);}
+              });
             }
 
             function keyUpEvent(event) {
-                players.forEach(function (player) {
-                    player.keyUp(event);
-                });
+              players.forEach(function (player) {
+                if(on == 1) {
+                  player.keyUp(event);}
+              });
             }
 
             function updatePos() {
@@ -610,7 +673,7 @@
                 players.push(new Player(0xff0000, "Player 2", {up: "KeyW", down: "KeyS", left: "KeyA", right: "KeyD"}));
                 players.push(new Player(0x009933, "Player 3", {up: "KeyI", down: "KeyK", left: "KeyJ", right: "KeyL", abutton: "KeyY", bbutton: "KeyU"}));
                 players.push(new Player(0xffff00, "Player 4", {up: "KeyG", down: "KeyB", left: "KeyV", right: "KeyN"}));
-                
+
                 players.forEach(function (player) {
                     scene.add(player.getPlayerObject());
                 });
