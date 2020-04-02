@@ -42,7 +42,7 @@
     </div>
 
 
-        <script src="js/lib/three.js"></script>
+        <script src="js/three.js"></script>
         <script>
             //Web JS Project that implements THREE.js.
             //Literally based off of tutorial:
@@ -88,6 +88,7 @@
             var player_max_velocity = .05;
             var players = []; //array of players
             var player_radius = .07;
+            var temp = [];
 
             //used to set the bounds of the canvas.?
             var canvas_multiplier = 335;
@@ -241,6 +242,12 @@
 
                     this.claimedShapesArray.push(new Polygon(this.coordsArray, this.color));
 
+                    var counter = this.claimedShapesArray.length;
+                    temp.push(this.claimedShapesArray[counter-1].geometry.vertices);
+                    //temp might need to store the color as well so that asteroids can be distinguished.
+                    console.table(temp);
+
+
                     while (this.coordsArray.length > 0) {
                         var n = this.coordsArray.pop();
                         scene.remove(n.coordObject);
@@ -255,6 +262,7 @@
                 }
 
                 updatePos () {
+
                     if (this.gamepad == undefined) {
                         if (this.ALocked == false) {
                             this.newCoord();
@@ -314,6 +322,7 @@
                         this.moveY(-this.currLJ_Y);
                         this.moveX(this.currLJ_X);
                     }
+
                 }
 
                 keyDown (e) {
@@ -377,6 +386,7 @@
                     this.coordObject.position.y = this.y;
 
                     scene.add(this.coordObject);
+
                 }
             }
 

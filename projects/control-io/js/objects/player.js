@@ -4,10 +4,12 @@
  * Class that represents a Player
  */
 class Player {
-    constructor(color, name, keybinds) {
+    constructor(gamewindow, color, name, keybinds) {
         this.coordsArray = [];
         this.linesArray = [];
         this.claimedShapesArray = [];
+
+        this.gamewindow = gamewindow;
 
         this.name = name;
 
@@ -43,7 +45,7 @@ class Player {
         this.randomSpawn();
         this.newCoord();
 
-        this.guidingLine = new GuidingLine(this.coordsArray[0].x, this.coordsArray[0].y, this.player_object.position.x, this.player_object.position.y, this.color.normal);
+        this.guidingLine = new PlayerGuidingLine(this.gamewindow, this.coordsArray[0].x, this.coordsArray[0].y, this.player_object.position.x, this.player_object.position.y, this.color.normal);
     };
 
     randomSpawn() {
@@ -109,13 +111,13 @@ class Player {
 
     newCoord() {
         if (this.coordsArray == undefined || this.coordsArray.length == 0) {
-            this.coordsArray.push(new Coordinate(this.player_object.position.x, this.player_object.position.y, this.color.normal));
+            this.coordsArray.push(new PlayerCoordinate(this.gamewindow, this.player_object.position.x, this.player_object.position.y, this.color.normal));
         } else {
             var lastCoord = this.coordsArray[this.coordsArray.length - 1];
 
-            this.coordsArray.push(new Coordinate(this.player_object.position.x, this.player_object.position.y, this.color.normal));
+            this.coordsArray.push(new PlayerCoordinate(this.gamewindow, this.player_object.position.x, this.player_object.position.y, this.color.normal));
 
-            this.linesArray.push(new CoordinateLine(this.player_object.position.x, this.player_object.position.y, lastCoord.x, lastCoord.y, this.color.normal));
+            this.linesArray.push(new PlayerCoordinateLine(this.gamewindow, this.player_object.position.x, this.player_object.position.y, lastCoord.x, lastCoord.y, this.color.normal));
             
             this.guidingLine.guidingLineObject.geometry.vertices[0].x = this.player_object.position.x;
             this.guidingLine.guidingLineObject.geometry.vertices[0].y = this.player_object.position.y;
@@ -125,16 +127,16 @@ class Player {
     setPoly() {
         this.newCoord();
 
-        this.claimedShapesArray.push(new Polygon(this.coordsArray, this.color.dark));
+        this.claimedShapesArray.push(new PlayerPolygon(this.gamewindow, this.coordsArray, this.color.dark));
 
         while (this.coordsArray.length > 0) {
             var n = this.coordsArray.pop();
-            scene.remove(n.coordObject);
+            this.gamewindow.scene.remove(n.coordObject);
         }
 
         while (this.linesArray.length > 0) {
             var n = this.linesArray.pop();
-            scene.remove(n.coordLineObject);
+            this.gamewindow.scene.remove(n.coordLineObject);
         }
 
         this.newCoord();
