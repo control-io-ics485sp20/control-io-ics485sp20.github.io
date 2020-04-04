@@ -105,3 +105,5 @@ class PlayerPolygon {
         gamewindow.scene.add(this.mesh);
     }
 }
+
+// class PlayerObject

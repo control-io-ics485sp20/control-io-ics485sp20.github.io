@@ -125,43 +125,44 @@ function keyUpEvent(event) {
 }
 
 //handle controller connections and disconnections
-window.addEventListener('gamepadconnected', controllerConnectedEvent);
-window.addEventListener('gamepaddisconnected', controllerDisconnectedEvent);
+
 
 //Literally from https://developer.mozilla.org/en-US/docs/Web/API/Gamepad_API/Using_the_Gamepad_API
 /**
  * controllerConnectedEvent
  * Detects when a gamepad is connected and announces it.
  */
-function controllerConnectedEvent(event) {
-    // console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
-    // event.gamepad.index, event.gamepad.id,
-    // event.gamepad.buttons.length, event.gamepad.axes.length);
-    //imagine spawning a player when they connect a gamepad though. Could make for a cool feature.
+// function controllerConnectedEvent(event) {
+//     // console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
+//     // event.gamepad.index, event.gamepad.id,
+//     // event.gamepad.buttons.length, event.gamepad.axes.length);
+//     //imagine spawning a player when they connect a gamepad though. Could make for a cool feature.
 
-    var i = 0;
-    while(i < players.length) {
-        if (players[i].gamepad == undefined) {
-            players[i].gamepad = event.gamepad;
-            console.log("Gamepad connected and assigned to %s with index %d: %s. %d buttons, %d axes.",
-                players[i].name, event.gamepad.index, event.gamepad.id, event.gamepad.buttons.length, event.gamepad.axes.length);
-            break;
-        }
-        i++;
-    }
-};
+//     var i = 0;
+//     while(i < players.length) {
+//         if (players[i].gamepad == undefined) {
+//             players[i].gamepad = event.gamepad;
+//             console.log("Gamepad connected and assigned to %s with index %d: %s. %d buttons, %d axes.",
+//                 players[i].name, event.gamepad.index, event.gamepad.id, event.gamepad.buttons.length, event.gamepad.axes.length);
+//             break;
+//         }
+//         i++;
+//     }
+// };
 
-function controllerDisconnectedEvent(event) {
-    var i = 0;
-    while(i < players.length) {
-        if (players[i].gamepad == event.gamepad) {
-            players[i].gamepad = undefined;
-            console.log("Gamepad disconnected from %s with index %d: %s. %d buttons, %d axes.",
-                players[i].name, event.gamepad.index, event.gamepad.id, event.gamepad.buttons.length, event.gamepad.axes.length);
-            break;
-        }
-        i++;
-    }
-}
+// function controllerDisconnectedEvent(event) {
+//     var i = 0;
+//     while(i < players.length) {
+//         if (players[i].gamepad == event.gamepad) {
+//             players[i].gamepad = undefined;
+//             console.log("Gamepad disconnected from %s with index %d: %s. %d buttons, %d axes.",
+//                 players[i].name, event.gamepad.index, event.gamepad.id, event.gamepad.buttons.length, event.gamepad.axes.length);
+//             break;
+//         }
+//         i++;
+//     }
+// }
+
+
 
 console.log("[Control.IO] Loaded input module.")

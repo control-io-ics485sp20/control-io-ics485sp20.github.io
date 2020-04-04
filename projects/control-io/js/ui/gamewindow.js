@@ -8,7 +8,16 @@ class GameWindow {
         this.camera.position.z = 5;
     
         this.renderer.setSize( max_x, max_y );
-        $('#window').append(this.renderer.domElement);
+        var domElement = this.renderer.domElement;
+        // domElement.css("z-index", "-3");
+        
+        // gameWindow.style.zIndex = -3;
+        // gameWindow.id = "gamewindow";
+
+        domElement.style.zIndex = -3;
+        domElement.style.position = "fixed";
+
+        $('#window').append(domElement);
 
         //move to canvas, for later
         // this.canvas = document.createElement("canvas");

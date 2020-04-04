@@ -1,3 +1,12 @@
+var gameName = "Control.IO"
+
+var lobbyWaitingMessage = "Waiting for players..."
+var lobbyJoinInstructionMessage = "Join by keyboard or connect a controller."
+var lobbyJoinKeyboardInstructionMessage = "Keyboard detected.<br><br>Press <b>SPACE</b> to join this controller."
+var lobbyJoinControllerInstructionMessage = "Controller detected.<br><br>Press <b>START</b> to join this controller."
+var lobbyPlayerJoinedStatus = "Joined"
+var readyButtonText = "SHIFT / A - START GAME"
+
 var max_x = window.innerWidth;
 var min_x = -max_x;
 var max_y = window.innerHeight;
@@ -13,3 +22,5 @@ var canvas_multiplier = 335;
 var debug = false;
 
 var zoom_percent = 100;
+
+var controllers = [];

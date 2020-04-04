@@ -4,7 +4,7 @@
  * Class that represents a Player
  */
 class Player {
-    constructor(gamewindow, color, name, keybinds) {
+    constructor(gamewindow, color, name, gamepad, keybinds) {
         this.coordsArray = [];
         this.linesArray = [];
         this.claimedShapesArray = [];
@@ -27,6 +27,7 @@ class Player {
         this.prevRJ_X = 0;
         this.prevRJ_Y = 0;
 
+        this.gamepad = gamepad;
         this.keybinds = keybinds;
 
         this.geometry = new THREE.RingGeometry(player_radius, (player_radius + .03), 32);
