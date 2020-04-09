@@ -11,11 +11,11 @@ class Gamepad {
  */
 function refineAxisValue(float) {
     var float_val = Math.floor(float * 100) / 100;
-    if ((float_val <= 0.05) && (float_val >= -0.05)) {
+    if ((float_val <= 0.08) && (float_val >= -0.08)) {
         return 0;
-    } else if ((float_val >= 0.95) && (float_val >= 1)) {
+    } else if ((float_val >= 0.92) && (float_val >= 1)) {
         return 1;
-    } else if ((float_val <= -0.95) && (float_val <= -1)) {
+    } else if ((float_val <= -0.92) && (float_val <= -1)) {
         return -1;
     } else {
         return float_val;
@@ -123,46 +123,5 @@ function keyUpEvent(event) {
         player.keyUp(event);
     });
 }
-
-//handle controller connections and disconnections
-
-
-//Literally from https://developer.mozilla.org/en-US/docs/Web/API/Gamepad_API/Using_the_Gamepad_API
-/**
- * controllerConnectedEvent
- * Detects when a gamepad is connected and announces it.
- */
-// function controllerConnectedEvent(event) {
-//     // console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
-//     // event.gamepad.index, event.gamepad.id,
-//     // event.gamepad.buttons.length, event.gamepad.axes.length);
-//     //imagine spawning a player when they connect a gamepad though. Could make for a cool feature.
-
-//     var i = 0;
-//     while(i < players.length) {
-//         if (players[i].gamepad == undefined) {
-//             players[i].gamepad = event.gamepad;
-//             console.log("Gamepad connected and assigned to %s with index %d: %s. %d buttons, %d axes.",
-//                 players[i].name, event.gamepad.index, event.gamepad.id, event.gamepad.buttons.length, event.gamepad.axes.length);
-//             break;
-//         }
-//         i++;
-//     }
-// };
-
-// function controllerDisconnectedEvent(event) {
-//     var i = 0;
-//     while(i < players.length) {
-//         if (players[i].gamepad == event.gamepad) {
-//             players[i].gamepad = undefined;
-//             console.log("Gamepad disconnected from %s with index %d: %s. %d buttons, %d axes.",
-//                 players[i].name, event.gamepad.index, event.gamepad.id, event.gamepad.buttons.length, event.gamepad.axes.length);
-//             break;
-//         }
-//         i++;
-//     }
-// }
-
-
 
 console.log("[Control.IO] Loaded input module.")

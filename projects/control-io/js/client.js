@@ -6,8 +6,12 @@
 
 
 console.log("[Control.IO] Loaded client module.")
+var clientType = navigator.userAgent;
 
-//generate session id
+console.log(clientType);
+//contact server to generate session id
 
 //all post-setup actions below here
+// window.onload = function() {
 var game = new Game();
+// }

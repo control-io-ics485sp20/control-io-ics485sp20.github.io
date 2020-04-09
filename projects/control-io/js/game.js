@@ -4,8 +4,11 @@ function Game() {
 
     var gameLobby;
     var gameWindow;
+    var gameMap;
 
     var gameStatus;
+
+    var gameRunning;
 
     function init() {
         window.addEventListener('gamepadconnected', controllerConnectedEvent);
@@ -22,8 +25,6 @@ function Game() {
         //totally optional
     };
 
-    
-
     function runLocalPlayer() {
         console.log("Starting a local session...")
         gameLobby = new GameLobby("Starting Local Session...");
@@ -37,15 +38,19 @@ function Game() {
     }
 
     function startGame(controllers) {
-        console.log(controllers);
+        // console.log(controllers);
 
         gameStatus = "singleplayer-game";
         //start game countdown
         //start game
         //create start game timer
-        gameWindow = new GameWindow();
+        let dimensions = {width: window.innerWidth, height: window.innerHeight}
 
-        initMap();
+        gameWindow = new GameWindow(dimensions);
+        gameWindow.init();
+        gameMap = new GameMap(dimensions);
+
+        // initMap();
 
         addPlayers(controllers);
 
@@ -54,23 +59,24 @@ function Game() {
     }
 
     return {
-        startGame: startGame
+        startGame: startGame,
+        checkGameStatus: checkGameStatus
     }
 
-    function initMap() {
-        console.log("Initializing map...")
-        var map = new GameMap({width: window.innerWidth, height: window.innerHeight});
+    // function initMap() {
+    //     console.log("Initializing map...")
+    //     var map = new GameMap({width: window.innerWidth, height: window.innerHeight});
     
-        // var img = new SimpleImage(200,200);
-        // print(img);
+    //     // var img = new SimpleImage(200,200);
+    //     // print(img);
     
-        // for (var pixel of img.values()) {
-        //     pixel.setRed(255);
-        //     pixel.setGreen(255);
-        //     pixel.setBlue(0);
-        // }
-        // print(img);
-    }            
+    //     // for (var pixel of img.values()) {
+    //     //     pixel.setRed(255);
+    //     //     pixel.setGreen(255);
+    //     //     pixel.setBlue(0);
+    //     // }
+    //     // print(img);
+    // }            
 
     /**
      * addPlayers
@@ -78,24 +84,23 @@ function Game() {
      * Adds players to the game
      */
     function addPlayers(controllers) { //TODO only add players from lobby
-        Object.keys(controllers).forEach(function (id) {
-            console.log(id);
-            console.log(controllers[id]);
 
+        Object.keys(controllers).forEach(function (id) {
             if (controllers[id]["player"] != null) {
                 if (controllers[id]["gamepad"] != null) {
-                    players.push(new Player(gameWindow, controllers[id]["player"]["color"], controllers[id]["player"]["name"], controllers[id]["gamepad"], null));
+                    players.push(new Player(this, gameWindow, gameMap, controllers[id]["player"]["color"], controllers[id]["player"]["name"], controllers[id]["gamepad"], null));
                 } else if (id == "keyboard1") {
-                    players.push(new Player(gameWindow, controllers[id]["player"]["color"], controllers[id]["player"]["name"], null, {up: "ArrowUp", down: "ArrowDown", left: "ArrowLeft", right: "ArrowRight", abutton: "KeyZ", bbutton: "ShiftLeft"}) );
+                    players.push(new Player(this, gameWindow, gameMap, controllers[id]["player"]["color"], controllers[id]["player"]["name"], null, {up: "ArrowUp", down: "ArrowDown", left: "ArrowLeft", right: "ArrowRight", abutton: "Space", bbutton: "ShiftLeft"}) );
                 }
+                playerCount++;
             }
         });
 
         
         
-        players.forEach(function (player) {
-            gameWindow.scene.add(player.getPlayerObject());
-        });
+        // players.forEach(function (player) {
+        //     gameWindow.scene.add(player.getPlayerObject());
+        // });
     }
 
     function updatePos() {
@@ -110,12 +115,15 @@ function Game() {
      * Starts the animation sequence. Methods within are called on each frame.
      */
     function runAnimation() {
-        requestAnimationFrame(runAnimation);
+        checkGameStatus();
+        gameRunning = requestAnimationFrame(runAnimation);
 
         updatePos();
 
-        gameWindow.renderer.render(gameWindow.scene, gameWindow.camera);
+        paper.view.draw();
     }
+
+    
 
     //Literally from https://developer.mozilla.org/en-US/docs/Web/API/Gamepad_API/Using_the_Gamepad_API
     /**
@@ -127,7 +135,7 @@ function Game() {
             gameLobby.controllerJoin(event);
         } else if (gameStatus == "singleplayer-game") {
             //allow for reconnect of disconnected player
-        } else {
+        } else if (gameStatus == "debug") {
             var i = 0;
             while(i < players.length) {
                 if (players[i].gamepad == undefined) {
@@ -146,7 +154,7 @@ function Game() {
             gameLobby.controllerLeave(event);
         } else if (gameStatus == "singleplayer-game") {
             //allow for reconnect of disconnected player
-        } else {
+        } else if (gameStatus == "debug") {
             var i = 0;
             while(i < players.length) {
                 if (players[i].gamepad == event.gamepad) {
@@ -182,3 +190,11 @@ function Game() {
 }
 
 console.log("[Control.IO] Loaded game module.")
+
+function checkGameStatus() {
+    if (playerCount <= 1) { //or timer is up
+        console.log("Game has finished!");
+        console.log(playerCount);
+        window.cancelAnimationFrame(gameRunning);
+    }
+}

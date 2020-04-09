@@ -101,7 +101,9 @@
              * Class that represents a Player
              */
             class Player {
-                constructor(color, name, keybinds) {
+                constructor(image, color, name, keybinds) {
+                    this.image = image;
+                    var texture = new THREE.TextureLoader().load(this.image);
                     this.coordsArray = [];
                     this.linesArray = [];
 
@@ -118,9 +120,9 @@
 
                     this.keybinds = keybinds;
 
-                    this.geometry = new THREE.RingGeometry(player_radius, (player_radius + .03), 32);
+                    this.geometry = new THREE.PlaneGeometry(0.8, 0.8, 0);
                     this.material = new THREE.MeshBasicMaterial({
-                        color: color,
+                        map: texture,
                         side: THREE.DoubleSide
                     });
                     this.player_object = new THREE.Mesh(this.geometry, this.material);
@@ -683,10 +685,10 @@
              * Adds players to the game
              */
             function addPlayers() {
-                players.push(new Player(0x4d88d5, "Player 1", {up: "ArrowUp", down: "ArrowDown", left: "ArrowLeft", right: "ArrowRight", abutton: "Space", bbutton: "ShiftLeft"}));
-                players.push(new Player(0xff0000, "Player 2", {up: "KeyW", down: "KeyS", left: "KeyA", right: "KeyD"}));
-                players.push(new Player(0x009933, "Player 3", {up: "KeyI", down: "KeyK", left: "KeyJ", right: "KeyL", abutton: "KeyY", bbutton: "KeyU"}));
-                players.push(new Player(0xffff00, "Player 4", {up: "KeyG", down: "KeyB", left: "KeyV", right: "KeyN"}));
+                players.push(new Player('blue.png', 0x4d88d5, "Player 1", {up: "ArrowUp", down: "ArrowDown", left: "ArrowLeft", right: "ArrowRight", abutton: "Space", bbutton: "ShiftLeft"}));
+                players.push(new Player('red.png', 0xff0000, "Player 2", {up: "KeyW", down: "KeyS", left: "KeyA", right: "KeyD"}));
+                players.push(new Player('blue.png', 0x009933, "Player 3", {up: "KeyI", down: "KeyK", left: "KeyJ", right: "KeyL", abutton: "KeyY", bbutton: "KeyU"}));
+                players.push(new Player('red.png', 0xffff00, "Player 4", {up: "KeyG", down: "KeyB", left: "KeyV", right: "KeyN"}));
 
                 players.forEach(function (player) {
                     scene.add(player.getPlayerObject());

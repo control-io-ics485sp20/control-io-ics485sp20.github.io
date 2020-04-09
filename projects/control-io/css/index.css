@@ -1,3 +1,10 @@
+#window {
+    position: relative;
+
+    width: 100%;
+    height: 100%;
+}
+
 #gamelobby {
     width: 100%;
     height: 100%;
@@ -102,4 +109,11 @@
 @font-face {
     font-family: "rainfall";
     src: url('../css/fonts/RAINFALL.otf');
+}
+
+.gamewindow {
+    position: absolute;
+
+    width: 100%;
+    height: 100%;
 }

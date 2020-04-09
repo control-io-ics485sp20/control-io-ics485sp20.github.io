@@ -39,7 +39,7 @@ function GameLobby(roomName) {
 
     function runGame() {
         window.cancelAnimationFrame(controllerCheck);
-        
+
         $("#gamelobby").remove();
 
         game.startGame(controllers);
@@ -65,6 +65,8 @@ function GameLobby(roomName) {
 
         if (controllers[id]["player"] != null) {
             removePlayer(controllers[id]["player"]);
+            joinedPlayers--;
+            updateStartButton();
         }
 
         delete controllers[id];
@@ -95,7 +97,6 @@ function GameLobby(roomName) {
 
             joinedPlayers--;
         }
-        //update player count
         updateStartButton();
     }
 
@@ -132,10 +133,10 @@ function GameLobby(roomName) {
     }
 
     function joinLeaveKeyboard(event) {
-        if (event.code == "Space") {
+        if ((event.code == "ShiftLeft") || (event.code == "ShiftRight")) {
             controllerLock("keyboard1", lobbyJoinKeyboardInstructionMessage);
             // gameLobby.joinLeaveKeyboard();
-        } else if ((event.code == "ShiftLeft") || (event.code == "ShiftRight")) {
+        } else if (event.code == "Space") {
             startLock();
         } else {
             //any other key pressed
