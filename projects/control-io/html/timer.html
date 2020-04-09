@@ -120,10 +120,12 @@
 
                     this.keybinds = keybinds;
 
-                    this.geometry = new THREE.PlaneGeometry(0.8, 0.8, 0);
+                    this.geometry = new THREE.PlaneGeometry(1, 1, 0);
                     this.material = new THREE.MeshBasicMaterial({
                         map: texture,
-                        side: THREE.DoubleSide
+                        side: THREE.DoubleSide,
+                        transparent: true,
+
                     });
                     this.player_object = new THREE.Mesh(this.geometry, this.material);
 
@@ -469,9 +471,13 @@
             class Gamepad {
 
             }
-
             var zoom_percent = 100;
             var scene = new THREE.Scene();
+            const loader = new THREE.TextureLoader();
+            loader.load('night.png' , function(texture)
+            {
+              scene.background = texture;
+            });
             var camera = new THREE.PerspectiveCamera( zoom_percent, max_x / max_y, 1, 1000 );
             camera.position.z = 5;
 

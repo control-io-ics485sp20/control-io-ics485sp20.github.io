@@ -1,7 +1,7 @@
 function GameWindow(properties) {
     var canvas;
     var properties = properties;
-    var layers = {};
+    this.layers = {};
 
     function init() {
 
@@ -18,44 +18,20 @@ function GameWindow(properties) {
         canvas = $("#layer_main")[0];
 
         paper.setup(canvas);
-        layers["background"] = (new paper.Layer({name: 'background'}));
-        layers["shaperaster"] = (new paper.Layer({name: 'shaperaster'}));
-        layers["shapes"] = (new paper.Layer({name: 'shapes'}));
-        layers["playersetlines"] = (new paper.Layer({name: 'playersetlines'}));
-        layers["playerguidinglines"] = (new paper.Layer({name: 'playerguidinglines'}));
-        layers["players"] = (new paper.Layer({name: 'players'}));
+        this.layers["background"] = (new paper.Layer({name: 'background'}));
+        this.layers["shaperaster"] = (new paper.Layer({name: 'shaperaster'}));
+        this.layers["shapes"] = (new paper.Layer({name: 'shapes'}));
+        this.layers["playersetlines"] = (new paper.Layer({name: 'playersetlines'}));
+        this.layers["playerguidinglines"] = (new paper.Layer({name: 'playerguidinglines'}));
+        this.layers["players"] = (new paper.Layer({name: 'players'}));
 
-        setBackground();
-    }
-
-    function addPlayer(x, y, color) {
-        var Player = new paper.Raster('../img/grey.png');
-        Player.position.x = x;
-        Player.position.y = y;
-        Player.scale(0.1);
-        // Player.size = new paper.Size(20, 20);
-        // Player.center = [x, y];
-        // var Player = new paper.Raster({
-        //     source: '../img/grey.png',
-        //     center: [x, y],
-        // });
-        // var Player = new paper.Path.Circle({
-        //     center: [x, y],
-        //     radius: 8,
-        //     strokeWidth: 5,
-        //     strokeColor: color
-        // });
-        layers["players"].addChild(Player);
-        return Player;
+        this.setBackground();
     }
 
     function setBackground() {
         var background = new paper.Raster({source: '../img/starry_night.png', position: window.center});
         background.scale(2);
-        // background.point = [0,0];
-        // background.size = [max_x / 2, max_y / 2];
-        // background.size.x = max_x;
-        layers["background"].addChild(background);
+        this.layers["background"].addChild(background);
     }
 
     function removePlayer() {
@@ -64,11 +40,10 @@ function GameWindow(properties) {
 
     return {
         init: init,
-        addPlayer: addPlayer,
         removePlayer: removePlayer,
         setBackground: setBackground,
         canvas: canvas,
-        layers: layers
+        layers: this.layers
     }
     
 

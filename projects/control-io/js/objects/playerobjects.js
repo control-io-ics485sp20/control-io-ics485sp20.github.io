@@ -1,16 +1,44 @@
-/*
-* A coordinate that a player can create.
-*/
-class PlayerCoordinate {
-    constructor (gamewindow, x, y, color) {
-        this.x = x;
-        this.y = y;
+function PlayerObject(gamewindow, x, y, color) {
+    // this.gamewindow = gamewindow;
 
-        this.asset = new paper.Path.Circle({
-            center: [x, y],
-            radius: 8,
-            fillColor: color
-        });
+    this.asset = new paper.Raster('../img/grey.png');
+    this.asset.position.x = x;
+    this.asset.position.y = y;
+    this.asset.scale(0.1);
+    gamewindow.layers["players"].addChild(this.asset);
+
+    function rotate_sprite(angle) {
+        // console.log(this.asset.rotation);
+        this.asset.rotation = angle;
+    }
+
+    return {
+        rotate_sprite: rotate_sprite,
+        asset: this.asset
+    }
+}
+
+/*
+ * A coordinate that a player can create.
+ */
+function PlayerCoordinate(gamewindow, x, y, color) {
+    // constructor (gamewindow, x, y, color) {
+    this.x = x;
+    this.y = y;
+
+    this.asset = new paper.Path.Circle({
+        center: [x, y],
+        radius: 8,
+        fillColor: color
+    });
+
+    gamewindow.layers["playersetlines"].addChild(this.asset);
+    // }
+
+    return {
+        x: this.x,
+        y: this.y,
+        asset: this.asset
     }
 }
 
@@ -24,6 +52,7 @@ class PlayerCoordinateLine {
         this.asset.strokeColor = color;
         this.asset.strokeWidth = lineWidth;
         this.asset.strokeCap = 'round';
+        gamewindow.layers["playersetlines"].addChild(this.asset);
     }
 }
 
@@ -59,7 +88,7 @@ class PlayerPolygon {
         this.asset.fillColor = color;
         gamewindow.layers["shapes"].addChild(this.asset);
 
-        console.log(this.asset.area);
+        console.log(Math.abs(this.asset.area));
         // gamewindow.layers["shaperaster"]
     }
 }

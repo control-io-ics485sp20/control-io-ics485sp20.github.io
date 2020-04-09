@@ -40,31 +40,27 @@ class Player {
         var random_x = Math.floor(((Math.random() * Math.floor(max_x))));
         var random_y = Math.floor(((Math.random() * Math.floor(max_y))));
 
-        this.asset = this.gamewindow.addPlayer(random_x, random_y, this.color.normal);
+        this.playerobject = new PlayerObject(this.gamewindow, random_x, random_y, this.color.normal);
     }
 
-    getPlayerObject () {
-        return this.player_object;
-    };
-
     moveUp () {
-        this.asset.position.y -= player_max_velocity;
-        this.updateVisualGuidingLine(null, this.asset.position.y, 1);
+        this.playerobject.asset.position.y -= player_max_velocity;
+        this.updateVisualGuidingLine(null, this.playerobject.asset.position.y, 1);
     }
 
     moveDown () {
-        this.asset.position.y += player_max_velocity;
-        this.updateVisualGuidingLine(null, this.asset.position.y, 1);
+        this.playerobject.asset.position.y += player_max_velocity;
+        this.updateVisualGuidingLine(null, this.playerobject.asset.position.y, 1);
     }
 
     moveLeft () {
-        this.asset.position.x -= player_max_velocity;
-        this.updateVisualGuidingLine(this.asset.position.x, null, 1);
+        this.playerobject.asset.position.x -= player_max_velocity;
+        this.updateVisualGuidingLine(this.playerobject.asset.position.x, null, 1);
     }
 
     moveRight () {
-        this.asset.position.x += player_max_velocity;
-        this.updateVisualGuidingLine(this.asset.position.x, null, 1);
+        this.playerobject.asset.position.x += player_max_velocity;
+        this.updateVisualGuidingLine(this.playerobject.asset.position.x, null, 1);
     }
 
     /*
@@ -74,8 +70,9 @@ class Player {
         * Given a float modifier value, updates the player's position on the X axis for a frame.
         */
     moveX (modifier) {
-        this.asset.position.x = this.asset.position.x + (player_max_velocity * modifier);
-        this.updateVisualGuidingLine(this.asset.position.x, null, 1);
+
+        this.playerobject.asset.position.x = this.playerobject.asset.position.x + (player_max_velocity * modifier);
+        this.updateVisualGuidingLine(this.playerobject.asset.position.x, null, 1);
     }
 
     /*
@@ -85,30 +82,27 @@ class Player {
         * Given a float modifier value, updates the player's position on the Y axis for a frame.
         */
     moveY (modifier) {
-        this.asset.position.y = this.asset.position.y + (player_max_velocity * modifier);
-        this.updateVisualGuidingLine(null, this.asset.position.y, 1);
+
+        this.playerobject.asset.position.y = this.playerobject.asset.position.y + (player_max_velocity * modifier);
+        this.updateVisualGuidingLine(null, this.playerobject.asset.position.y, 1);
     }
 
     setCoord() {
         if (this.coordsArray == undefined || this.coordsArray.length == 0) {
-            // var tempPoint = new paper.Path.Line(new paper.Point(this.asset.position.x, this.asset.position.y), new paper.Point(this.asset.position.x, this.asset.position.y));
-            var tempPoint = new paper.Point(this.asset.position.x, this.asset.position.y);
-            // console.log("point intersects: " + this.checkPointIntersects(tempPoint));
+            var tempPoint = new paper.Point(this.playerobject.asset.position.x, this.playerobject.asset.position.y);
             if(!this.checkPointIntersects(tempPoint)) {
-                this.coordsArray.push(new PlayerCoordinate(this.gamewindow, this.asset.position.x, this.asset.position.y, this.color.normal));
-                this.guidingLine = new PlayerGuidingLine(this.gamewindow, this.coordsArray[0].x, this.coordsArray[0].y, this.asset.position.x, this.asset.position.y, this.color.normal);
+                this.coordsArray.push(new PlayerCoordinate(this.gamewindow, this.playerobject.asset.position.x, this.playerobject.asset.position.y, this.color.normal));
+                this.guidingLine = new PlayerGuidingLine(this.gamewindow, this.coordsArray[0].x, this.coordsArray[0].y, this.playerobject.asset.position.x, this.playerobject.asset.position.y, this.color.normal);
             }
-            
-            // tempPoint.remove();
         } else {
             if (!this.checkLineIntersects(this.guidingLine)) {
                 var lastCoord = this.coordsArray[this.coordsArray.length - 1];
 
-                this.coordsArray.push(new PlayerCoordinate(this.gamewindow, this.asset.position.x, this.asset.position.y, this.color.normal));
+                this.coordsArray.push(new PlayerCoordinate(this.gamewindow, this.playerobject.asset.position.x, this.playerobject.asset.position.y, this.color.normal));
 
-                this.linesArray.push(new PlayerCoordinateLine(this.gamewindow, this.asset.position.x, this.asset.position.y, lastCoord.x, lastCoord.y, this.color.normal));
+                this.linesArray.push(new PlayerCoordinateLine(this.gamewindow, this.playerobject.asset.position.x, this.playerobject.asset.position.y, lastCoord.x, lastCoord.y, this.color.normal));
                 
-                this.updateVisualGuidingLine(this.asset.position.x, this.asset.position.y, 0);
+                this.updateVisualGuidingLine(this.playerobject.asset.position.x, this.playerobject.asset.position.y, 0);
             }
         }
     }
@@ -126,8 +120,8 @@ class Player {
     }
 
     removeVisuals() {
-        if (this.asset != null) {
-            this.asset.remove();
+        if (this.playerobject.asset != null) {
+            this.playerobject.asset.remove();
         }
         if (this.guidingLine != null && this.guidingLine.asset != null) {
             this.guidingLine.asset.remove();
@@ -144,7 +138,7 @@ class Player {
 
     setPoly() {
         if (!(this.coordsArray == undefined || this.coordsArray.length < 2)) {
-            var completingLine = new PlayerCoordinateLine(this.gamewindow, this.coordsArray[0].asset.position.x, this.coordsArray[0].asset.position.y, this.asset.position.x, this.asset.position.y, this.color.normal);
+            var completingLine = new PlayerCoordinateLine(this.gamewindow, this.coordsArray[0].asset.position.x, this.coordsArray[0].asset.position.y, this.playerobject.asset.position.x, this.playerobject.asset.position.y, this.color.normal);
 
             if (!(this.checkLineIntersects(completingLine) || this.checkLineIntersects(this.guidingLine))) {
                 this.setCoord();
@@ -171,8 +165,8 @@ class Player {
 
     //debug
     printCoordinates() {
-        console.log(this.asset.position.x);
-        console.log(this.asset.position.y);
+        console.log(this.playerobject.asset.position.x);
+        console.log(this.playerobject.asset.position.y);
 
         this.checkOutOfBounds();
     }
@@ -204,7 +198,7 @@ class Player {
     }
 
     checkOutOfBounds() {
-        if ((this.asset.position.x <= min_x) || (this.asset.position.x >= max_x) || (this.asset.position.y <= min_y) || (this.asset.position.y >= max_y)) {
+        if ((this.playerobject.asset.position.x <= min_x) || (this.playerobject.asset.position.x >= max_x) || (this.playerobject.asset.position.y <= min_y) || (this.playerobject.asset.position.y >= max_y)) {
             this.die("border");
         }
     }
@@ -224,18 +218,31 @@ class Player {
 
     updatePos () {
         if (this.gamepad == undefined) {
+            let ljx = 0;
+            let ljy = 0;
+
             if (this.UpPressed) {
+                ljy = ljy + 1;
                 this.moveUp();
             }
             if (this.DownPressed) {
+                ljy = ljy - 1;
                 this.moveDown();
             }
             if (this.LeftPressed) {
+                ljx = ljx + 1;
                 this.moveLeft();
             }
             if (this.RightPressed) {
+                ljx = ljx - 1;
                 this.moveRight();
             }
+
+            if (ljx != 0 || ljy != 0) {
+                let angle = Math.atan2(ljy, ljx) * (180/Math.PI) - 90;
+                this.playerobject.asset.rotation = angle;
+            }
+
         } else {
             if (this.ALocked == false && this.gamepad.buttons[0].pressed) {
                 this.setCoord();
@@ -251,6 +258,7 @@ class Player {
                 this.BLocked = false;
             }
 
+            //left joystick
             this.currLJ_X = refineAxisValue(this.gamepad.axes[0]);
             this.currLJ_Y = refineAxisValue(this.gamepad.axes[1]);
             if (!(this.prevLJ_X == this.currLJ_X)) {
@@ -260,6 +268,7 @@ class Player {
                 this.prevLJ_Y = this.currLJ_Y;
             }
 
+            //right joystick
             this.currRJ_X = refineAxisValue(this.gamepad.axes[2]);
             this.currRJ_Y = refineAxisValue(this.gamepad.axes[3]);
             if (!(this.prevRJ_X == this.currRJ_X)) {
@@ -267,6 +276,11 @@ class Player {
             }
             if (!(this.prevRJ_Y == this.currRJ_Y)) {
                 this.prevRJ_Y = this.currRJ_Y;
+            }
+
+            if (this.currLJ_X != 0 || this.currLJ_Y != 0) {
+                let angle = Math.atan2(this.currLJ_Y, this.currLJ_X) * (180/Math.PI) + 90;
+                this.playerobject.asset.rotation = angle;
             }
 
             this.moveY(this.currLJ_Y);
