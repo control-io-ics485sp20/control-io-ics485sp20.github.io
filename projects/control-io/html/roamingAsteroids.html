@@ -42,7 +42,7 @@
 </div>
 
 
-<script src="js/three.js"></script>
+<script src="../js/lib/three.js"></script>
 <script>
   //Web JS Project that implements THREE.js.
   //Literally based off of tutorial:
@@ -104,7 +104,7 @@
   class Cube
   {
     constructor(box, navigator){
-      var asteroid = new THREE.TextureLoader().load('asteroid.png');
+      var asteroid = new THREE.TextureLoader().load('../img/asteroid.png');
       this.geometry = new THREE.PlaneGeometry(1, 1, 0);
       this.material = new THREE.MeshBasicMaterial({
         map: asteroid,
@@ -563,7 +563,7 @@
   var zoom_percent = 100;
   var scene = new THREE.Scene();
   const loader = new THREE.TextureLoader();
-  loader.load('night.png' , function(texture)
+  loader.load('../img/night.png' , function(texture)
   {
     scene.background = texture;
   });
@@ -807,10 +807,10 @@
    * Adds players to the game
    */
   function addPlayers() {
-    players.push(new Player('blue.png', 0x4d88d5, "Player 1", {up: "ArrowUp", down: "ArrowDown", left: "ArrowLeft", right: "ArrowRight", abutton: "Space", bbutton: "ShiftLeft"}));
-    players.push(new Player('red.png', 0xff0000, "Player 2", {up: "KeyW", down: "KeyS", left: "KeyA", right: "KeyD"}));
-    players.push(new Player('blue.png', 0x009933, "Player 3", {up: "KeyI", down: "KeyK", left: "KeyJ", right: "KeyL", abutton: "KeyY", bbutton: "KeyU"}));
-    players.push(new Player('red.png', 0xffff00, "Player 4", {up: "KeyG", down: "KeyB", left: "KeyV", right: "KeyN"}));
+    players.push(new Player('../img/blue.png', 0x4d88d5, "Player 1", {up: "ArrowUp", down: "ArrowDown", left: "ArrowLeft", right: "ArrowRight", abutton: "Space", bbutton: "ShiftLeft"}));
+    players.push(new Player('../img/red.png', 0xff0000, "Player 2", {up: "KeyW", down: "KeyS", left: "KeyA", right: "KeyD"}));
+    players.push(new Player('../img/grey.png', 0x009933, "Player 3", {up: "KeyI", down: "KeyK", left: "KeyJ", right: "KeyL", abutton: "KeyY", bbutton: "KeyU"}));
+    players.push(new Player('../img/red.png', 0xffff00, "Player 4", {up: "KeyG", down: "KeyB", left: "KeyV", right: "KeyN"}));
 
     players.forEach(function (player) {
       scene.add(player.getPlayerObject());
