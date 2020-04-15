@@ -33,34 +33,18 @@ class Player {
         this.keybinds = keybinds;
 
         this.randomSpawn();
-        this.setCoord();
+        // this.setCoord();
     };
 
     randomSpawn() {
         var random_x = Math.floor(((Math.random() * Math.floor(max_x))));
         var random_y = Math.floor(((Math.random() * Math.floor(max_y))));
 
-        this.playerobject = new PlayerObject(this.gamewindow, random_x, random_y, this.color.normal);
-    }
+        // this.playerobject = new PlayerObject(this.gamewindow, random_x, random_y, this.color.normal);
+        this.playerobject = new PlayerObject();
+        this.playerobject.init(this.gamewindow, random_x, random_y, this.color.normal);
 
-    moveUp () {
-        this.playerobject.asset.position.y -= player_max_velocity;
-        this.updateVisualGuidingLine(null, this.playerobject.asset.position.y, 1);
-    }
-
-    moveDown () {
-        this.playerobject.asset.position.y += player_max_velocity;
-        this.updateVisualGuidingLine(null, this.playerobject.asset.position.y, 1);
-    }
-
-    moveLeft () {
-        this.playerobject.asset.position.x -= player_max_velocity;
-        this.updateVisualGuidingLine(this.playerobject.asset.position.x, null, 1);
-    }
-
-    moveRight () {
-        this.playerobject.asset.position.x += player_max_velocity;
-        this.updateVisualGuidingLine(this.playerobject.asset.position.x, null, 1);
+        console.log(this.playerobject.point());
     }
 
     /*
@@ -71,8 +55,8 @@ class Player {
         */
     moveX (modifier) {
 
-        this.playerobject.asset.position.x = this.playerobject.asset.position.x + (player_max_velocity * modifier);
-        this.updateVisualGuidingLine(this.playerobject.asset.position.x, null, 1);
+        this.playerobject.assetgroup.position.x = this.playerobject.assetgroup.position.x + (player_minimum_max_velocity * modifier);
+        this.updateVisualGuidingLine(this.playerobject.assetgroup.position.x, null, 1);
     }
 
     /*
@@ -83,26 +67,31 @@ class Player {
         */
     moveY (modifier) {
 
-        this.playerobject.asset.position.y = this.playerobject.asset.position.y + (player_max_velocity * modifier);
-        this.updateVisualGuidingLine(null, this.playerobject.asset.position.y, 1);
+        this.playerobject.assetgroup.position.y = this.playerobject.assetgroup.position.y + (player_minimum_max_velocity * modifier);
+        this.updateVisualGuidingLine(null, this.playerobject.assetgroup.position.y, 1);
     }
 
     setCoord() {
+        if (debug) {
+            console.log(`player.js.Player.setCoord
+    x: ` + this.playerobject.assetgroup.position.getX() + `
+    y: ` + this.playerobject.assetgroup.position.getY());
+        }
         if (this.coordsArray == undefined || this.coordsArray.length == 0) {
-            var tempPoint = new paper.Point(this.playerobject.asset.position.x, this.playerobject.asset.position.y);
+            var tempPoint = new paper.Point(this.playerobject.assetgroup.position.x, this.playerobject.assetgroup.position.y);
             if(!this.checkPointIntersects(tempPoint)) {
-                this.coordsArray.push(new PlayerCoordinate(this.gamewindow, this.playerobject.asset.position.x, this.playerobject.asset.position.y, this.color.normal));
-                this.guidingLine = new PlayerGuidingLine(this.gamewindow, this.coordsArray[0].x, this.coordsArray[0].y, this.playerobject.asset.position.x, this.playerobject.asset.position.y, this.color.normal);
+                this.coordsArray.push(new PlayerCoordinate(this.gamewindow, this.playerobject.assetgroup.position.x, this.playerobject.assetgroup.position.y, this.color.normal));
+                this.guidingLine = new PlayerGuidingLine(this.gamewindow, this.coordsArray[0].x, this.coordsArray[0].y, this.playerobject.assetgroup.position.x, this.playerobject.assetgroup.position.y, this.color.normal);
             }
         } else {
             if (!this.checkLineIntersects(this.guidingLine)) {
                 var lastCoord = this.coordsArray[this.coordsArray.length - 1];
 
-                this.coordsArray.push(new PlayerCoordinate(this.gamewindow, this.playerobject.asset.position.x, this.playerobject.asset.position.y, this.color.normal));
+                this.coordsArray.push(new PlayerCoordinate(this.gamewindow, this.playerobject.assetgroup.position.x, this.playerobject.assetgroup.position.y, this.color.normal));
 
-                this.linesArray.push(new PlayerCoordinateLine(this.gamewindow, this.playerobject.asset.position.x, this.playerobject.asset.position.y, lastCoord.x, lastCoord.y, this.color.normal));
+                this.linesArray.push(new PlayerCoordinateLine(this.gamewindow, this.playerobject.assetgroup.position.x, this.playerobject.assetgroup.position.y, lastCoord.x, lastCoord.y, this.color.normal));
                 
-                this.updateVisualGuidingLine(this.playerobject.asset.position.x, this.playerobject.asset.position.y, 0);
+                this.updateVisualGuidingLine(this.playerobject.assetgroup.position.x, this.playerobject.assetgroup.position.y, 0);
             }
         }
     }
@@ -120,8 +109,8 @@ class Player {
     }
 
     removeVisuals() {
-        if (this.playerobject.asset != null) {
-            this.playerobject.asset.remove();
+        if (this.playerobject.assetgroup != null) {
+            this.playerobject.assetgroup.remove();
         }
         if (this.guidingLine != null && this.guidingLine.asset != null) {
             this.guidingLine.asset.remove();
@@ -138,7 +127,7 @@ class Player {
 
     setPoly() {
         if (!(this.coordsArray == undefined || this.coordsArray.length < 2)) {
-            var completingLine = new PlayerCoordinateLine(this.gamewindow, this.coordsArray[0].asset.position.x, this.coordsArray[0].asset.position.y, this.playerobject.asset.position.x, this.playerobject.asset.position.y, this.color.normal);
+            var completingLine = new PlayerCoordinateLine(this.gamewindow, this.coordsArray[0].asset.position.x, this.coordsArray[0].asset.position.y, this.playerobject.assetgroup.position.x, this.playerobject.assetgroup.position.y, this.color.normal);
 
             if (!(this.checkLineIntersects(completingLine) || this.checkLineIntersects(this.guidingLine))) {
                 this.setCoord();
@@ -165,8 +154,8 @@ class Player {
 
     //debug
     printCoordinates() {
-        console.log(this.playerobject.asset.position.x);
-        console.log(this.playerobject.asset.position.y);
+        console.log(this.playerobject.assetgroup.position.x);
+        console.log(this.playerobject.assetgroup.position.y);
 
         this.checkOutOfBounds();
     }
@@ -198,8 +187,12 @@ class Player {
     }
 
     checkOutOfBounds() {
-        if ((this.playerobject.asset.position.x <= min_x) || (this.playerobject.asset.position.x >= max_x) || (this.playerobject.asset.position.y <= min_y) || (this.playerobject.asset.position.y >= max_y)) {
-            this.die("border");
+        if ((this.playerobject.assetgroup.position.x <= min_x) || (this.playerobject.assetgroup.position.x >= max_x) || (this.playerobject.assetgroup.position.y <= min_y) || (this.playerobject.assetgroup.position.y >= max_y)) {
+            // console.log(this.playerobject.assetgroup.position.x + " " + this.playerobject.assetgroup.position.y);
+            // this.die("border");
+            if (debug) {
+                console.log("   Out of bounds!");
+            }
         }
     }
 
@@ -222,25 +215,48 @@ class Player {
             let ljy = 0;
 
             if (this.UpPressed) {
-                ljy = ljy + 1;
-                this.moveUp();
+                ljy = -1;
             }
             if (this.DownPressed) {
-                ljy = ljy - 1;
-                this.moveDown();
+                ljy = 1;
             }
             if (this.LeftPressed) {
-                ljx = ljx + 1;
-                this.moveLeft();
+                ljx = -1;
             }
             if (this.RightPressed) {
-                ljx = ljx - 1;
-                this.moveRight();
+                ljx = 1;
             }
 
+            if (this.UpPressed && this.LeftPressed) {
+                ljx = -keyboard_player_max_diagonal_velocity;
+                ljy = -keyboard_player_max_diagonal_velocity;
+            }
+            if (this.UpPressed && this.RightPressed) {
+                ljx = keyboard_player_max_diagonal_velocity;
+                ljy = -keyboard_player_max_diagonal_velocity;
+            }
+            if (this.DownPressed && this.LeftPressed) {
+                ljx = -keyboard_player_max_diagonal_velocity;
+                ljy = keyboard_player_max_diagonal_velocity;
+            }
+            if (this.DownPressed && this.RightPressed) {
+                ljx = keyboard_player_max_diagonal_velocity;
+                ljy = keyboard_player_max_diagonal_velocity;
+            }
+
+            if (this.UpPressed && this.DownPressed) {
+                ljy = 0;
+            }
+            if (this.LeftPressed && this.RightPressed) {
+                ljx = 0;
+            }
+            
+            this.moveY(ljy);
+            this.moveX(ljx);
+
             if (ljx != 0 || ljy != 0) {
-                let angle = Math.atan2(ljy, ljx) * (180/Math.PI) - 90;
-                this.playerobject.asset.rotation = angle;
+                let angle = Math.atan2(ljy, ljx) * (180/Math.PI) + 90;
+                this.playerobject.rotate(angle);
             }
 
         } else {
@@ -258,33 +274,19 @@ class Player {
                 this.BLocked = false;
             }
 
-            //left joystick
-            this.currLJ_X = refineAxisValue(this.gamepad.axes[0]);
-            this.currLJ_Y = refineAxisValue(this.gamepad.axes[1]);
-            if (!(this.prevLJ_X == this.currLJ_X)) {
-                this.prevLJ_X = this.currLJ_X;
-            }
-            if (!(this.prevLJ_Y == this.currLJ_Y)) {
-                this.prevLJ_Y = this.currLJ_Y;
-            }
+            let ljx = 0;
+            let ljy = 0;
 
-            //right joystick
-            this.currRJ_X = refineAxisValue(this.gamepad.axes[2]);
-            this.currRJ_Y = refineAxisValue(this.gamepad.axes[3]);
-            if (!(this.prevRJ_X == this.currRJ_X)) {
-                this.prevRJ_X = this.currRJ_X;
-            }
-            if (!(this.prevRJ_Y == this.currRJ_Y)) {
-                this.prevRJ_Y = this.currRJ_Y;
-            }
+            ljx = refineAxisValue(this.gamepad.axes[0]);
+            ljy = refineAxisValue(this.gamepad.axes[1]);
 
-            if (this.currLJ_X != 0 || this.currLJ_Y != 0) {
-                let angle = Math.atan2(this.currLJ_Y, this.currLJ_X) * (180/Math.PI) + 90;
-                this.playerobject.asset.rotation = angle;
-            }
+            this.moveY(ljy);
+            this.moveX(ljx);
 
-            this.moveY(this.currLJ_Y);
-            this.moveX(this.currLJ_X);
+            if (ljx != 0 || ljy != 0) {
+                let angle = Math.atan2(ljy, ljx) * (180/Math.PI) + 90;
+                this.playerobject.rotate(angle);
+            }
         }
         this.checkOutOfBounds();
     }

@@ -1,20 +1,49 @@
-function PlayerObject(gamewindow, x, y, color) {
-    // this.gamewindow = gamewindow;
+function PlayerObject() {
 
-    this.asset = new paper.Raster('../img/grey.png');
-    this.asset.position.x = x;
-    this.asset.position.y = y;
-    this.asset.scale(0.1);
-    gamewindow.layers["players"].addChild(this.asset);
+    function init(gamewindow, x, y, color) {
+        this.assetgroup = new paper.Group();
+        this.assetgroup.applyMatrix = false;
 
-    function rotate_sprite(angle) {
-        // console.log(this.asset.rotation);
-        this.asset.rotation = angle;
+        this.assetgroup.position = [x, y];
+
+        this.playerspritepath = ("../img/sprites/playersprite01-" + color.replace("#", "") + ".png");
+        
+        this.spritegroup = new paper.Raster({
+            source: this.playerspritepath,
+            point: [0, 0],
+            scaling: 0.08,
+            applyMatrix: false,
+            width: this.width,
+            height: this.height
+        });
+
+        this.assetgroup.addChild(this.spritegroup);
+
+        gamewindow.layers["players"].addChild(this.assetgroup);
+
+        this.item = new paper.Item();
+        console.log(this.assetgroup.position);
+    }
+
+    function rotate(angle) {
+        this.spritegroup.rotation = angle;
+    }
+
+    function move(xpos, ypos) {
+        this.assetgroup.position.x = xpos;
+        this.assetgroup.position.y = ypos;
+    }
+
+    function point() {
+        return this.assetgroup.position;
     }
 
     return {
-        rotate_sprite: rotate_sprite,
-        asset: this.asset
+        init: init,
+        rotate: rotate,
+        move: move,
+        point: point,
+        assetgroup: this.assetgroup
     }
 }
 
@@ -28,7 +57,7 @@ function PlayerCoordinate(gamewindow, x, y, color) {
 
     this.asset = new paper.Path.Circle({
         center: [x, y],
-        radius: 8,
+        radius: 6,
         fillColor: color
     });
 
@@ -66,8 +95,14 @@ class PlayerGuidingLine {
         this.asset.strokeColor = color;
         this.asset.strokeWidth = lineWidth;
         this.asset.strokeCap = 'round';
-        this.asset.dashArray = [4, 10]
+        // this.asset.dashArray = [4, 10]
         gamewindow.layers["playerguidinglines"].addChild(this.asset);
+    }
+}
+
+class PlayerCompletingLine {
+    constructor () {
+
     }
 }
 
@@ -86,11 +121,13 @@ class PlayerPolygon {
         }
         this.asset.closed = true;
         this.asset.fillColor = color;
+        this.asset.opacity = 0.5;
         gamewindow.layers["shapes"].addChild(this.asset);
 
-        console.log(Math.abs(this.asset.area));
+        if (debug) {
+            console.log("playerobjects.js.PlayerPolygon.constructor");
+            console.log("   area: " + (Math.abs(this.asset.area)/100));
+        }
         // gamewindow.layers["shaperaster"]
     }
 }
-
-// class PlayerObject

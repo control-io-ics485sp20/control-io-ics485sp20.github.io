@@ -54,7 +54,19 @@ function Game() {
 
         addPlayers(controllers);
 
-        runAnimation(this);
+        // console.log('view ' + paper.view);
+
+        paper.view.onFrame = function() {
+            // console.log("a");
+            checkGameStatus();
+            // gameRunning = requestAnimationFrame(runAnimation);
+
+            updatePos();
+
+            // paper.view.draw();
+        }
+
+        // runAnimation(this);
         //end game screen
     }
 

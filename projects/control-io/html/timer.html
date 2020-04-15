@@ -42,7 +42,7 @@
     </div>
 
 
-        <script src="js/three.js"></script>
+        <script src="../js/lib/three.js"></script>
         <script>
             //Web JS Project that implements THREE.js.
             //Literally based off of tutorial:
@@ -100,6 +100,95 @@
              *
              * Class that represents a Player
              */
+
+            class Cube
+            {
+              constructor(box, navigator){
+                var asteroid = new THREE.TextureLoader().load('asteroid.png');
+                this.geometry = new THREE.PlaneGeometry(1, 1, 0);
+                this.material = new THREE.MeshBasicMaterial({
+                  map: asteroid,
+                  side: THREE.DoubleSide,
+                  transparent: true,
+              });
+                this.asteroid_object = new THREE.Mesh(this.geometry, this.material);
+
+                this.edges = new THREE.EdgesGeometry(this.geometry);
+                this.line = new THREE.Mesh(this.geometry, this.material);
+
+                this.line.position.x = box.position.x;
+                this.line.position.y = box.position.y;
+                this.line.position.z = box.position.z;
+
+                this.navigator = navigator;
+
+//animation
+                this.moveAnimation = false;
+
+                this.roamX = this.navigator.randCoOrd();
+                this.roamY = this.navigator.randCoOrd();
+
+                this.ray = false;
+              }
+
+              spin(){
+                this.line.rotation.x += 0.04;
+                this.line.rotation.y += 0.04;
+              }
+
+              roam(){
+                let x = this.roamX/50;
+                let y = this.roamY/50;
+
+                let v = new THREE.Vector3(x, y, 0);
+
+                this.line.position.add(v);
+
+
+                if(this.navigator.isOutOfBoundsX(this.line.position.x)){
+                  this.roamX = x = ((x*50) < 0) ? ((x*50) * -1) : (0 - (x*50));
+                }
+
+                if(this.navigator.isOutOfBoundsY(this.line.position.y)){
+                  this.roamY = y = ((y*50) < 0) ? ((y*50) * -1) : (0 - (y*50));
+                }
+              }
+
+              getAsteroidObject () {
+                return this.asteroid_object;
+              };
+            }
+
+
+            class Navigator{
+              constructor(boundryX, boundryY){
+                this.boundryX = boundryX;
+                this.boundryY = boundryY;
+              }
+
+              isOutOfBoundsX(x){
+                return ((x >= this.boundryX) || (x <= (0 - this.boundryX)));
+              }
+
+              isOutOfBoundsY(y){
+                return ((y >= this.boundryY) || (y <= (0 - this.boundryY)));
+              }
+
+              randCoOrd(){
+                let x = Math.random() * 2 + 1;
+                return x *= Math.floor(Math.random() * 2) == 1 ? 1 : -1;
+              }
+
+              update(boundryX, boundryY) {
+                this.boundryX;
+                this.boundryY;
+              }
+            }
+
+            const navigator = new Navigator(window.innerWidth / 150, window.innerHeight / 150);
+            const cubes = [];
+
+
             class Player {
                 constructor(image, color, name, keybinds) {
                     this.image = image;
@@ -568,6 +657,14 @@
                 // gamepad_detect();
 
                 renderer.render(scene, camera);
+
+              for (var x = 0, xl = cubes.length; x != xl; ++x) {
+                cubes[x].roam();
+              }
+
+              window.addEventListener("resize", () => {
+                navigator.update(window.innerWidth / 200, window.innerHeight / 200);
+              }, false);
             }
 
             //TODO assign a gamepad to a Player
@@ -683,6 +780,25 @@
              */
             function init() {
                 addPlayers();
+
+              for(var x = 0, xl = 10; x != xl; ++x){
+                let cube = new Cube({
+                      size: 1,
+                      color: "white",
+                      position: {
+                        x: 0,
+                        y: 0,
+                        z: 0
+                      }
+                    },
+                    navigator
+                );
+
+                cubes.push(cube);
+                scene.add(cube.line);
+              }
+
+
             };
 
             /**
