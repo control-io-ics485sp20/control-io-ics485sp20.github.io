@@ -54,13 +54,28 @@ function Game() {
 
         addPlayers(controllers);
 
-      const navigator = new Navigator(window.innerWidth, window.innerHeight);
+        const navigator = new Navigator(window.innerWidth, window.innerHeight);
 
-      for(var x = 0, xl = 15; x != xl; ++x) {
-        let asteroid = new Asteroid(this, gameWindow, gameMap, navigator);
-        asteroids.push(asteroid);
-      }
+        for(var x = 0, xl = 15; x != xl; ++x) {
+
+            let asteroid = new Asteroid(this, gameWindow, gameMap, navigator);
+            asteroids.push(asteroid);
+        }
+        
         runAnimation(this);
+        // console.log('view ' + paper.view);
+
+        paper.view.onFrame = function() {
+            // console.log("a");
+            checkGameStatus();
+            // gameRunning = requestAnimationFrame(runAnimation);
+
+            updatePos();
+
+            // paper.view.draw();
+        }
+
+        // runAnimation(this);
         //end game screen
     }
 
