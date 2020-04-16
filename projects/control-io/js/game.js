@@ -54,6 +54,15 @@ function Game() {
 
         addPlayers(controllers);
 
+        const navigator = new Navigator(window.innerWidth, window.innerHeight);
+
+        for(var x = 0, xl = 15; x != xl; ++x) {
+
+            let asteroid = new Asteroid(this, gameWindow, gameMap, navigator);
+            asteroids.push(asteroid);
+        }
+        
+        runAnimation(this);
         // console.log('view ' + paper.view);
 
         paper.view.onFrame = function() {
@@ -78,17 +87,17 @@ function Game() {
     // function initMap() {
     //     console.log("Initializing map...")
     //     var map = new GameMap({width: window.innerWidth, height: window.innerHeight});
-    
+
     //     // var img = new SimpleImage(200,200);
     //     // print(img);
-    
+
     //     // for (var pixel of img.values()) {
     //     //     pixel.setRed(255);
     //     //     pixel.setGreen(255);
     //     //     pixel.setBlue(0);
     //     // }
     //     // print(img);
-    // }            
+    // }
 
     /**
      * addPlayers
@@ -108,8 +117,8 @@ function Game() {
             }
         });
 
-        
-        
+
+
         // players.forEach(function (player) {
         //     gameWindow.scene.add(player.getPlayerObject());
         // });
@@ -130,12 +139,16 @@ function Game() {
         checkGameStatus();
         gameRunning = requestAnimationFrame(runAnimation);
 
+        for (var x = 0, xl = asteroids.length; x != xl; ++x) {
+          asteroids[x].roam();
+        }
+
         updatePos();
 
         paper.view.draw();
     }
 
-    
+
 
     //Literally from https://developer.mozilla.org/en-US/docs/Web/API/Gamepad_API/Using_the_Gamepad_API
     /**
@@ -194,7 +207,7 @@ function Game() {
 
         }
     }
-    
+
     // players.push(new Player(gameWindow, "#4d88d5", "Player 1", {up: "ArrowUp", down: "ArrowDown", left: "ArrowLeft", right: "ArrowRight", abutton: "KeyZ", bbutton: "ShiftLeft"}));
     // players.push(new Player(gameWindow, "#ff0000", "Player 2", {up: "KeyW", down: "KeyS", left: "KeyA", right: "KeyD"}));
     // players.push(new Player(gameWindow, "#009933", "Player 3", {up: "KeyI", down: "KeyK", left: "KeyJ", right: "KeyL", abutton: "KeyY", bbutton: "KeyU"}));

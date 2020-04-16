@@ -40,3 +40,5 @@ var controllers = [];
 var sensitivity_buffer = 0.08;
 
 var playerCount = 0
+
+const asteroids = [];

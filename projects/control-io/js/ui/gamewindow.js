@@ -24,6 +24,7 @@ function GameWindow(properties) {
         this.layers["playersetlines"] = (new paper.Layer({name: 'playersetlines'}));
         this.layers["playerguidinglines"] = (new paper.Layer({name: 'playerguidinglines'}));
         this.layers["players"] = (new paper.Layer({name: 'players'}));
+        this.layers["asteroids"] = (new paper.Layer({name: 'asteroids'}));
 
         this.setBackground();
     }
@@ -45,7 +46,7 @@ function GameWindow(properties) {
         canvas: canvas,
         layers: this.layers
     }
-    
+
 
     //adds item to body. Probably belongs in render library.
 }
