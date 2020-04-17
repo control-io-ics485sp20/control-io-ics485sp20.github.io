@@ -21,10 +21,10 @@ class Player {
             dark: tinycolor(color).darken(25).toString()
         };
 
-        this.prevLJ_X = 0;
-        this.prevLJ_Y = 0;
-        this.prevRJ_X = 0;
-        this.prevRJ_Y = 0;
+        // this.prevLJ_X = 0;
+        // this.prevLJ_Y = 0;
+        // this.prevRJ_X = 0;
+        // this.prevRJ_Y = 0;
 
         //maxrange
         //maxpoints
@@ -44,7 +44,7 @@ class Player {
         this.playerobject = new PlayerObject();
         this.playerobject.init(this.gamewindow, random_x, random_y, this.color.normal);
 
-        console.log(this.playerobject.point());
+        // console.log(this.playerobject.point());
     }
 
     /*
@@ -55,8 +55,10 @@ class Player {
         */
     moveX (modifier) {
 
-        this.playerobject.assetgroup.position.x = this.playerobject.assetgroup.position.x + (player_minimum_max_velocity * modifier);
+        this.playerobject.assetgroup.position.x = this.playerobject.assetgroup.position.x + (PlayerMinVelocityCap * modifier);
         this.updateVisualGuidingLine(this.playerobject.assetgroup.position.x, null, 1);
+
+        this.playerobject.sprite_exhaust.visible = true;
     }
 
     /*
@@ -67,8 +69,10 @@ class Player {
         */
     moveY (modifier) {
 
-        this.playerobject.assetgroup.position.y = this.playerobject.assetgroup.position.y + (player_minimum_max_velocity * modifier);
+        this.playerobject.assetgroup.position.y = this.playerobject.assetgroup.position.y + (PlayerMinVelocityCap * modifier);
         this.updateVisualGuidingLine(null, this.playerobject.assetgroup.position.y, 1);
+
+        this.playerobject.sprite_exhaust.visible = true;
     }
 
     setCoord() {
@@ -210,6 +214,7 @@ class Player {
     }
 
     updatePos () {
+        var moving = false;
         if (this.gamepad == undefined) {
             let ljx = 0;
             let ljy = 0;
@@ -228,20 +233,20 @@ class Player {
             }
 
             if (this.UpPressed && this.LeftPressed) {
-                ljx = -keyboard_player_max_diagonal_velocity;
-                ljy = -keyboard_player_max_diagonal_velocity;
+                ljx = -PlayerKeyboardDiagonalVelocityCap;
+                ljy = -PlayerKeyboardDiagonalVelocityCap;
             }
             if (this.UpPressed && this.RightPressed) {
-                ljx = keyboard_player_max_diagonal_velocity;
-                ljy = -keyboard_player_max_diagonal_velocity;
+                ljx = PlayerKeyboardDiagonalVelocityCap;
+                ljy = -PlayerKeyboardDiagonalVelocityCap;
             }
             if (this.DownPressed && this.LeftPressed) {
-                ljx = -keyboard_player_max_diagonal_velocity;
-                ljy = keyboard_player_max_diagonal_velocity;
+                ljx = -PlayerKeyboardDiagonalVelocityCap;
+                ljy = PlayerKeyboardDiagonalVelocityCap;
             }
             if (this.DownPressed && this.RightPressed) {
-                ljx = keyboard_player_max_diagonal_velocity;
-                ljy = keyboard_player_max_diagonal_velocity;
+                ljx = PlayerKeyboardDiagonalVelocityCap;
+                ljy = PlayerKeyboardDiagonalVelocityCap;
             }
 
             if (this.UpPressed && this.DownPressed) {
@@ -257,6 +262,7 @@ class Player {
             if (ljx != 0 || ljy != 0) {
                 let angle = Math.atan2(ljy, ljx) * (180/Math.PI) + 90;
                 this.playerobject.rotate(angle);
+                moving = true;
             }
 
         } else {
@@ -286,8 +292,13 @@ class Player {
             if (ljx != 0 || ljy != 0) {
                 let angle = Math.atan2(ljy, ljx) * (180/Math.PI) + 90;
                 this.playerobject.rotate(angle);
+                moving = true;
             }
         }
+        if (!moving) {
+            this.playerobject.sprite_exhaust.visible = false;
+        }
+
         this.checkOutOfBounds();
     }
 

@@ -54,50 +54,34 @@ function Game() {
 
         addPlayers(controllers);
 
-        const navigator = new Navigator(window.innerWidth, window.innerHeight);
-
-        for(var x = 0, xl = 15; x != xl; ++x) {
-
-            let asteroid = new Asteroid(this, gameWindow, gameMap, navigator);
-            asteroids.push(asteroid);
-        }
-        
-        runAnimation(this);
-        // console.log('view ' + paper.view);
+        // for (var x = 0, xl = 15; x != xl; ++x) {
+        //     let asteroid = new Asteroid();
+        //     asteroid.init(this, gameWindow, gameMap)
+        //     asteroids.push(asteroid);
+        // }
 
         paper.view.onFrame = function() {
-            // console.log("a");
             checkGameStatus();
-            // gameRunning = requestAnimationFrame(runAnimation);
 
-            updatePos();
+            spawnAsteroids();
 
-            // paper.view.draw();
+            updatePlayers();
+            updateAsteroids();
         }
+    }
 
-        // runAnimation(this);
-        //end game screen
+    function spawnAsteroids() {
+        if ((asteroids.length <= AsteroidSpawnCap) && ((Math.random() * 101) < AsteroidSpawnRate)) {
+            let asteroid = new Asteroid();
+            asteroid.init(this, gameWindow, gameMap)
+            asteroids.push(asteroid);
+        }
     }
 
     return {
         startGame: startGame,
         checkGameStatus: checkGameStatus
-    }
-
-    // function initMap() {
-    //     console.log("Initializing map...")
-    //     var map = new GameMap({width: window.innerWidth, height: window.innerHeight});
-
-    //     // var img = new SimpleImage(200,200);
-    //     // print(img);
-
-    //     // for (var pixel of img.values()) {
-    //     //     pixel.setRed(255);
-    //     //     pixel.setGreen(255);
-    //     //     pixel.setBlue(0);
-    //     // }
-    //     // print(img);
-    // }
+    }       
 
     /**
      * addPlayers
@@ -116,39 +100,22 @@ function Game() {
                 playerCount++;
             }
         });
-
-
-
-        // players.forEach(function (player) {
-        //     gameWindow.scene.add(player.getPlayerObject());
-        // });
     }
 
-    function updatePos() {
+    function updatePlayers() {
         players.forEach(function (player) {
             player.updatePos();
         });
     }
 
-    /**
-     * runAnimation
-     *
-     * Starts the animation sequence. Methods within are called on each frame.
-     */
-    function runAnimation() {
-        checkGameStatus();
-        gameRunning = requestAnimationFrame(runAnimation);
-
-        for (var x = 0, xl = asteroids.length; x != xl; ++x) {
-          asteroids[x].roam();
-        }
-
-        updatePos();
-
-        paper.view.draw();
+    function updateAsteroids() {
+        asteroids.forEach(function (asteroid, index, object) {
+            var result = asteroid.updatePos();
+            if (!result) {
+                object.splice(index, 1);
+            }
+        })
     }
-
-
 
     //Literally from https://developer.mozilla.org/en-US/docs/Web/API/Gamepad_API/Using_the_Gamepad_API
     /**
@@ -159,7 +126,7 @@ function Game() {
         if (gameStatus == "local-lobby") {
             gameLobby.controllerJoin(event);
         } else if (gameStatus == "singleplayer-game") {
-            //allow for reconnect of disconnected player
+            //TODO allow for reconnect of disconnected player
         } else if (gameStatus == "debug") {
             var i = 0;
             while(i < players.length) {
@@ -178,7 +145,7 @@ function Game() {
         if (gameStatus == "local-lobby") {
             gameLobby.controllerLeave(event);
         } else if (gameStatus == "singleplayer-game") {
-            //allow for reconnect of disconnected player
+            //TODO allow for reconnect of disconnected player
         } else if (gameStatus == "debug") {
             var i = 0;
             while(i < players.length) {
@@ -207,15 +174,11 @@ function Game() {
 
         }
     }
-
-    // players.push(new Player(gameWindow, "#4d88d5", "Player 1", {up: "ArrowUp", down: "ArrowDown", left: "ArrowLeft", right: "ArrowRight", abutton: "KeyZ", bbutton: "ShiftLeft"}));
-    // players.push(new Player(gameWindow, "#ff0000", "Player 2", {up: "KeyW", down: "KeyS", left: "KeyA", right: "KeyD"}));
-    // players.push(new Player(gameWindow, "#009933", "Player 3", {up: "KeyI", down: "KeyK", left: "KeyJ", right: "KeyL", abutton: "KeyY", bbutton: "KeyU"}));
-    // players.push(new Player(gameWindow, "#ffff00", "Player 4", {up: "KeyG", down: "KeyB", left: "KeyV", right: "KeyN"}));
 }
 
 console.log("[Control.IO] Loaded game module.")
 
+//TODO can't seem to call checkGameStatus 
 function checkGameStatus() {
     if (playerCount <= 1) { //or timer is up
         console.log("Game has finished!");

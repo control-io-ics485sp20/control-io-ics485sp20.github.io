@@ -24,13 +24,14 @@ function GameWindow(properties) {
         this.layers["playersetlines"] = (new paper.Layer({name: 'playersetlines'}));
         this.layers["playerguidinglines"] = (new paper.Layer({name: 'playerguidinglines'}));
         this.layers["players"] = (new paper.Layer({name: 'players'}));
+
         this.layers["asteroids"] = (new paper.Layer({name: 'asteroids'}));
 
         this.setBackground();
     }
 
     function setBackground() {
-        var background = new paper.Raster({source: '../img/starry_night.png', position: window.center});
+        var background = new paper.Raster({source: '../img/background/starry_night.png', position: window.center});
         background.scale(2);
         this.layers["background"].addChild(background);
     }
@@ -46,7 +47,7 @@ function GameWindow(properties) {
         canvas: canvas,
         layers: this.layers
     }
-
+    
 
     //adds item to body. Probably belongs in render library.
 }

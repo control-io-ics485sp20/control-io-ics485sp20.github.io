@@ -3,12 +3,21 @@ function PlayerObject() {
     function init(gamewindow, x, y, color) {
         this.assetgroup = new paper.Group();
         this.assetgroup.applyMatrix = false;
-
         this.assetgroup.position = [x, y];
 
-        this.playerspritepath = ("../img/sprites/playersprite01-" + color.replace("#", "") + ".png");
+        this.playerexhaustspritepath = ("../img/playersprites/playersprite01-base-exhaust.png");
+        this.playerspritepath = ("../img/playersprites/playersprite01-" + color.replace("#", "") + ".png");
         
-        this.spritegroup = new paper.Raster({
+        this.sprite_exhaust = new paper.Raster({
+            source: this.playerexhaustspritepath,
+            point: [0, 0],
+            scaling: 0.08,
+            applyMatrix: false,
+            width: this.width,
+            height: this.height
+        });
+
+        this.sprite = new paper.Raster({
             source: this.playerspritepath,
             point: [0, 0],
             scaling: 0.08,
@@ -17,16 +26,29 @@ function PlayerObject() {
             height: this.height
         });
 
-        this.assetgroup.addChild(this.spritegroup);
+        this.hitbox = new paper.Path.Circle({
+            radius: 11,
+            applyMatrix: false
+        });
+        if (showHitboxes == true) {
+            this.hitbox.strokeColor = PlayerHitboxColor;
+        } else {
+            this.hitbox.visible = false;
+        }
+
+        this.assetgroup.addChild(this.sprite_exhaust);
+        this.assetgroup.addChild(this.sprite);
+        this.assetgroup.addChild(this.hitbox);
 
         gamewindow.layers["players"].addChild(this.assetgroup);
 
         this.item = new paper.Item();
-        console.log(this.assetgroup.position);
+        // console.log(this.assetgroup.position);
     }
 
     function rotate(angle) {
-        this.spritegroup.rotation = angle;
+        this.sprite.rotation = angle;
+        this.sprite_exhaust.rotation = angle;
     }
 
     function move(xpos, ypos) {
@@ -43,7 +65,9 @@ function PlayerObject() {
         rotate: rotate,
         move: move,
         point: point,
-        assetgroup: this.assetgroup
+        assetgroup: this.assetgroup,
+        hitbox: this.hitbox,
+        sprite_exhaust: this.sprite_exhaust
     }
 }
 
@@ -122,6 +146,14 @@ class PlayerPolygon {
         this.asset.closed = true;
         this.asset.fillColor = color;
         this.asset.opacity = 0.5;
+
+        if (showHitboxes == true) {
+            this.asset.strokeColor = PlayerHitboxColor;
+        } else {
+            // this.hitbox.visible = false;
+            this.asset.strokeColor = null;
+        }
+
         gamewindow.layers["shapes"].addChild(this.asset);
 
         if (debug) {
