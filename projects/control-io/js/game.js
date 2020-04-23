@@ -71,7 +71,7 @@ function Game() {
     }
 
     function spawnAsteroids() {
-        if ((asteroids.length <= AsteroidSpawnCap) && ((Math.random() * 101) < AsteroidSpawnRate)) {
+        if ((asteroids.length < AsteroidSpawnCap) && ((Math.random() * 101) < AsteroidSpawnRate)) {
             let asteroid = new Asteroid();
             asteroid.init(this, gameWindow, gameMap)
             asteroids.push(asteroid);

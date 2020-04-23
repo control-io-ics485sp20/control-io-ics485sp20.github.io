@@ -58,3 +58,4 @@ class GameMap {
     //     this.boundaryY;
     // }
 }
+
