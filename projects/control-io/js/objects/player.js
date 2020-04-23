@@ -50,12 +50,16 @@ class Player {
     /*
         * moveX
         *
-        * Intended for controllers.
         * Given a float modifier value, updates the player's position on the X axis for a frame.
         */
     moveX (modifier) {
-
-        this.playerobject.assetgroup.position.x = this.playerobject.assetgroup.position.x + (PlayerMinVelocityCap * modifier);
+        let nextxcoord = (this.playerobject.assetgroup.position.x + (PlayerMinVelocityCap * modifier));
+        if (nextxcoord < PlayerMinX) {
+            nextxcoord = PlayerMinX;
+        } else if (nextxcoord > PlayerMaxX) {
+            nextxcoord = PlayerMaxX;
+        }
+        this.playerobject.assetgroup.position.x = nextxcoord;
         this.updateVisualGuidingLine(this.playerobject.assetgroup.position.x, null, 1);
 
         this.playerobject.sprite_exhaust.visible = true;
@@ -64,12 +68,16 @@ class Player {
     /*
         * moveY
         *
-        * Intended for controllers.
         * Given a float modifier value, updates the player's position on the Y axis for a frame.
         */
     moveY (modifier) {
-
-        this.playerobject.assetgroup.position.y = this.playerobject.assetgroup.position.y + (PlayerMinVelocityCap * modifier);
+        let nextycoord = (this.playerobject.assetgroup.position.y + (PlayerMinVelocityCap * modifier));
+        if (nextycoord < PlayerMinY) {
+            nextycoord = PlayerMinY;
+        } else if (nextycoord > PlayerMaxY) {
+            nextycoord = PlayerMaxY;
+        }
+        this.playerobject.assetgroup.position.y = nextycoord;
         this.updateVisualGuidingLine(null, this.playerobject.assetgroup.position.y, 1);
 
         this.playerobject.sprite_exhaust.visible = true;
@@ -299,7 +307,7 @@ class Player {
             this.playerobject.sprite_exhaust.visible = false;
         }
 
-        this.checkOutOfBounds();
+        // this.checkOutOfBounds();
     }
 
     keyDown (e) {

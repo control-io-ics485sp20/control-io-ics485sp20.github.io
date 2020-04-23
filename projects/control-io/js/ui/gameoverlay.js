@@ -1,3 +1,3 @@
-class GameOverlay {
+function GameOverlay() {
     
 }

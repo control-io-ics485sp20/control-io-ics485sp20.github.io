@@ -65,26 +65,26 @@ function Asteroid () {
         //TODO spawn at edge
         var xyspawn = (Math.floor(Math.random() * 4));
         if (xyspawn == 0) { //spawn top side
-            x = Math.floor((Math.random() * Math.floor(AsteroidMaxX)));
-            y = AsteroidMinY;
+            x = Math.floor((Math.random() * Math.floor(GameObjectBorderMaxX)));
+            y = GameObjectBorderMinY;
 
             roamX = ((Math.random() * 1) * (Math.floor(Math.random() * 2) == 1 ? 1 : -1));
             roamY = ((Math.random() * 1) * (1));
         } else if (xyspawn == 1) { //spawn bottom side
-            x = Math.floor((Math.random() * Math.floor(AsteroidMaxX)));
-            y = AsteroidMaxY;
+            x = Math.floor((Math.random() * Math.floor(GameObjectBorderMaxX)));
+            y = GameObjectBorderMaxY;
 
             roamX = ((Math.random() * 1) * (Math.floor(Math.random() * 2) == 1 ? 1 : -1));
             roamY = ((Math.random() * 1) * (-1));
         } else if (xyspawn == 2) { //spawn left side
-            x = AsteroidMinX;
-            y = Math.floor((Math.random() * Math.floor(AsteroidMaxY)));
+            x = GameObjectBorderMinX;
+            y = Math.floor((Math.random() * Math.floor(GameObjectBorderMaxY)));
 
             roamX = ((Math.random() * 1) * (1));
             roamY = ((Math.random() * 1) * (Math.floor(Math.random() * 2) == 1 ? 1 : -1));
         } else if (xyspawn == 3) { //spawn right side
-            x = AsteroidMaxX;
-            y = Math.floor((Math.random() * Math.floor(AsteroidMaxY)));
+            x = GameObjectBorderMaxX;
+            y = Math.floor((Math.random() * Math.floor(GameObjectBorderMaxY)));
 
             roamX = ((Math.random() * 1) * (-1));
             roamY = ((Math.random() * 1) * (Math.floor(Math.random() * 2) == 1 ? 1 : -1));
@@ -99,8 +99,7 @@ function Asteroid () {
             let newx = this.assetgroup.position.x + this.roamX * this.velocitymodifier;
             let newy = this.assetgroup.position.y + this.roamY * this.velocitymodifier;
 
-            if (this.gamemap.AsteroidIsOutOfBounds(newx, newy)) {
-
+            if (this.gamemap.GameObjectIsOutOfBounds(newx, newy)) {
                 remove(this.hitbox, this.sprite, this.assetgroup);
                 delete this.hitbox;
                 delete this.sprite;
@@ -115,33 +114,31 @@ function Asteroid () {
                 var asteroidAssetGroup = this.assetgroup;
                 var asteroidHitboxRadius = this.hitboxscaling;
                 Object.keys(players).forEach(function (id) {
-                    // if (players[id].assetgroup) {
-                        var playerHitbox = {
-                            x: players[id].playerobject.assetgroup.position.x,
-                            y: players[id].playerobject.assetgroup.position.y,
-                            radius: players[id].playerobject.hitboxRadius
-                        }
-                        var asteroidHitbox = {
-                            x: asteroidAssetGroup.position.x,
-                            y: asteroidAssetGroup.position.y,
-                            radius: asteroidHitboxRadius
-                        }
-    
-                        if (checkHit(playerHitbox, asteroidHitbox)) {
-                            if (players[id].playerobject) {
-                                players[id].playerobject.hitbox.strokeColor = "red";
-                            }
-                            asteroidHitBox.strokeColor = "red";
+                    var playerHitbox = {
+                        x: players[id].playerobject.assetgroup.position.x,
+                        y: players[id].playerobject.assetgroup.position.y,
+                        radius: players[id].playerobject.hitboxRadius
+                    }
+                    var asteroidHitbox = {
+                        x: asteroidAssetGroup.position.x,
+                        y: asteroidAssetGroup.position.y,
+                        radius: asteroidHitboxRadius
+                    }
 
-                            //everything here should technically run
-                            console.log("colliding!");
-                        } else {
-                            if (players[id].playerobject) {
-                                players[id].playerobject.hitbox.strokeColor = "white";
-                            }
-                            asteroidHitBox.strokeColor = "yellow";
+                    if (checkHit(playerHitbox, asteroidHitbox)) {
+                        if (players[id].playerobject) {
+                            players[id].playerobject.hitbox.strokeColor = "red";
                         }
-                    // }
+                        asteroidHitBox.strokeColor = "red";
+
+                        //everything here should technically run
+                        console.log("colliding!");
+                    } else {
+                        if (players[id].playerobject) {
+                            players[id].playerobject.hitbox.strokeColor = "white";
+                        }
+                        asteroidHitBox.strokeColor = "yellow";
+                    }
                 });
             }
             return true;

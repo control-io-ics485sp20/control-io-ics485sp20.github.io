@@ -25,7 +25,9 @@ var max_y = window.innerHeight;
 var min_y = 0;
 
 //game options
-//player
+//---------------
+//[ P L A Y E R ]
+//---------------
 var PlayerMinVelocityCap = 3;
 var PlayerMaxVelocityCap = 5;
 var PlayerMinControlPoints = 3;
@@ -42,10 +44,17 @@ var keyboard_player_max_linear_velocity = 1;
 var lineWidth = 6;
 var playersprite_scale = 0.08; //not working
 
+var PlayerMinX = min_x;
+var PlayerMaxX = max_x;
+var PlayerMinY = min_y;
+var PlayerMaxY = max_y;
+
 //used to set the bounds of the canvas.?
 // var canvas_multiplier = 335;
 
-//asteroid
+//-------------------
+//[ A S T E R O I D ]
+//-------------------
 var AsteroidMinSpeed = 2
 var AsteroidMaxSpeed = 3
 var AsteroidMinSpinSpeed = 0.5
@@ -54,24 +63,25 @@ var AsteroidMinSize = 1
 var AsteroidMaxSize = 2
 var AsteroidAllowNoSpin = false;
 var AsteroidHitboxColor = 'yellow';
-var AsteroidSpawnBorder = 0;
+var AsteroidSpawnBorder = 20;
 var AsteroidSpawnRate = 3;
-var AsteroidSpawnCap = 15;
-// var AsteroidSpawnCap = 1;
+var AsteroidSpawnCap = 20;
 
-var AsteroidMinX = min_x;
-var AsteroidMaxX = max_x;
-var AsteroidMinY = min_y;
-var AsteroidMaxY = max_y;
 
-var AsteroidDespawnMinX = min_x - AsteroidSpawnBorder;
-var AsteroidDespawnMaxX = max_x + AsteroidSpawnBorder;
-var AsteroidDespawnMinY = min_y - AsteroidSpawnBorder;
-var AsteroidDespawnMaxY = max_y + AsteroidSpawnBorder;
-var AsteroidDespawnUpperLeft = [AsteroidDespawnMinX, AsteroidDespawnMaxY];
-var AsteroidDespawnUpperRight = [AsteroidDespawnMaxX, AsteroidDespawnMaxY];
-var AsteroidDespawnLowerLeft = [AsteroidDespawnMinX, AsteroidDespawnMinY];
-var AsteroidDespawnLowerRight = [AsteroidDespawnMaxX, AsteroidDespawnMinY];
+var GameObjectBorderMinX = min_x - AsteroidSpawnBorder;
+var GameObjectBorderMaxX = max_x + AsteroidSpawnBorder;
+var GameObjectBorderMinY = min_y - AsteroidSpawnBorder;
+var GameObjectBorderMaxY = max_y + AsteroidSpawnBorder;
+
+
+// var AsteroidMinX = min_x;
+// var AsteroidMaxX = max_x;
+// var AsteroidMinY = min_y;
+// var AsteroidMaxY = max_y;
+// var AsteroidDespawnUpperLeft = [AsteroidDespawnMinX, AsteroidDespawnMaxY];
+// var AsteroidDespawnUpperRight = [AsteroidDespawnMaxX, AsteroidDespawnMaxY];
+// var AsteroidDespawnLowerLeft = [AsteroidDespawnMinX, AsteroidDespawnMinY];
+// var AsteroidDespawnLowerRight = [AsteroidDespawnMaxX, AsteroidDespawnMinY];
 
 //canvas
 var zoom_percent = 100;

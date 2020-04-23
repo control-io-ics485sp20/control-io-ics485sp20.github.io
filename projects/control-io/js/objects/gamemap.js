@@ -13,26 +13,17 @@ class GameMap {
             strokeColor = '';
             visible = false;
         }
-
-        this.AsteroidBounds = new paper.Path.Rectangle({
-            rectangle: {
-                topLeft: AsteroidDespawnUpperLeft,
-                bottomRight: AsteroidDespawnLowerRight,
-            },
-            strokeColor: 'yellow',
-            applyMatrix: false
-        });
     }
 
-    AsteroidIsOutOfBounds(x, y) {
+    GameObjectIsOutOfBounds(x, y) {
         if ((
-            x < AsteroidDespawnMinX
+            x < GameObjectBorderMinX
         ) || (
-            x > AsteroidDespawnMaxX
+            x > GameObjectBorderMaxX
         ) || (
-            y < AsteroidDespawnMinY
+            y < GameObjectBorderMinY
         ) || (
-            y > AsteroidDespawnMaxY
+            y > GameObjectBorderMaxY
         )){
             return true;
         }
