@@ -99,10 +99,8 @@ function Asteroid () {
             let newx = this.assetgroup.position.x + this.roamX * this.velocitymodifier;
             let newy = this.assetgroup.position.y + this.roamY * this.velocitymodifier;
 
-            // if (!this.hitbox.intersects(this.gamemap.AsteroidBounds)) {
             if (this.gamemap.AsteroidIsOutOfBounds(newx, newy)) {
 
-                console.log("Asteroid left play area!");
                 remove(this.hitbox, this.sprite, this.assetgroup);
                 delete this.hitbox;
                 delete this.sprite;
@@ -112,36 +110,43 @@ function Asteroid () {
                 this.assetgroup.position.y = newy;
 
                 this.assetgroup.rotate(this.spindirection * this.spinmodifier);
+
+                var asteroidHitBox = this.hitbox;
+                var asteroidAssetGroup = this.assetgroup;
+                var asteroidHitboxRadius = this.hitboxscaling;
+                Object.keys(players).forEach(function (id) {
+                    // if (players[id].assetgroup) {
+                        var playerHitbox = {
+                            x: players[id].playerobject.assetgroup.position.x,
+                            y: players[id].playerobject.assetgroup.position.y,
+                            radius: players[id].playerobject.hitboxRadius
+                        }
+                        var asteroidHitbox = {
+                            x: asteroidAssetGroup.position.x,
+                            y: asteroidAssetGroup.position.y,
+                            radius: asteroidHitboxRadius
+                        }
+    
+                        if (checkHit(playerHitbox, asteroidHitbox)) {
+                            if (players[id].playerobject) {
+                                players[id].playerobject.hitbox.strokeColor = "red";
+                            }
+                            asteroidHitBox.strokeColor = "red";
+
+                            console.log("colliding!");
+                        } else {
+                            if (players[id].playerobject) {
+                                players[id].playerobject.hitbox.strokeColor = "white";
+                            }
+                            asteroidHitBox.strokeColor = "yellow";
+                        }
+                    // }
+                });
             }
-
-            // var asthitbox = this.hitbox;
-            // Object.keys(players).forEach(function (id) {
-            //     if (players[id].playerobject.hitbox.intersects(asthitbox)) {
-            //         console.log("collided!");
-
-            //     }
-            // });
-
             return true;
         } else {
             return false;
         }
-        
-        //move
-        // this.assetgroup.position.y = this.assetgroup.position.y + y * this.velocitymodifier;
-        // this.assetgroup.position.x = this.assetgroup.position.x + x * this.velocitymodifier;
-
-        //either reflect asteroids, or destroy asteroids
-
-        // //if out of bounds
-        // if(this.gamemap.isOutOfBoundsX(this.assetgroup.position.x)){
-        //     this.roamX = x = (x < 0) ? (x * -1) : (0 - x);
-        // }
-
-        // //if out of bounds
-        // if(this.gamemap.isOutOfBoundsY(this.assetgroup.position.x)){
-        //     this.roamY = y = (y < 0) ? (y * -1) : (0 - y);
-        // }
     }
 
     function remove(hitbox, sprite, assetgroup) {

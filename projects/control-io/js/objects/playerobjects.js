@@ -26,8 +26,9 @@ function PlayerObject() {
             height: this.height
         });
 
+        this.hitboxRadius = 11;
         this.hitbox = new paper.Path.Circle({
-            radius: 11,
+            radius: this.hitboxRadius,
             applyMatrix: false
         });
         if (showHitboxes == true) {

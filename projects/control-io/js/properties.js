@@ -52,10 +52,11 @@ var AsteroidMaxSpinSpeed = 3
 var AsteroidMinSize = 1
 var AsteroidMaxSize = 2
 var AsteroidAllowNoSpin = false;
-var AsteroidHitboxColor = 'red';
+var AsteroidHitboxColor = 'yellow';
 var AsteroidSpawnBorder = 0;
 var AsteroidSpawnRate = 3;
 var AsteroidSpawnCap = 15;
+// var AsteroidSpawnCap = 1;
 
 var AsteroidMinX = min_x;
 var AsteroidMaxX = max_x;

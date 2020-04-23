@@ -215,7 +215,7 @@ class Player {
 
     updatePos () {
         var moving = false;
-        if (this.gamepad == undefined) {
+        if (this.gamepad == undefined) { //if keyboard
             let ljx = 0;
             let ljy = 0;
 
@@ -265,7 +265,7 @@ class Player {
                 moving = true;
             }
 
-        } else {
+        } else { //if gamepad
             if (this.ALocked == false && this.gamepad.buttons[0].pressed) {
                 this.setCoord();
                 this.ALocked = true;
