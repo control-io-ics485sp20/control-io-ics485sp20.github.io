@@ -16,11 +16,12 @@ var controllers = []; //list of all controllers
 var debug = true;
 var showHitboxes = true;
 
+var MinPlayers = 1;
+var TotalPlayers;
+
 var max_x = window.innerWidth;
-// var min_x = -max_x;
 var min_x = 0;
 var max_y = window.innerHeight;
-// var min_y = -max_y;
 var min_y = 0;
 
 //game options

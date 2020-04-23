@@ -26,7 +26,7 @@ function GameLobby(roomName) {
             <div id="gamelobby-playerlist">
                 <div id="keyboard1" class="gamelobby-playercard">` + lobbyJoinKeyboardInstructionMessage + `</div>
             </div>
-            <div id="gamelobby-readybutton">` + readyButtonText + `<div id="gamelobby-readybutton-playercount">(0/2)</div></div>        
+            <div id="gamelobby-readybutton">` + readyButtonText + `<div id="gamelobby-readybutton-playercount"></div></div>        
         </div>
         `
 
@@ -101,11 +101,11 @@ function GameLobby(roomName) {
     }
 
     function updateStartButton() {
-        if (joinedPlayers >= 2) {
-            $("#gamelobby-readybutton-playercount").html("");
+        if (joinedPlayers >= MinPlayers) {
+            // $("#gamelobby-readybutton-playercount").html("");
             $("#gamelobby-readybutton").css("background-color", "rgb(218, 189, 29)");
         } else {
-            $("#gamelobby-readybutton-playercount").html("(" + joinedPlayers + "/" + "2)");
+            // $("#gamelobby-readybutton-playercount").html("(" + joinedPlayers + "/" + "2)");
             $("#gamelobby-readybutton").css("background-color", "rgb(158, 158, 158)");
         }
     }
@@ -115,7 +115,7 @@ function GameLobby(roomName) {
         // if (controllers[id]["start"]) {
 
         // }
-        if (joinedPlayers >= 2) {
+        if (joinedPlayers >= MinPlayers) {
             runGame();
         }
     }

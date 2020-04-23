@@ -133,6 +133,7 @@ function Asteroid () {
                             }
                             asteroidHitBox.strokeColor = "red";
 
+                            //everything here should technically run
                             console.log("colliding!");
                         } else {
                             if (players[id].playerobject) {
