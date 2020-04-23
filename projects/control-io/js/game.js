@@ -8,7 +8,7 @@ function Game() {
 
     var gameStatus;
 
-    var gameRunning;
+    // var gameRunning;
 
     function init() {
         window.addEventListener('gamepadconnected', controllerConnectedEvent);
@@ -53,12 +53,7 @@ function Game() {
         // initMap();
 
         addPlayers(controllers);
-
-        // for (var x = 0, xl = 15; x != xl; ++x) {
-        //     let asteroid = new Asteroid();
-        //     asteroid.init(this, gameWindow, gameMap)
-        //     asteroids.push(asteroid);
-        // }
+        TotalPlayers = players.length;
 
         paper.view.onFrame = function() {
             checkGameStatus();
@@ -163,11 +158,6 @@ function Game() {
     function keyUp(event) {
         if (gameStatus == "local-lobby") {
             gameLobby.joinLeaveKeyboard(event);
-
-            // if (event.code == "Space") {
-            // } else if (event.) {
-
-            // }
         } else if (gameStatus == "singleplayer-game") {
 
         } else {
@@ -180,9 +170,13 @@ console.log("[Control.IO] Loaded game module.")
 
 //TODO can't seem to call checkGameStatus 
 function checkGameStatus() {
-    if (playerCount <= 1) { //or timer is up
-        console.log("Game has finished!");
-        console.log(playerCount);
-        window.cancelAnimationFrame(gameRunning);
+    if (TotalPlayers == 1) { //if local singleplayer
+        //TODO if timer is up
+    } else { //if local multiplayer
+        if (playerCount <= 1) { //or timer is up
+            console.log("Game has finished!");
+            console.log(playerCount);
+            window.cancelAnimationFrame(gameRunning);
+        }
     }
 }
