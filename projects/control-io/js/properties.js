@@ -64,8 +64,8 @@ var AsteroidMaxSize = 2
 var AsteroidAllowNoSpin = false;
 var AsteroidHitboxColor = 'yellow';
 var AsteroidSpawnBorder = 20;
-var AsteroidSpawnRate = 3;
-var AsteroidSpawnCap = 20;
+var AsteroidSpawnRate = 3; //3
+var AsteroidSpawnCap = 20; //20
 
 
 var GameObjectBorderMinX = min_x - AsteroidSpawnBorder;

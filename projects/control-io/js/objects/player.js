@@ -4,7 +4,7 @@
  * Class that represents a Player
  */
 class Player {
-    constructor(game, gamewindow, gamemap, color, name, gamepad, keybinds) {
+    constructor(gamewindow, gameMap, color, name, gamepad, keybinds) {
         this.game = game;
 
         this.coordsArray = [];
@@ -21,30 +21,21 @@ class Player {
             dark: tinycolor(color).darken(25).toString()
         };
 
-        // this.prevLJ_X = 0;
-        // this.prevLJ_Y = 0;
-        // this.prevRJ_X = 0;
-        // this.prevRJ_Y = 0;
-
         //maxrange
         //maxpoints
 
         this.gamepad = gamepad;
         this.keybinds = keybinds;
 
-        this.randomSpawn();
+        this.randomSpawn(gamewindow);
         // this.setCoord();
     };
 
-    randomSpawn() {
+    randomSpawn(gamewindow) {
         var random_x = Math.floor(((Math.random() * Math.floor(max_x))));
         var random_y = Math.floor(((Math.random() * Math.floor(max_y))));
 
-        // this.playerobject = new PlayerObject(this.gamewindow, random_x, random_y, this.color.normal);
-        this.playerobject = new PlayerObject();
-        this.playerobject.init(this.gamewindow, random_x, random_y, this.color.normal);
-
-        // console.log(this.playerobject.point());
+        this.playerobject = new PlayerObject(this.gamewindow, random_x, random_y, this.color.normal);
     }
 
     /*

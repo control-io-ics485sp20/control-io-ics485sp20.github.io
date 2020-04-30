@@ -67,8 +67,7 @@ function Game() {
 
     function spawnAsteroids() {
         if ((asteroids.length < AsteroidSpawnCap) && ((Math.random() * 101) < AsteroidSpawnRate)) {
-            let asteroid = new Asteroid();
-            asteroid.init(this, gameWindow, gameMap)
+            let asteroid = new Asteroid(gameWindow, gameMap);
             asteroids.push(asteroid);
         }
     }
@@ -84,13 +83,12 @@ function Game() {
      * Adds players to the game
      */
     function addPlayers(controllers) { //TODO only add players from lobby
-
         Object.keys(controllers).forEach(function (id) {
             if (controllers[id]["player"] != null) {
                 if (controllers[id]["gamepad"] != null) {
-                    players.push(new Player(this, gameWindow, gameMap, controllers[id]["player"]["color"], controllers[id]["player"]["name"], controllers[id]["gamepad"], null));
+                    players.push(new Player(gameWindow, gameMap, controllers[id]["player"]["color"], controllers[id]["player"]["name"], controllers[id]["gamepad"], null));
                 } else if (id == "keyboard1") {
-                    players.push(new Player(this, gameWindow, gameMap, controllers[id]["player"]["color"], controllers[id]["player"]["name"], null, {up: "ArrowUp", down: "ArrowDown", left: "ArrowLeft", right: "ArrowRight", abutton: "Space", bbutton: "ShiftLeft"}) );
+                    players.push(new Player(gameWindow, gameMap, controllers[id]["player"]["color"], controllers[id]["player"]["name"], null, {up: "ArrowUp", down: "ArrowDown", left: "ArrowLeft", right: "ArrowRight", abutton: "Space", bbutton: "ShiftLeft"}) );
                 }
                 playerCount++;
             }
