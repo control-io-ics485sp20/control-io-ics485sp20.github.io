@@ -51,6 +51,11 @@ function PlayerObject(g, x, y, c) {
         // console.log(_this.assetgroup.position);
     // }
 
+    _this.velocity = {
+        x: 0,
+        y: 0
+    }
+
     function rotate(angle) {
         _this.sprite.rotation = angle;
         _this.sprite_exhaust.rotation = angle;
@@ -74,8 +79,11 @@ function PlayerObject(g, x, y, c) {
         sprite: _this.sprite,
         sprite_exhaust: _this.sprite_exhaust,
         radius: _this.hitboxRadius,
-        // x: _this.assetgroup.position.x,
-        // y: _this.assetgroup.position.y,
+        velocity: {
+            x: 1,
+            y: 1
+        },
+        mass: 1
     }
 }
 

@@ -27,6 +27,8 @@ class Player {
         this.gamepad = gamepad;
         this.keybinds = keybinds;
 
+        // this.player
+
         this.randomSpawn(gamewindow);
         // this.setCoord();
     };
@@ -51,6 +53,7 @@ class Player {
             nextxcoord = PlayerMaxX;
         }
         this.playerobject.assetgroup.position.x = nextxcoord;
+        this.playerobject.velocity.x = modifier;
         this.updateVisualGuidingLine(this.playerobject.assetgroup.position.x, null, 1);
 
         this.playerobject.sprite_exhaust.visible = true;
@@ -69,6 +72,7 @@ class Player {
             nextycoord = PlayerMaxY;
         }
         this.playerobject.assetgroup.position.y = nextycoord;
+        this.playerobject.velocity.y = modifier;
         this.updateVisualGuidingLine(null, this.playerobject.assetgroup.position.y, 1);
 
         this.playerobject.sprite_exhaust.visible = true;

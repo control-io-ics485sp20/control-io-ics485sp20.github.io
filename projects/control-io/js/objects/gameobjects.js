@@ -138,7 +138,8 @@ function Asteroid (gameWindow, gameMap) {
                         asteroidHitBox.strokeColor = "red";
 
                         //everything here should technically run
-                        console.log("asteroid colliding with ship!");
+                        // console.log("asteroid colliding with ship!");
+                        resolveAsteroidToShipCollision(_this, players[index].playerobject);
                     } else {
                         if (players[index].playerobject) {
                             players[index].playerobject.hitbox.strokeColor = "white";
