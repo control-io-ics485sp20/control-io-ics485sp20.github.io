@@ -4,144 +4,165 @@
  * Class that represents an Asteroid
  */
 
-function Asteroid () {
-    // var gamemap;
+function Asteroid (gameWindow, gameMap) {
+    var _this = this
+    _this.id = (Date.now() * Math.random())
 
-    function init (game, gamewindow, gameMap){
-        this.game = game;
-        this.gamewindow = gamewindow;
-        this.gamemap = gameMap;
+    _this.gamewindow = gameWindow;
+    _this.gamemap = gameMap;
 
-        //set random size
-        this.sizemodifier = (Math.random() * (AsteroidMaxSize - AsteroidMinSize) + AsteroidMinSize);
-        //set random velocity
-        this.velocitymodifier = (Math.random() * (AsteroidMaxSpeed - AsteroidMinSpeed) + AsteroidMinSpeed);
-        //set random spin speed
-        this.spinmodifier = (Math.random() * (AsteroidMaxSpinSpeed - AsteroidMinSpinSpeed) + AsteroidMinSpinSpeed);
-        //set random spin direction
-        if (AsteroidAllowNoSpin) { //if spindirection includes 0
-            this.spindirection = ((Math.floor(Math.random() * 2)) * ((Math.floor(Math.random() * 2)) == 1 ? 1 : -1));
-        } else { //if spindirection excludes 0
-            this.spindirection = ((Math.floor(Math.random() * 2)) == 1 ? 1 : -1); 
-        }
-
-        this.assetgroup = new paper.Group();
-        this.assetgroup.applyMatrix = false;
-
-        this.spritescaling = 0.11 * this.sizemodifier;
-        this.sprite = new paper.Raster({
-            source: '../img/sprites/asteroid-min.png',
-            position: [0, 0],
-            scaling: this.spritescaling,
-            applyMatrix: false
-        });
-
-        this.hitboxscaling = 11 * this.sizemodifier;
-        this.hitbox = new paper.Path.Circle({
-            radius: this.hitboxscaling,
-            applyMatrix: false
-        });
-        if (showHitboxes == true) {
-            this.hitbox.strokeColor = AsteroidHitboxColor;
-        } else {
-            this.hitbox.visible = false;
-        }
-
-        this.assetgroup.addChild(this.sprite);
-        this.assetgroup.addChild(this.hitbox);
-
-        gamewindow.layers["asteroids"].addChild(this.assetgroup);
-
-        var roamParams = spawn(this.assetgroup);
-        this.roamX = roamParams.roamX;
-        this.roamY = roamParams.roamY;
+    //set random size
+    _this.sizemodifier = (Math.random() * (AsteroidMaxSize - AsteroidMinSize) + AsteroidMinSize);
+    //set random velocity
+    _this.velocitymodifier = (Math.random() * (AsteroidMaxSpeed - AsteroidMinSpeed) + AsteroidMinSpeed);
+    //set random spin speed
+    _this.spinmodifier = (Math.random() * (AsteroidMaxSpinSpeed - AsteroidMinSpinSpeed) + AsteroidMinSpinSpeed);
+    //set random spin direction
+    if (AsteroidAllowNoSpin) { //if spindirection includes 0
+        _this.spindirection = ((Math.floor(Math.random() * 2)) * ((Math.floor(Math.random() * 2)) == 1 ? 1 : -1));
+    } else { //if spindirection excludes 0
+        _this.spindirection = ((Math.floor(Math.random() * 2)) == 1 ? 1 : -1); 
     }
 
-    function spawn(assetgroup) {
+    _this.assetgroup = new paper.Group();
+    _this.assetgroup.applyMatrix = false;
+
+    _this.spritescaling = 0.11 * _this.sizemodifier;
+    _this.sprite = new paper.Raster({
+        source: '../img/sprites/asteroid-min.png',
+        position: [0, 0],
+        scaling: _this.spritescaling,
+        applyMatrix: false
+    });
+
+    _this.mass = 1 * _this.sizemodifier;
+    _this.radius = 11 * _this.sizemodifier;
+    _this.hitbox = new paper.Path.Circle({
+        radius: _this.radius,
+        applyMatrix: false
+    });
+    if (showHitboxes == true) {
+        _this.hitbox.strokeColor = AsteroidHitboxColor;
+    } else {
+        _this.hitbox.visible = false;
+    }
+
+    _this.assetgroup.addChild(_this.sprite);
+    _this.assetgroup.addChild(_this.hitbox);
+
+    _this.gamewindow.layers["asteroids"].addChild(_this.assetgroup);
+
+    _this.velocity = spawn(_this);
+    _this.velX = _this.velocity.x;
+    _this.velY = _this.velocity.y;
+    // }
+
+    // console.log("Creating asteroid!");
+
+
+    function spawn() {
         var x;
         var y;
-        var roamX;
-        var roamY;
+        var velX;
+        var velY;
         //TODO spawn at edge
         var xyspawn = (Math.floor(Math.random() * 4));
         if (xyspawn == 0) { //spawn top side
-            x = Math.floor((Math.random() * Math.floor(AsteroidMaxX)));
-            y = AsteroidMinY;
+            x = Math.floor((Math.random() * Math.floor(GameObjectBorderMaxX)));
+            y = GameObjectBorderMinY;
 
-            roamX = ((Math.random() * 1) * (Math.floor(Math.random() * 2) == 1 ? 1 : -1));
-            roamY = ((Math.random() * 1) * (1));
+            velX = ((Math.random() * 1) * (Math.floor(Math.random() * 2) == 1 ? 1 : -1));
+            velY = ((Math.random() * 1) * (1));
         } else if (xyspawn == 1) { //spawn bottom side
-            x = Math.floor((Math.random() * Math.floor(AsteroidMaxX)));
-            y = AsteroidMaxY;
+            x = Math.floor((Math.random() * Math.floor(GameObjectBorderMaxX)));
+            y = GameObjectBorderMaxY;
 
-            roamX = ((Math.random() * 1) * (Math.floor(Math.random() * 2) == 1 ? 1 : -1));
-            roamY = ((Math.random() * 1) * (-1));
+            velX = ((Math.random() * 1) * (Math.floor(Math.random() * 2) == 1 ? 1 : -1));
+            velY = ((Math.random() * 1) * (-1));
         } else if (xyspawn == 2) { //spawn left side
-            x = AsteroidMinX;
-            y = Math.floor((Math.random() * Math.floor(AsteroidMaxY)));
+            x = GameObjectBorderMinX;
+            y = Math.floor((Math.random() * Math.floor(GameObjectBorderMaxY)));
 
-            roamX = ((Math.random() * 1) * (1));
-            roamY = ((Math.random() * 1) * (Math.floor(Math.random() * 2) == 1 ? 1 : -1));
+            velX = ((Math.random() * 1) * (1));
+            velY = ((Math.random() * 1) * (Math.floor(Math.random() * 2) == 1 ? 1 : -1));
         } else if (xyspawn == 3) { //spawn right side
-            x = AsteroidMaxX;
-            y = Math.floor((Math.random() * Math.floor(AsteroidMaxY)));
+            x = GameObjectBorderMaxX;
+            y = Math.floor((Math.random() * Math.floor(GameObjectBorderMaxY)));
 
-            roamX = ((Math.random() * 1) * (-1));
-            roamY = ((Math.random() * 1) * (Math.floor(Math.random() * 2) == 1 ? 1 : -1));
+            velX = ((Math.random() * 1) * (-1));
+            velY = ((Math.random() * 1) * (Math.floor(Math.random() * 2) == 1 ? 1 : -1));
         }
 
-        assetgroup.position = [x, y];
-        return {roamX: roamX, roamY: roamY};
+        _this.assetgroup.position = [x, y];
+        return {x: velX, y: velY};
     }
 
     function updatePos() {
-        if (this.assetgroup) {
-            let newx = this.assetgroup.position.x + this.roamX * this.velocitymodifier;
-            let newy = this.assetgroup.position.y + this.roamY * this.velocitymodifier;
+        if (_this.assetgroup) {
+            let newx = _this.assetgroup.position.x + _this.velocity.x * _this.velocitymodifier;
+            let newy = _this.assetgroup.position.y + _this.velocity.y * _this.velocitymodifier;
 
-            if (this.gamemap.AsteroidIsOutOfBounds(newx, newy)) {
-
-                remove(this.hitbox, this.sprite, this.assetgroup);
-                delete this.hitbox;
-                delete this.sprite;
-                delete this.assetgroup;
+            if (_this.gamemap.GameObjectIsOutOfBounds(newx, newy)) {
+                remove(_this.hitbox, _this.sprite, _this.assetgroup);
+                delete _this.hitbox;
+                delete _this.sprite;
+                delete _this.assetgroup;
             } else {
-                this.assetgroup.position.x = newx;
-                this.assetgroup.position.y = newy;
+                _this.assetgroup.position.x = newx;
+                _this.assetgroup.position.y = newy;
 
-                this.assetgroup.rotate(this.spindirection * this.spinmodifier);
+                _this.assetgroup.rotate(_this.spindirection * _this.spinmodifier);
 
-                var asteroidHitBox = this.hitbox;
-                var asteroidAssetGroup = this.assetgroup;
-                var asteroidHitboxRadius = this.hitboxscaling;
-                Object.keys(players).forEach(function (id) {
-                    // if (players[id].assetgroup) {
-                        var playerHitbox = {
-                            x: players[id].playerobject.assetgroup.position.x,
-                            y: players[id].playerobject.assetgroup.position.y,
-                            radius: players[id].playerobject.hitboxRadius
+                var asteroidHitBox = _this.hitbox;
+                // var asteroidAssetGroup = _this.assetgroup;
+                _this.asteroidHitboxRadius = _this.radius;
+
+                var asteroidHitbox = {
+                    id: _this.id,
+                    x: _this.assetgroup.position.x,
+                    y: _this.assetgroup.position.y,
+                    radius: _this.radius
+                }
+
+                Object.keys(players).forEach(function (index) {
+                    var playerHitbox = {
+                        x: players[index].playerobject.assetgroup.position.x,
+                        y: players[index].playerobject.assetgroup.position.y,
+                        radius: players[index].playerobject.radius
+                    }
+
+                    if (checkHit(playerHitbox, asteroidHitbox)) {
+                        if (players[index].playerobject) {
+                            players[index].playerobject.hitbox.strokeColor = "red";
                         }
-                        var asteroidHitbox = {
-                            x: asteroidAssetGroup.position.x,
-                            y: asteroidAssetGroup.position.y,
-                            radius: asteroidHitboxRadius
-                        }
-    
-                        if (checkHit(playerHitbox, asteroidHitbox)) {
-                            if (players[id].playerobject) {
-                                players[id].playerobject.hitbox.strokeColor = "red";
-                            }
-                            asteroidHitBox.strokeColor = "red";
+                        asteroidHitBox.strokeColor = "red";
 
-                            //everything here should technically run
-                            console.log("colliding!");
+                        //everything here should technically run
+                        // console.log("asteroid colliding with ship!");
+                        resolveAsteroidToShipCollision(_this, players[index].playerobject);
+                    } else {
+                        if (players[index].playerobject) {
+                            players[index].playerobject.hitbox.strokeColor = "white";
+                        }
+                        asteroidHitBox.strokeColor = "yellow";
+                    }
+                });
+
+                Object.keys(asteroids).forEach(function (index) {
+                    let asteroid2Hitbox = {
+                        id: asteroids[index].id,
+                        x: asteroids[index].assetgroup.position.x,
+                        y: asteroids[index].assetgroup.position.y,
+                        radius: asteroids[index].radius,
+                    }
+                    if (asteroidHitbox.id === asteroid2Hitbox.id) {
+                        // console.log("same asteroid!");
+                    } else {
+                        if (checkHit(asteroidHitbox, asteroid2Hitbox)) {
+                            resolveAsteroidToAsteroidCollision(_this, asteroids[index])
                         } else {
-                            if (players[id].playerobject) {
-                                players[id].playerobject.hitbox.strokeColor = "white";
-                            }
-                            asteroidHitBox.strokeColor = "yellow";
                         }
-                    // }
+                    }
                 });
             }
             return true;
@@ -149,6 +170,8 @@ function Asteroid () {
             return false;
         }
     }
+
+    
 
     function remove(hitbox, sprite, assetgroup) {
         hitbox.remove();
@@ -163,13 +186,15 @@ function Asteroid () {
     }
 
     return {
-        init: init,
         updatePos: updatePos,
-        spawn: spawn,
-        // isOutOfBounds: isOutOfBounds,
-        assetgroup: this.assetgroup,
-        gamemap: this.gamemap,
-        hitbox: this.hitbox
+        assetgroup: _this.assetgroup,
+        gamemap: _this.gamemap,
+        radius: _this.radius,
+        sprite: _this.sprite,
+        hitbox: _this.hitbox,
+        id: _this.id,
+        velocity: _this.velocity,
+        mass: _this.mass,
     }
 }
 

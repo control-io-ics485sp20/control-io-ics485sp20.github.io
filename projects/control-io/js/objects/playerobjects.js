@@ -1,74 +1,89 @@
-function PlayerObject() {
+function PlayerObject(g, x, y, c) {
+    var _this = this;
 
-    function init(gamewindow, x, y, color) {
-        this.assetgroup = new paper.Group();
-        this.assetgroup.applyMatrix = false;
-        this.assetgroup.position = [x, y];
+    _this.gamewindow = g;
+    _this.color = c;
 
-        this.playerexhaustspritepath = ("../img/playersprites/playersprite01-base-exhaust.png");
-        this.playerspritepath = ("../img/playersprites/playersprite01-" + color.replace("#", "") + ".png");
-        
-        this.sprite_exhaust = new paper.Raster({
-            source: this.playerexhaustspritepath,
-            point: [0, 0],
-            scaling: 0.08,
-            applyMatrix: false,
-            width: this.width,
-            height: this.height
-        });
+    _this.assetgroup = new paper.Group();
+    _this.assetgroup.applyMatrix = false;
+    _this.assetgroup.position = [x, y];
 
-        this.sprite = new paper.Raster({
-            source: this.playerspritepath,
-            point: [0, 0],
-            scaling: 0.08,
-            applyMatrix: false,
-            width: this.width,
-            height: this.height
-        });
+    _this.playerexhaustspritepath = ("../img/playersprites/playersprite01-base-exhaust.png");
+    _this.playerspritepath = ("../img/playersprites/playersprite01-" + _this.color.replace("#", "") + ".png");
+    
+    _this.sprite_exhaust = new paper.Raster({
+        source: _this.playerexhaustspritepath,
+        point: [0, 0],
+        scaling: 0.08,
+        applyMatrix: false,
+        width: _this.width,
+        height: _this.height
+    });
 
-        this.hitboxRadius = 11;
-        this.hitbox = new paper.Path.Circle({
-            radius: this.hitboxRadius,
-            applyMatrix: false
-        });
-        if (showHitboxes == true) {
-            this.hitbox.strokeColor = PlayerHitboxColor;
-        } else {
-            this.hitbox.visible = false;
-        }
+    _this.sprite = new paper.Raster({
+        source: _this.playerspritepath,
+        point: [0, 0],
+        scaling: 0.08,
+        applyMatrix: false,
+        width: _this.width,
+        height: _this.height
+    });
 
-        this.assetgroup.addChild(this.sprite_exhaust);
-        this.assetgroup.addChild(this.sprite);
-        this.assetgroup.addChild(this.hitbox);
+    _this.hitboxRadius = 11;
+    _this.hitbox = new paper.Path.Circle({
+        radius: _this.hitboxRadius,
+        applyMatrix: false
+    });
+    if (showHitboxes == true) {
+        _this.hitbox.strokeColor = PlayerHitboxColor;
+    } else {
+        _this.hitbox.visible = false;
+    }
 
-        gamewindow.layers["players"].addChild(this.assetgroup);
+    _this.assetgroup.addChild(_this.sprite_exhaust);
+    _this.assetgroup.addChild(_this.sprite);
+    _this.assetgroup.addChild(_this.hitbox);
 
-        this.item = new paper.Item();
-        // console.log(this.assetgroup.position);
+    _this.gamewindow.layers["players"].addChild(_this.assetgroup);
+    // g.layers["players"].addChild(_this.assetgroup);
+
+    _this.item = new paper.Item();
+        // console.log(_this.assetgroup.position);
+    // }
+
+    _this.velocity = {
+        x: 0,
+        y: 0
     }
 
     function rotate(angle) {
-        this.sprite.rotation = angle;
-        this.sprite_exhaust.rotation = angle;
+        _this.sprite.rotation = angle;
+        _this.sprite_exhaust.rotation = angle;
     }
 
     function move(xpos, ypos) {
-        this.assetgroup.position.x = xpos;
-        this.assetgroup.position.y = ypos;
+        _this.assetgroup.position.x = xpos;
+        _this.assetgroup.position.y = ypos;
     }
 
     function point() {
-        return this.assetgroup.position;
+        return _this.assetgroup.position;
     }
 
     return {
-        init: init,
         rotate: rotate,
         move: move,
         point: point,
-        assetgroup: this.assetgroup,
-        hitbox: this.hitbox,
-        sprite_exhaust: this.sprite_exhaust
+        assetgroup: _this.assetgroup,
+        hitbox: _this.hitbox,
+        sprite: _this.sprite,
+        sprite_exhaust: _this.sprite_exhaust,
+        radius: _this.hitboxRadius,
+        velocity: {
+            x: 1,
+            y: 1
+        },
+        mass: 1
     }
 }
 
@@ -76,23 +91,25 @@ function PlayerObject() {
  * A coordinate that a player can create.
  */
 function PlayerCoordinate(gamewindow, x, y, color) {
-    // constructor (gamewindow, x, y, color) {
-    this.x = x;
-    this.y = y;
+    var _this = this;
 
-    this.asset = new paper.Path.Circle({
+    // constructor (gamewindow, x, y, color) {
+    _this.x = x;
+    _this.y = y;
+
+    _this.asset = new paper.Path.Circle({
         center: [x, y],
         radius: 6,
         fillColor: color
     });
 
-    gamewindow.layers["playersetlines"].addChild(this.asset);
+    gamewindow.layers["playersetlines"].addChild(_this.asset);
     // }
 
     return {
-        x: this.x,
-        y: this.y,
-        asset: this.asset
+        x: _this.x,
+        y: _this.y,
+        asset: _this.asset
     }
 }
 
@@ -120,7 +137,7 @@ class PlayerGuidingLine {
         this.asset.strokeColor = color;
         this.asset.strokeWidth = lineWidth;
         this.asset.strokeCap = 'round';
-        // this.asset.dashArray = [4, 10]
+        // _this.asset.dashArray = [4, 10]
         gamewindow.layers["playerguidinglines"].addChild(this.asset);
     }
 }
@@ -140,7 +157,7 @@ class PlayerPolygon {
         this.asset = new paper.Path();
         var i = 0;
         while (i < coordsArray.length) {
-            // this.polygonShape.lineTo(coordsArray[i].x, coordsArray[i].y);
+            // _this.polygonShape.lineTo(coordsArray[i].x, coordsArray[i].y);
             this.asset.add(new paper.Point(coordsArray[i].x, coordsArray[i].y));
             i++;
         }
@@ -151,7 +168,7 @@ class PlayerPolygon {
         if (showHitboxes == true) {
             this.asset.strokeColor = PlayerHitboxColor;
         } else {
-            // this.hitbox.visible = false;
+            // _this.hitbox.visible = false;
             this.asset.strokeColor = null;
         }
 

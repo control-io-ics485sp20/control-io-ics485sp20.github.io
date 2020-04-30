@@ -4,7 +4,7 @@
  * Class that represents a Player
  */
 class Player {
-    constructor(game, gamewindow, gamemap, color, name, gamepad, keybinds) {
+    constructor(gamewindow, gameMap, color, name, gamepad, keybinds) {
         this.game = game;
 
         this.coordsArray = [];
@@ -21,41 +21,39 @@ class Player {
             dark: tinycolor(color).darken(25).toString()
         };
 
-        // this.prevLJ_X = 0;
-        // this.prevLJ_Y = 0;
-        // this.prevRJ_X = 0;
-        // this.prevRJ_Y = 0;
-
         //maxrange
         //maxpoints
 
         this.gamepad = gamepad;
         this.keybinds = keybinds;
 
-        this.randomSpawn();
+        // this.player
+
+        this.randomSpawn(gamewindow);
         // this.setCoord();
     };
 
-    randomSpawn() {
+    randomSpawn(gamewindow) {
         var random_x = Math.floor(((Math.random() * Math.floor(max_x))));
         var random_y = Math.floor(((Math.random() * Math.floor(max_y))));
 
-        // this.playerobject = new PlayerObject(this.gamewindow, random_x, random_y, this.color.normal);
-        this.playerobject = new PlayerObject();
-        this.playerobject.init(this.gamewindow, random_x, random_y, this.color.normal);
-
-        // console.log(this.playerobject.point());
+        this.playerobject = new PlayerObject(this.gamewindow, random_x, random_y, this.color.normal);
     }
 
     /*
         * moveX
         *
-        * Intended for controllers.
         * Given a float modifier value, updates the player's position on the X axis for a frame.
         */
     moveX (modifier) {
-
-        this.playerobject.assetgroup.position.x = this.playerobject.assetgroup.position.x + (PlayerMinVelocityCap * modifier);
+        let nextxcoord = (this.playerobject.assetgroup.position.x + (PlayerMinVelocityCap * modifier));
+        if (nextxcoord < PlayerMinX) {
+            nextxcoord = PlayerMinX;
+        } else if (nextxcoord > PlayerMaxX) {
+            nextxcoord = PlayerMaxX;
+        }
+        this.playerobject.assetgroup.position.x = nextxcoord;
+        this.playerobject.velocity.x = modifier;
         this.updateVisualGuidingLine(this.playerobject.assetgroup.position.x, null, 1);
 
         this.playerobject.sprite_exhaust.visible = true;
@@ -64,12 +62,17 @@ class Player {
     /*
         * moveY
         *
-        * Intended for controllers.
         * Given a float modifier value, updates the player's position on the Y axis for a frame.
         */
     moveY (modifier) {
-
-        this.playerobject.assetgroup.position.y = this.playerobject.assetgroup.position.y + (PlayerMinVelocityCap * modifier);
+        let nextycoord = (this.playerobject.assetgroup.position.y + (PlayerMinVelocityCap * modifier));
+        if (nextycoord < PlayerMinY) {
+            nextycoord = PlayerMinY;
+        } else if (nextycoord > PlayerMaxY) {
+            nextycoord = PlayerMaxY;
+        }
+        this.playerobject.assetgroup.position.y = nextycoord;
+        this.playerobject.velocity.y = modifier;
         this.updateVisualGuidingLine(null, this.playerobject.assetgroup.position.y, 1);
 
         this.playerobject.sprite_exhaust.visible = true;
@@ -299,7 +302,7 @@ class Player {
             this.playerobject.sprite_exhaust.visible = false;
         }
 
-        this.checkOutOfBounds();
+        // this.checkOutOfBounds();
     }
 
     keyDown (e) {
