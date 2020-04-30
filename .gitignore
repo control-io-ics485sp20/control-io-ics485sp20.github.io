@@ -4,3 +4,6 @@
 *.iml
 _site/
 .sass-cache/
+projects/control-io/html/gamepad old.html
+projects/control-io/html/gamepad react.html
+projects/control-io/html/gamepad.html
