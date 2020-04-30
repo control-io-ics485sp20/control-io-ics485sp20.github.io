@@ -1,7 +1,18 @@
 function GameWindow(properties) {
+    var _this = this
+    
     var canvas;
     var properties = properties;
     this.layers = {};
+
+    // var Render = Matter.Render;
+
+    _this.Engine = Matter.Engine;
+    _this.World = Matter.World;
+    _this.Bodies = Matter.Bodies;
+
+    // var engine = _this.Engine.create();
+    // _this.Engine.run(engine);
 
     function init() {
 
@@ -45,7 +56,10 @@ function GameWindow(properties) {
         removePlayer: removePlayer,
         setBackground: setBackground,
         canvas: canvas,
-        layers: this.layers
+        layers: this.layers,
+        engine: _this.Engine,
+        bodies: _this.Bodies,
+        world: _this.World,
     }
     
 

@@ -11,6 +11,7 @@ var readyButtonText = "SPACE / A - START GAME"
 var players = []; //list of all players
 var asteroids = []; //list of all asteroids
 var controllers = []; //list of all controllers
+var claimed_shapes = [];
 
 //debugging options
 var debug = true;
