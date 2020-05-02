@@ -79,10 +79,7 @@ function PlayerObject(g, x, y, c) {
         sprite: _this.sprite,
         sprite_exhaust: _this.sprite_exhaust,
         radius: _this.hitboxRadius,
-        velocity: {
-            x: 1,
-            y: 1
-        },
+        velocity: _this.velocity,
         mass: 1
     }
 }
@@ -151,33 +148,55 @@ class PlayerCompletingLine {
 /*
  * A polygon that a 
  */
-class PlayerPolygon {
-    constructor (gamewindow, coordsArray, color) {
+function PlayerPolygon (gamewindow, id, coordsArray, color) {
+    var _this = this;
 
-        this.asset = new paper.Path();
-        var i = 0;
-        while (i < coordsArray.length) {
-            // _this.polygonShape.lineTo(coordsArray[i].x, coordsArray[i].y);
-            this.asset.add(new paper.Point(coordsArray[i].x, coordsArray[i].y));
-            i++;
+    // constructor (gamewindow, id, coordsArray, color) {
+    _this.playerId = id;
+
+
+    _this.asset = new paper.Path();
+
+    _this.asset.lineObjects = [];
+
+    var i = 0;
+    _this.lastCoord = coordsArray[coordsArray.length - 1];
+    while (i < coordsArray.length) {
+        let segment = {
+            p1: _this.lastCoord,
+            p2: coordsArray[i],
+            slope: (coordsArray[i].y - _this.lastCoord.y)/(coordsArray[i].x - _this.lastCoord.x)
         }
-        this.asset.closed = true;
-        this.asset.fillColor = color;
-        this.asset.opacity = 0.5;
 
-        if (showHitboxes == true) {
-            this.asset.strokeColor = PlayerHitboxColor;
-        } else {
-            // _this.hitbox.visible = false;
-            this.asset.strokeColor = null;
-        }
+        _this.asset.lineObjects.push(segment);
+        _this.lastCoord = coordsArray[i];
 
-        gamewindow.layers["shapes"].addChild(this.asset);
+        _this.asset.add(new paper.Point(coordsArray[i].x, coordsArray[i].y));
+        i++;
+    }
+    _this.asset.closed = true;
+    _this.asset.fillColor = color;
+    _this.asset.opacity = 0.5;
 
-        if (debug) {
-            console.log("playerobjects.js.PlayerPolygon.constructor");
-            console.log("   area: " + (Math.abs(this.asset.area)/100));
-        }
-        // gamewindow.layers["shaperaster"]
+    if (showHitboxes == true) {
+        _this.asset.strokeColor = PlayerHitboxColor;
+    } else {
+        // _this.hitbox.visible = false;
+        _this.asset.strokeColor = null;
+    }
+
+    gamewindow.layers["shapes"].addChild(_this.asset);
+
+    if (debug) {
+        console.log("playerobjects.js.PlayerPolygon.constructor");
+        console.log("   area: " + (Math.abs(_this.asset.area)/100));
+    }
+    // gamewindow.layers["shaperaster"]
+
+    claimed_shapes.push(_this);
+    // }
+
+    return {
+        lines: _this.asset.lineObjects
     }
 }

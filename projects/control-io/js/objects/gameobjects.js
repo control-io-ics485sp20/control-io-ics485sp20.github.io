@@ -27,16 +27,33 @@ function Asteroid (gameWindow, gameMap) {
     _this.assetgroup = new paper.Group();
     _this.assetgroup.applyMatrix = false;
 
-    _this.spritescaling = 0.11 * _this.sizemodifier;
+    var asteroidModel = {
+        small: {
+            spriteBaseSize: 0.25,
+            hitboxBaseSize: 11,
+            source: '../img/sprites/ASTEROID small v1-min.png'
+        },
+        large: {
+            spriteBaseSize: 0.25,
+            hitboxBaseSize: 11,
+            source: '../img/sprites/ASTEROID large v1-min.png'
+        }
+    }
+
+    // console.log(asteroidModel["small"]);
+
+    _this.spriteSize = asteroidModel.small.spriteBaseSize * _this.sizemodifier;
     _this.sprite = new paper.Raster({
-        source: '../img/sprites/asteroid-min.png',
+        // source: '../img/sprites/asteroid-min.png',
+        source: asteroidModel.small.source,
         position: [0, 0],
-        scaling: _this.spritescaling,
+        scaling: _this.spriteSize,
         applyMatrix: false
     });
 
-    _this.mass = 1 * _this.sizemodifier;
-    _this.radius = 11 * _this.sizemodifier;
+    _this.mass = 1.5 * _this.sizemodifier;
+    // _this.mass = 1;
+    _this.radius = asteroidModel.small.hitboxBaseSize * _this.sizemodifier;
     _this.hitbox = new paper.Path.Circle({
         radius: _this.radius,
         applyMatrix: false
@@ -53,6 +70,9 @@ function Asteroid (gameWindow, gameMap) {
     _this.gamewindow.layers["asteroids"].addChild(_this.assetgroup);
 
     _this.velocity = spawn(_this);
+
+
+
     _this.velX = _this.velocity.x;
     _this.velY = _this.velocity.y;
     // }
@@ -94,6 +114,12 @@ function Asteroid (gameWindow, gameMap) {
         }
 
         _this.assetgroup.position = [x, y];
+
+        //
+        // _this.hitbox2 = new _this.gamewindow.bodies.circle(x, y, _this.radius);
+        // console.log(_this.hitbox2);
+        // _this.gamewindow.world.add(_this.gamewindow.engine.world, [_this.hitbox2]);
+
         return {x: velX, y: velY};
     }
 
@@ -113,8 +139,6 @@ function Asteroid (gameWindow, gameMap) {
 
                 _this.assetgroup.rotate(_this.spindirection * _this.spinmodifier);
 
-                var asteroidHitBox = _this.hitbox;
-                // var asteroidAssetGroup = _this.assetgroup;
                 _this.asteroidHitboxRadius = _this.radius;
 
                 var asteroidHitbox = {
@@ -135,7 +159,7 @@ function Asteroid (gameWindow, gameMap) {
                         if (players[index].playerobject) {
                             players[index].playerobject.hitbox.strokeColor = "red";
                         }
-                        asteroidHitBox.strokeColor = "red";
+                        _this.hitbox.strokeColor = "red";
 
                         //everything here should technically run
                         // console.log("asteroid colliding with ship!");
@@ -144,7 +168,7 @@ function Asteroid (gameWindow, gameMap) {
                         if (players[index].playerobject) {
                             players[index].playerobject.hitbox.strokeColor = "white";
                         }
-                        asteroidHitBox.strokeColor = "yellow";
+                        _this.hitbox.strokeColor = "yellow";
                     }
                 });
 
@@ -164,14 +188,20 @@ function Asteroid (gameWindow, gameMap) {
                         }
                     }
                 });
+
+                Object.keys(claimed_shapes).forEach(function (index) {
+                    if (checkPolygonHit(asteroidHitbox, claimed_shapes[index].asset)) {
+                        // console.log("polygon hit!");
+                        resolveAsteroidToPolygonCollision(_this, claimed_shapes[index].asset)
+                    } else {
+                    }
+                });
             }
             return true;
         } else {
             return false;
         }
     }
-
-    
 
     function remove(hitbox, sprite, assetgroup) {
         hitbox.remove();
@@ -181,8 +211,6 @@ function Asteroid (gameWindow, gameMap) {
         hitbox = null;
         sprite = null;
         assetgroup = null;
-
-        
     }
 
     return {
@@ -195,53 +223,6 @@ function Asteroid (gameWindow, gameMap) {
         id: _this.id,
         velocity: _this.velocity,
         mass: _this.mass,
+        gamewindow: _this.gameWindow,
     }
 }
-
-//gameitem
-//base object
-// function GameItem(id) {
-//     this.id = id;
-//     this.position.x = 0;
-//     this.position.y = 0;
-
-//     this.image = "";
-// }
-
-// //ship
-// //controlled by player or ai
-// //has hp
-// function Ship(id) {
-//     GameItem.call(this, id);
-
-//     //these are ideas. Not sure if our ships will use these statistics.
-//     this.health = 0;
-//     this.deployables = 0;
-//     this.fuel = 0;   //might not need fuel. 
-// }
-
-// //asteroid
-// //has hp
-// function Asteroid(id) {
-//     GameItem.call(this, id);
-
-//     this.health = 0;
-//     this.damage = 0;
-// }
-
-// //space station
-// //capturable
-// //has hp
-// function Station(id) {
-//     GameItem.call(this, id);
-
-//     // this.health = 0;
-//     this.status = "unclaimed";
-//     this.owner = null;
-// }
-
-// //planet
-// //capturable
-// function Planet() {
-//     GameItem.call(this, id);
-// }

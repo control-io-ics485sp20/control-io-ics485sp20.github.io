@@ -1,12 +1,14 @@
 function Game() {
+    var _this = this
+
     console.log("[Control.IO] Starting game instance...");
     init();
 
-    var gameLobby;
-    var gameWindow;
-    var gameMap;
+    _this.gameLobby;
+    _this.gameWindow;
+    _this.gameMap;
 
-    var gameStatus;
+    _this.gameStatus;
 
     // var gameRunning;
 
@@ -27,9 +29,9 @@ function Game() {
 
     function runLocalPlayer() {
         console.log("Starting a local session...")
-        gameLobby = new GameLobby("Starting Local Session...");
-        gameStatus = "local-lobby"
-        var gameLobbyResult = gameLobby.create();
+        _this.gameLobby = new GameLobby("Starting Local Session...");
+        _this.gameStatus = "local-lobby"
+        var gameLobbyResult = _this.gameLobby.create();
     }
 
     function runMultiPlayer() {
@@ -40,15 +42,15 @@ function Game() {
     function startGame(controllers) {
         // console.log(controllers);
 
-        gameStatus = "singleplayer-game";
+        _this.gameStatus = "singleplayer-game";
         //start game countdown
         //start game
         //create start game timer
         let dimensions = {width: window.innerWidth, height: window.innerHeight}
 
-        gameWindow = new GameWindow(dimensions);
-        gameWindow.init();
-        gameMap = new GameMap(dimensions);
+        _this.gameWindow = new GameWindow(dimensions);
+        _this.gameWindow.init();
+        _this.gameMap = new GameMap(dimensions);
 
         // initMap();
 
@@ -67,7 +69,7 @@ function Game() {
 
     function spawnAsteroids() {
         if ((asteroids.length < AsteroidSpawnCap) && ((Math.random() * 101) < AsteroidSpawnRate)) {
-            let asteroid = new Asteroid(gameWindow, gameMap);
+            let asteroid = new Asteroid(_this.gameWindow, _this.gameMap);
             asteroids.push(asteroid);
         }
     }
@@ -86,9 +88,9 @@ function Game() {
         Object.keys(controllers).forEach(function (id) {
             if (controllers[id]["player"] != null) {
                 if (controllers[id]["gamepad"] != null) {
-                    players.push(new Player(gameWindow, gameMap, controllers[id]["player"]["color"], controllers[id]["player"]["name"], controllers[id]["gamepad"], null));
+                    players.push(new Player(_this.gameWindow, _this.gameMap, controllers[id]["player"]["color"], controllers[id]["player"]["name"], controllers[id]["gamepad"], null));
                 } else if (id == "keyboard1") {
-                    players.push(new Player(gameWindow, gameMap, controllers[id]["player"]["color"], controllers[id]["player"]["name"], null, {up: "ArrowUp", down: "ArrowDown", left: "ArrowLeft", right: "ArrowRight", abutton: "Space", bbutton: "ShiftLeft"}) );
+                    players.push(new Player(_this.gameWindow, _this.gameMap, controllers[id]["player"]["color"], controllers[id]["player"]["name"], null, {up: "ArrowUp", down: "ArrowDown", left: "ArrowLeft", right: "ArrowRight", abutton: "Space", bbutton: "ShiftLeft"}) );
                 }
                 playerCount++;
             }
@@ -116,11 +118,11 @@ function Game() {
      * Detects when a gamepad is connected and announces it.
      */
     function controllerConnectedEvent(event) {
-        if (gameStatus == "local-lobby") {
-            gameLobby.controllerJoin(event);
-        } else if (gameStatus == "singleplayer-game") {
+        if (_this.gameStatus == "local-lobby") {
+            _this.gameLobby.controllerJoin(event);
+        } else if (_this.gameStatus == "singleplayer-game") {
             //TODO allow for reconnect of disconnected player
-        } else if (gameStatus == "debug") {
+        } else if (_this.gameStatus == "debug") {
             var i = 0;
             while(i < players.length) {
                 if (players[i].gamepad == undefined) {
@@ -135,11 +137,11 @@ function Game() {
     };
 
     function controllerDisconnectedEvent(event) {
-        if (gameStatus == "local-lobby") {
-            gameLobby.controllerLeave(event);
-        } else if (gameStatus == "singleplayer-game") {
+        if (_this.gameStatus == "local-lobby") {
+            _this.gameLobby.controllerLeave(event);
+        } else if (_this.gameStatus == "singleplayer-game") {
             //TODO allow for reconnect of disconnected player
-        } else if (gameStatus == "debug") {
+        } else if (_this.gameStatus == "debug") {
             var i = 0;
             while(i < players.length) {
                 if (players[i].gamepad == event.gamepad) {
@@ -154,9 +156,9 @@ function Game() {
     }
 
     function keyUp(event) {
-        if (gameStatus == "local-lobby") {
-            gameLobby.joinLeaveKeyboard(event);
-        } else if (gameStatus == "singleplayer-game") {
+        if (_this.gameStatus == "local-lobby") {
+            _this.gameLobby.joinLeaveKeyboard(event);
+        } else if (_this.gameStatus == "singleplayer-game") {
 
         } else {
 
