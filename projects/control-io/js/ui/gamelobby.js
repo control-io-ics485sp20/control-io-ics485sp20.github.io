@@ -118,6 +118,7 @@ function GameLobby(roomName) {
         // }
         if (joinedPlayers >= MinPlayers) {
             console.log("3 seconds timer(tbr)");
+            timer.play();
             changeName();
             setTimeout(changeName,1000);
             setTimeout(changeName,2000);
@@ -145,6 +146,8 @@ function GameLobby(roomName) {
     function joinLeaveKeyboard(event) {
         if ((event.code == "ShiftLeft") || (event.code == "ShiftRight")) {
             controllerLock("keyboard1", lobbyJoinKeyboardInstructionMessage);
+            var audio_in = new Audio('../music/in.wav');
+            audio_in.play();
             // gameLobby.joinLeaveKeyboard();
         } else if (event.code == "Space") {
             startLock();

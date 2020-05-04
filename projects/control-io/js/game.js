@@ -41,7 +41,6 @@ function Game() {
 
     function startGame(controllers) {
         // console.log(controllers);
-
         _this.gameStatus = "singleplayer-game";
         //start game countdown
         //start game
@@ -51,6 +50,9 @@ function Game() {
         _this.gameWindow = new GameWindow(dimensions);
         _this.gameWindow.init();
         _this.gameMap = new GameMap(dimensions);
+
+        var ingame = new Audio('../music/ingame.wav');
+        ingame.play();
 
         // initMap();
 
@@ -77,7 +79,7 @@ function Game() {
     return {
         startGame: startGame,
         checkGameStatus: checkGameStatus
-    }       
+    }
 
     /**
      * addPlayers
@@ -168,7 +170,7 @@ function Game() {
 
 console.log("[Control.IO] Loaded game module.")
 
-//TODO can't seem to call checkGameStatus 
+//TODO can't seem to call checkGameStatus
 function checkGameStatus() {
     if (TotalPlayers == 1) { //if local singleplayer
         //TODO if timer is up
