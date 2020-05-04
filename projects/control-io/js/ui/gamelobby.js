@@ -118,6 +118,7 @@ function GameLobby(roomName) {
         // }
         if (joinedPlayers >= MinPlayers) {
             console.log("3 seconds timer(tbr)");
+            var timer = new Audio('../music/countdown_trim.wav');
             timer.play();
             changeName();
             setTimeout(changeName,1000);
