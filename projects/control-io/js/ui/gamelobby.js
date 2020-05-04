@@ -6,6 +6,7 @@ function GameLobby(roomName) {
     var startVotePlayers = 0;
     var ButtonPressedStatus = {}
     var controllerCheck;
+    var counter = 3;
     // AButtonPressed = {}
     var availablePlayers = [
         { "name": "Player 1", "color": "#ff3c00" },
@@ -76,7 +77,7 @@ function GameLobby(roomName) {
         if (controllers[id]["player"] == null) {
             var player = addPlayer();
 
-            if (player != null) { 
+            if (player != null) {
                 controllers[id]["player"] = player;
 
                 $("#" + id).html(
@@ -116,8 +117,17 @@ function GameLobby(roomName) {
 
         // }
         if (joinedPlayers >= MinPlayers) {
-            runGame();
+            console.log("3 seconds timer(tbr)");
+            changeName();
+            setTimeout(changeName,1000);
+            setTimeout(changeName,2000);
+            setTimeout(runGame,3000);
         }
+    }
+
+    function changeName(){
+      document.getElementById("gamelobby-roomname").innerHTML = "Game starts in " + counter + "...";
+      counter --;
     }
 
     function addPlayer() {
@@ -145,7 +155,6 @@ function GameLobby(roomName) {
 
     function checkControllers() {
         controllerCheck = requestAnimationFrame(checkControllers);
-    
         Object.keys(controllers).forEach(function (id) {
             if (controllers[id] != null && controllers[id]["gamepad"] != null) {
                 if (controllers[id]["gamepad"].buttons[9].value > 0 || controllers[id]["gamepad"].buttons[9].pressed == true) {
@@ -168,7 +177,6 @@ function GameLobby(roomName) {
             }
         });
     }
-    
     return {
         create: create,
         controllerJoin: controllerJoin,
