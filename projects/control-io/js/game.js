@@ -227,12 +227,12 @@ function Game() {
     function togglePauseMenu() {
         if (_this.paused) {
             _this.paused = false;
-            // _this.pausemenu.hide();
-            // _this.scorescreen.show();
+            _this.pausemenu.hide();
+            _this.scorescreen.show();
         } else {
             _this.paused = true;
-            // _this.scorescreen.hide();
-            // _this.pausemenu.show();
+            _this.scorescreen.hide();
+            _this.pausemenu.show();
         }
     }
 
