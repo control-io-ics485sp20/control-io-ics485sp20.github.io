@@ -239,7 +239,9 @@ function Asteroid (gameWindow, gameMap) {
 
                         // console.log("polygon hit!");
                         claimedShape.health -= _this.damage.toForcefields;
-                        console.log(claimedShape.id + ": " + claimedShape.health);
+                        if (debug) {
+                            console.log(claimedShape.id + ": " + claimedShape.health);
+                        }
                         var hit_sound = new Audio('../music/zzz.m4a');
                         hit_sound.play();
                         hit_sound.volume = 0.4;

@@ -49,7 +49,7 @@ function GameOverlay() {
             for(j in scoreobjlist) {
                 let percentage = (Math.floor((scoreobjlist[j].score/topscore) * 100)).toString() + "%";
 
-                let playerdiv = `<div class="gameoverlay-playerdiv" id="` + scoreobjlist[j].id + `-scorebar">` + scoreobjlist[j].name + `</div>`
+                let playerdiv = `<div class="gameoverlay-playerdiv" id="` + scoreobjlist[j].id + `-scorebar">(` + Math.floor(scoreobjlist[j].score) + ") " + scoreobjlist[j].name + `</div>`
                 $("#gameoverlay-scorescreen").append(playerdiv);
                 $("#" + scoreobjlist[j].id + "-scorebar").css("width", percentage);
                 $("#" + scoreobjlist[j].id + "-scorebar").css("background-color", scoreobjlist[j].color);
