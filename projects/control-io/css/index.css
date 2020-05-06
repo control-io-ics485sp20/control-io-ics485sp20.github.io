@@ -113,7 +113,38 @@
 
 .gamewindow {
     position: absolute;
-
+    z-index: -5;
     width: 100%;
     height: 100%;
+}
+
+#gameoverlay-scorescreen {
+    width: 15%;
+    z-index: 0;
+    position: absolute;
+    /* background: rgba(0, 0, 0, 0.5); */
+    padding: 20px;
+    color: white;
+    height: auto;
+    right: 0;
+    top: 0;
+}
+
+.gameoverlay-playerdiv {
+    border: 1px solid white;
+    padding: 1px;
+    padding-right: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-weight: bold;
+    text-align: right;
+    border-radius: 5px;
+}
+
+#gameoverlay-pausemenu {
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    z-index: 5;
+    background: rgba(0, 0, 0, 0.7);
 }

@@ -6,7 +6,7 @@
 
 function Asteroid (gameWindow, gameMap) {
     var _this = this
-    _this.id = (Date.now() * Math.random())
+    _this.id = (Date.now() * Math.random()).toString().replace(".", "-");
 
     _this.gamewindow = gameWindow;
     _this.gamemap = gameMap;
@@ -148,42 +148,42 @@ function Asteroid (gameWindow, gameMap) {
                     radius: _this.radius
                 }
 
-                Object.keys(players).forEach(function (index) {
+                Object.keys(game.players).forEach(function (index) {
                     var playerHitbox = {
-                        x: players[index].playerobject.assetgroup.position.x,
-                        y: players[index].playerobject.assetgroup.position.y,
-                        radius: players[index].playerobject.radius
+                        x: game.players[index].playerobject.assetgroup.position.x,
+                        y: game.players[index].playerobject.assetgroup.position.y,
+                        radius: game.players[index].playerobject.radius
                     }
 
                     if (checkHit(playerHitbox, asteroidHitbox)) {
-                        if (players[index].playerobject) {
-                            players[index].playerobject.hitbox.strokeColor = "red";
+                        if (game.players[index].playerobject) {
+                            game.players[index].playerobject.hitbox.strokeColor = "red";
                         }
                         _this.hitbox.strokeColor = "red";
 
                         //everything here should technically run
                         // console.log("asteroid colliding with ship!");
-                        resolveAsteroidToShipCollision(_this, players[index].playerobject);
+                        resolveAsteroidToShipCollision(_this, game.players[index].playerobject);
                     } else {
-                        if (players[index].playerobject) {
-                            players[index].playerobject.hitbox.strokeColor = "white";
+                        if (game.players[index].playerobject) {
+                            game.players[index].playerobject.hitbox.strokeColor = "white";
                         }
                         _this.hitbox.strokeColor = "yellow";
                     }
                 });
 
-                Object.keys(asteroids).forEach(function (index) {
+                Object.keys(game.asteroids).forEach(function (index) {
                     let asteroid2Hitbox = {
-                        id: asteroids[index].id,
-                        x: asteroids[index].assetgroup.position.x,
-                        y: asteroids[index].assetgroup.position.y,
-                        radius: asteroids[index].radius,
+                        id: game.asteroids[index].id,
+                        x: game.asteroids[index].assetgroup.position.x,
+                        y: game.asteroids[index].assetgroup.position.y,
+                        radius: game.asteroids[index].radius,
                     }
                     if (asteroidHitbox.id === asteroid2Hitbox.id) {
                         // console.log("same asteroid!");
                     } else {
                         if (checkHit(asteroidHitbox, asteroid2Hitbox)) {
-                            resolveAsteroidToAsteroidCollision(_this, asteroids[index])
+                            resolveAsteroidToAsteroidCollision(_this, game.asteroids[index])
                         } else {
                         }
                     }

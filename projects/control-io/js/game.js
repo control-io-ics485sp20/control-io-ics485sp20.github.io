@@ -2,15 +2,21 @@ function Game() {
     var _this = this
 
     console.log("[Control.IO] Starting game instance...");
-    init();
+
+    _this.reg;
+
+    _this.players = []
+    _this.asteroids = []
 
     _this.gameLobby;
     _this.gameWindow;
     _this.gameMap;
 
+    _this.overlay;
+
     _this.gameStatus;
 
-    // var gameRunning;
+    init();
 
     function init() {
         window.addEventListener('gamepadconnected', controllerConnectedEvent);
@@ -20,14 +26,15 @@ function Game() {
         // window.addEventListener("MozGamepadButtonDown", function(evt) { buttonPressed(evt, true); } );
         // window.addEventListener("MozGamepadButtonUp", function(evt) { buttonPressed(evt, false); } );
 
-        //if singleplayer selected
-        runLocalPlayer();
+        //if local singleplayer/multiplayer selected
+        runLocalGame();
 
-        //if multiplayer selected
+        //if internet multiplayer selected
         //totally optional
+        
     };
 
-    function runLocalPlayer() {
+    function runLocalGame() {
         console.log("Starting a local session...")
         _this.gameLobby = new GameLobby("Starting Local Session...");
         _this.gameStatus = "local-lobby"
@@ -51,34 +58,49 @@ function Game() {
         _this.gameWindow.init();
         _this.gameMap = new GameMap(dimensions);
 
+        _this.scorescreen = new GameOverlay();
+        _this.pausemenu = new GameOverlayPauseMenu();
+
         var ingame = new Audio('../music/ingame.wav');
         ingame.play();
 
         // initMap();
 
         addPlayers(controllers);
-        TotalPlayers = players.length;
+        TotalPlayers = game.players.length;
+
+        _this.scorescreen.init();
 
         paper.view.onFrame = function() {
-            checkGameStatus();
+            if (!_this.paused) {
+                checkGameStatus();
 
-            spawnAsteroids();
-
+                spawnAsteroids();
+    
+                updateAsteroids();
+    
+                updatePlayerScores();
+            }
             updatePlayers();
-            updateAsteroids();
+
         }
     }
 
     function spawnAsteroids() {
-        if ((asteroids.length < AsteroidSpawnCap) && ((Math.random() * 101) < AsteroidSpawnRate)) {
+        if ((game.asteroids.length < AsteroidSpawnCap) && ((Math.random() * 101) < AsteroidSpawnRate)) {
             let asteroid = new Asteroid(_this.gameWindow, _this.gameMap);
-            asteroids.push(asteroid);
+            game.asteroids.push(asteroid);
         }
     }
 
     return {
         startGame: startGame,
-        checkGameStatus: checkGameStatus
+        checkGameStatus: checkGameStatus,
+        togglePauseMenu: togglePauseMenu,
+        reg: _this.reg,
+        overlay: _this.overlay,
+        players: _this.players,
+        asteroids: _this.asteroids,
     }
 
     /**
@@ -90,9 +112,9 @@ function Game() {
         Object.keys(controllers).forEach(function (id) {
             if (controllers[id]["player"] != null) {
                 if (controllers[id]["gamepad"] != null) {
-                    players.push(new Player(_this.gameWindow, _this.gameMap, controllers[id]["player"]["color"], controllers[id]["player"]["name"], controllers[id]["gamepad"], null));
+                    game.players.push(new Player(_this.gameWindow, _this.gameMap, controllers[id]["player"]["color"], controllers[id]["player"]["name"], controllers[id]["gamepad"], null));
                 } else if (id == "keyboard1") {
-                    players.push(new Player(_this.gameWindow, _this.gameMap, controllers[id]["player"]["color"], controllers[id]["player"]["name"], null, {up: "ArrowUp", down: "ArrowDown", left: "ArrowLeft", right: "ArrowRight", abutton: "Space", bbutton: "ShiftLeft"}) );
+                    game.players.push(new Player(_this.gameWindow, _this.gameMap, controllers[id]["player"]["color"], controllers[id]["player"]["name"], null, {up: "ArrowUp", down: "ArrowDown", left: "ArrowLeft", right: "ArrowRight", abutton: "Space", bbutton: "ShiftLeft", startbutton: "Escape"}) );
                 }
                 playerCount++;
             }
@@ -100,13 +122,31 @@ function Game() {
     }
 
     function updatePlayers() {
-        players.forEach(function (player) {
-            player.updatePos();
+        game.players.forEach(function (player) {
+            player.updatePos(_this.paused);
         });
     }
 
+    function togglePauseMenu() {
+        console.log("Toggling pause menu!");
+        if (_this.paused) {
+            _this.paused = false;
+            _this.pausemenu.hide();
+            _this.scorescreen.show();
+        } else {
+            _this.paused = true;
+            _this.scorescreen.hide();
+            _this.pausemenu.show();
+
+        }
+    }
+
+    function updatePlayerScores() {
+
+    }
+
     function updateAsteroids() {
-        asteroids.forEach(function (asteroid, index, object) {
+        game.asteroids.forEach(function (asteroid, index, object) {
             var result = asteroid.updatePos();
             if (!result) {
                 object.splice(index, 1);
@@ -126,11 +166,11 @@ function Game() {
             //TODO allow for reconnect of disconnected player
         } else if (_this.gameStatus == "debug") {
             var i = 0;
-            while(i < players.length) {
-                if (players[i].gamepad == undefined) {
-                    players[i].gamepad = event.gamepad;
+            while(i < _this.players.length) {
+                if (_this.players[i].gamepad == undefined) {
+                    _this.players[i].gamepad = event.gamepad;
                     console.log("Gamepad connected and assigned to %s with index %d: %s. %d buttons, %d axes.",
-                        players[i].name, event.gamepad.index, event.gamepad.id, event.gamepad.buttons.length, event.gamepad.axes.length);
+                    _this.players[i].name, event.gamepad.index, event.gamepad.id, event.gamepad.buttons.length, event.gamepad.axes.length);
                     break;
                 }
                 i++;

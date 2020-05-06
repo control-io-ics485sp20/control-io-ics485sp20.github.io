@@ -120,7 +120,7 @@ function resolveAsteroidToPolygonCollision(object, path) {
     const yDist = nearestPoint.y - object.assetgroup.position.y;
 
     if (xVelocityDiff * xDist + yVelocityDiff * yDist >= 0) {
-        console.log("bouncing");
+        // console.log("bouncing");
 
         let lines = path.lineObjects;
 
@@ -131,7 +131,7 @@ function resolveAsteroidToPolygonCollision(object, path) {
             if (n.contains(nearestPoint)) {
                 angle = Math.atan2(lines[i].p2.y - lines[i].p1.y, lines[i].p2.x - lines[i].p1.x);
                 // console.log("contains!");
-                console.log(angle);
+                // console.log(angle);
             }
 
         }

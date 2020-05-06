@@ -5,7 +5,12 @@
  */
 function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
     var _this = this;
-    _this.id = (Date.now() * Math.random())
+    _this.id = (Date.now() * Math.random()).toString().replace(".", "-");
+
+    _this.stats = {
+        score: 0,
+        health: 100,
+    };
 
     _this.game = game;
 
@@ -134,7 +139,7 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
         }
     }
 
-    function setPoly() {
+    function attemptClaimShape() {
         if (!(_this.coordsArray == undefined || _this.coordsArray.length < 2)) {
             var completingLine = new PlayerCoordinateLine(_this.gamewindow, _this.coordsArray[0].asset.position.x, _this.coordsArray[0].asset.position.y, _this.playerobject.assetgroup.position.x, _this.playerobject.assetgroup.position.y, _this.color.normal);
 
@@ -218,7 +223,7 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
         checkGameStatus();
     }
 
-    function updatePos () {
+    function updatePos (paused) {
         var moving = false;
         if (_this.gamepad == undefined) { //if keyboard
             let ljx = 0;
@@ -261,14 +266,17 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
                 ljx = 0;
             }
             
-            moveY(ljy);
-            moveX(ljx);
-
-            if (ljx != 0 || ljy != 0) {
-                let angle = Math.atan2(ljy, ljx) * (180/Math.PI) + 90;
-                _this.playerobject.rotate(angle);
-                moving = true;
+            if (!paused) {
+                moveY(ljy);
+                moveX(ljx);
+    
+                if (ljx != 0 || ljy != 0) {
+                    let angle = Math.atan2(ljy, ljx) * (180/Math.PI) + 90;
+                    _this.playerobject.rotate(angle);
+                    moving = true;
+                }
             }
+            
 
         } else { //if gamepad
             if (_this.ALocked == false && _this.gamepad.buttons[0].pressed) {
@@ -279,10 +287,17 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
             }
 
             if (_this.BLocked == false && _this.gamepad.buttons[1].pressed) {
-                setPoly();
+                attemptClaimShape();
                 _this.BLocked = true;
             } else if (!_this.gamepad.buttons[1].pressed) {
                 _this.BLocked = false;
+            }
+
+            if (_this.StartLocked == false && _this.gamepad.buttons[9].pressed) {
+                game.togglePauseMenu();
+                _this.StartLocked = true;
+            } else if (!_this.gamepad.buttons[9].pressed) {
+                _this.StartLocked = false;
             }
 
             let ljx = 0;
@@ -291,13 +306,15 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
             ljx = refineAxisValue(_this.gamepad.axes[0]);
             ljy = refineAxisValue(_this.gamepad.axes[1]);
 
-            moveY(ljy);
-            moveX(ljx);
-
-            if (ljx != 0 || ljy != 0) {
-                let angle = Math.atan2(ljy, ljx) * (180/Math.PI) + 90;
-                _this.playerobject.rotate(angle);
-                moving = true;
+            if (!paused) {
+                moveY(ljy);
+                moveX(ljx);
+    
+                if (ljx != 0 || ljy != 0) {
+                    let angle = Math.atan2(ljy, ljx) * (180/Math.PI) + 90;
+                    _this.playerobject.rotate(angle);
+                    moving = true;
+                }
             }
         }
         if (!moving) {
@@ -318,10 +335,16 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
                     break;
                 case _this.keybinds.bbutton:
                     if (!_this.BLocked) {
-                        setPoly();
+                        attemptClaimShape();
                         _this.BLocked = true;
                     }
                     break;
+                case _this.keybinds.startbutton:
+                    if (!_this.StartLocked) {
+                        game.togglePauseMenu();
+                        _this.StartLocked = true;
+                    }
+                    break;    
                 case _this.keybinds.up:
                     _this.UpPressed = true;
                     break;
@@ -349,6 +372,9 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
                 case _this.keybinds.bbutton:
                     _this.BLocked = false;
                     break;
+                case _this.keybinds.startbutton:
+                    _this.StartLocked = false;
+                break;
                 case _this.keybinds.up:
                     _this.UpPressed = false;
                     break;
@@ -371,7 +397,10 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
         updatePos: updatePos,
         keyDown: keyDown,
         keyUp: keyUp,
+        id: _this.id,
         playerobject: _this.playerobject,
-        hitbox: _this.playerobject.hitbox
+        hitbox: _this.playerobject.hitbox,
+        name: _this.name,
+        color: _this.color,
     }
 };

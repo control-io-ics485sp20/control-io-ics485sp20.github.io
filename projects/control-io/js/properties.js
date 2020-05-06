@@ -8,8 +8,8 @@ var lobbyPlayerJoinedStatus = "Joined"
 var readyButtonText = "SPACE / A - START GAME"
 
 //object arrays to keep track of items
-var players = []; //list of all players
-var asteroids = []; //list of all asteroids
+// var players = []; //list of all players
+// var asteroids = []; //list of all asteroids
 var controllers = []; //list of all controllers
 var claimed_shapes = [];
 
@@ -18,7 +18,7 @@ var debug = true;
 var showHitboxes = true;
 
 var MinPlayers = 1;
-var TotalPlayers;
+// var TotalPlayers;
 
 var max_x = window.innerWidth;
 var min_x = 0;
@@ -33,11 +33,15 @@ var PlayerMinVelocityCap = 3;
 var PlayerMaxVelocityCap = 5;
 var PlayerMinControlPoints = 3;
 var PlayerMaxControlPoints = 6;
-var PlayerHitboxColor = 'white'; //'#5cff59'
-
+var PlayerHitboxColor = 'white';
+var PlayerSpawnBorderThreshold = 20;
 var player_radius = .07;
 
-// var keyboard_player_max_diagonal_velocity = 0.93;
+var PlayerSpawnBorderMinX = min_x - PlayerSpawnBorderThreshold;
+var PlayerSpawnBorderMaxX = max_x + PlayerSpawnBorderThreshold;
+var PlayerSpawnBorderMinY = min_y - PlayerSpawnBorderThreshold;
+var PlayerSpawnBorderMaxY = max_y + PlayerSpawnBorderThreshold;
+
 var PlayerKeyboardDiagonalVelocityCap = 0.93;
 var keyboard_player_max_linear_velocity = 1;
 // var keyboard_player_max_linear_velocity = 1;
@@ -50,9 +54,6 @@ var PlayerMaxX = max_x;
 var PlayerMinY = min_y;
 var PlayerMaxY = max_y;
 
-//used to set the bounds of the canvas.?
-// var canvas_multiplier = 335;
-
 //-------------------
 //[ A S T E R O I D ]
 //-------------------
@@ -64,15 +65,15 @@ var AsteroidMinSize = 1
 var AsteroidMaxSize = 2
 var AsteroidAllowNoSpin = false;
 var AsteroidHitboxColor = 'yellow';
-var AsteroidSpawnBorder = 20;
+var AsteroidSpawnBorderThreshold = 20;
 var AsteroidSpawnRate = 3; //3
 var AsteroidSpawnCap = 20; //20
 
 
-var GameObjectBorderMinX = min_x - AsteroidSpawnBorder;
-var GameObjectBorderMaxX = max_x + AsteroidSpawnBorder;
-var GameObjectBorderMinY = min_y - AsteroidSpawnBorder;
-var GameObjectBorderMaxY = max_y + AsteroidSpawnBorder;
+var GameObjectBorderMinX = min_x - AsteroidSpawnBorderThreshold;
+var GameObjectBorderMaxX = max_x + AsteroidSpawnBorderThreshold;
+var GameObjectBorderMinY = min_y - AsteroidSpawnBorderThreshold;
+var GameObjectBorderMaxY = max_y + AsteroidSpawnBorderThreshold;
 
 
 // var AsteroidMinX = min_x;

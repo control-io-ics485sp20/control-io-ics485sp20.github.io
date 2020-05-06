@@ -154,7 +154,6 @@ function PlayerPolygon (gamewindow, id, coordsArray, color) {
     // constructor (gamewindow, id, coordsArray, color) {
     _this.playerId = id;
 
-
     _this.asset = new paper.Path();
 
     _this.asset.lineObjects = [];
