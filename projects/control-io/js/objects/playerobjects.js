@@ -10,7 +10,7 @@ function PlayerObject(g, x, y, c) {
 
     _this.playerexhaustspritepath = ("../img/playersprites/playersprite01-base-exhaust.png");
     _this.playerspritepath = ("../img/playersprites/playersprite01-" + _this.color.replace("#", "") + ".png");
-    
+
     _this.sprite_exhaust = new paper.Raster({
         source: _this.playerexhaustspritepath,
         point: [0, 0],
@@ -146,7 +146,7 @@ class PlayerCompletingLine {
 }
 
 /*
- * A polygon that a 
+ * A polygon that a
  */
 function PlayerPolygon (gamewindow, id, coordsArray, color) {
     var _this = this;
@@ -193,6 +193,8 @@ function PlayerPolygon (gamewindow, id, coordsArray, color) {
     // gamewindow.layers["shaperaster"]
 
     claimed_shapes.push(_this);
+    var sound = new Audio('../music/claim.wav');
+    sound.play();
     // }
 
     return {
