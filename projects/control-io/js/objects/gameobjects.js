@@ -219,7 +219,7 @@ function Asteroid (gameWindow, gameMap) {
                         console.log(claimedShape.id + ": " + claimedShape.health);
                         var hit_sound = new Audio('../music/zzz.m4a');
                         hit_sound.play();
-                        hit_sound.volume = 0.6;
+                        hit_sound.volume = 0.4;
 
                         let dmgpercentage = claimedShape.health/claimedShape.maxHealth;
                         // claimedShape.asset.opacity = (dmgpercentage * (claimedShape.maxOpacity - claimedShape.minOpacity)) + claimedShape.minOpacity;
