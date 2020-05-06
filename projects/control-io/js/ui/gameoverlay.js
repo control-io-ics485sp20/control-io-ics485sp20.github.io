@@ -35,7 +35,6 @@ function GameOverlay() {
             seconds--;
           } else {
             clearInterval(timer);
-            alert("Time Out");
           }
         }
 
