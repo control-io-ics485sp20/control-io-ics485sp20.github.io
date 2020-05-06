@@ -32,7 +32,7 @@ function Game() {
 
         //if internet multiplayer selected
         //totally optional
-        
+
     };
 
     function runLocalGame() {
@@ -64,6 +64,7 @@ function Game() {
 
         var ingame = new Audio('../music/ingame.wav');
         ingame.play();
+        ingame.volume = 0.4;
 
         // initMap();
 
@@ -84,9 +85,9 @@ function Game() {
                 checkGameStatus();
 
                 spawnAsteroids();
-    
+
                 updateAsteroids();
-    
+
                 updatePlayerScores();
             }
             updatePlayers();

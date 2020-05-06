@@ -10,7 +10,7 @@ function PlayerObject(g, x, y, c) {
 
     _this.playerexhaustspritepath = ("../img/playersprites/playersprite01-base-exhaust.png");
     _this.playerspritepath = ("../img/playersprites/playersprite01-" + _this.color.replace("#", "") + ".png");
-    
+
     _this.sprite_exhaust = new paper.Raster({
         source: _this.playerexhaustspritepath,
         point: [0, 0],
@@ -203,7 +203,8 @@ function PlayerForcefield (gamewindow, id, coordsArray, color) {
     }
     // gamewindow.layers["shaperaster"] 
 
-    // game.claimedShapes.push(_this);
+    var sound = new Audio('../music/claim.wav');
+    sound.play();
     // }
 
     function removeForcefield() {
