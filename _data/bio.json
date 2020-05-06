@@ -1,12 +1,12 @@
 {
   "basics": {
     "name": "HOME",
-    "label": "Game Project",
+    "label": "CONTROL.IO",
     "picture": "https://control-io-ics485sp20.github.io/images/main.png",
     "email": "@hawaii.edu",
     "phone": "808-000-0000",
     "website": "https://control-io-ics485sp20.github.io/",
-    "summary": "control.io is a zone control game.",
+    "summary": "Welcome to our company Website!",
     "location": {
       "address": "",
       "postalCode": "96822",
