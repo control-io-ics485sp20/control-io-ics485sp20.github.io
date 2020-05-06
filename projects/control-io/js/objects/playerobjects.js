@@ -226,6 +226,8 @@ function PlayerForcefield (gamewindow, id, coordsArray, color) {
         maxOpacity: _this.maxOpacity,
         minOpacity: _this.minOpacity,
         asset: _this.asset,
+        area: _this.area,
+        playerId: _this.playerId,
         removeForcefield: removeForcefield,
     }
 }

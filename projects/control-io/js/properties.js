@@ -75,15 +75,15 @@ var AsteroidSpawnBorderThreshold = 20;
 var AsteroidSpawnRate = 5; //3
 var AsteroidSpawnCap = 20; //20
 var AsteroidDamageToPlayers = 10; //10
-var AsteroidDamageToForcefields = 7; //7
+var AsteroidDamageToForcefields = 4; //7
 
 var GameObjectBorderMinX = min_x - AsteroidSpawnBorderThreshold;
 var GameObjectBorderMaxX = max_x + AsteroidSpawnBorderThreshold;
 var GameObjectBorderMinY = min_y - AsteroidSpawnBorderThreshold;
 var GameObjectBorderMaxY = max_y + AsteroidSpawnBorderThreshold;
 
-//-------------------
+//-----------------------
 //[ F O R C E F I E L D ]
-//-------------------
+//-----------------------
 var ForcefieldHPModifier = 1;
 

@@ -163,18 +163,6 @@ function Game() {
     }
 
     function updateForcefields() {
-        // for (i in game.forcefields) {
-        //     let forcefield = game.forcefields[i];
-
-        //     if (forcefield.health < 0) {
-        //         console.log(forcefield);
-        //         forcefield.removeForcefield();
-        //         delete game.forcefields[i];
-
-        //         console.log(game.forcefields);
-        //     }
-        // }
-
         game.forcefields.forEach(function (forcefield, index, object) {
             if (forcefield.health < 0) {
                 forcefield.removeForcefield();
@@ -189,22 +177,6 @@ function Game() {
         })
     }
 
-    function togglePauseMenu() {
-        if (_this.paused) {
-            _this.paused = false;
-            _this.pausemenu.hide();
-            _this.scorescreen.show();
-        } else {
-            _this.paused = true;
-            _this.scorescreen.hide();
-            _this.pausemenu.show();
-        }
-    }
-
-    function updatePlayerScores() {
-
-    }
-
     function updateAsteroids() {
         game.asteroids.forEach(function (asteroid, index, object) {
             var result = asteroid.updatePos();
@@ -213,6 +185,47 @@ function Game() {
             }
         })
     }
+
+    function updatePlayerScores() {
+        let scoreobj = {};
+
+        for (i in game.forcefields) {
+            if (scoreobj[game.forcefields[i].playerId] == undefined) {
+                scoreobj[game.forcefields[i].playerId] = {};
+                scoreobj[game.forcefields[i].playerId].score = 0;
+            }
+
+            scoreobj[game.forcefields[i].playerId].score += game.forcefields[i].area;
+        }
+
+        if ((_this.lastforcefieldslength != game.forcefields.length) && !(_.isEqual(_this.lastScoreObj,scoreobj))) {
+            _this.lastScoreObj = scoreobj;
+            _this.lastforcefieldslength = game.forcefields.length;
+            
+            for (j in game.players) {
+                if (game.players[j].id != undefined && scoreobj[game.players[j].id] != undefined) {
+                    scoreobj[game.players[j].id].name = game.players[j].name;
+                    scoreobj[game.players[j].id].color = game.players[j].color.normal;
+                }
+            }
+
+            _this.scorescreen.update(scoreobj);
+        }
+    }
+
+    function togglePauseMenu() {
+        if (_this.paused) {
+            _this.paused = false;
+            // _this.pausemenu.hide();
+            // _this.scorescreen.show();
+        } else {
+            _this.paused = true;
+            // _this.scorescreen.hide();
+            // _this.pausemenu.show();
+        }
+    }
+
+    
 
     //Literally from https://developer.mozilla.org/en-US/docs/Web/API/Gamepad_API/Using_the_Gamepad_API
     /**
