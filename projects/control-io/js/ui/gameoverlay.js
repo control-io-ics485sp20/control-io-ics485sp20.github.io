@@ -68,10 +68,11 @@ function GameOverlay() {
 
 function GameOverlayPauseMenu() {
     var _this = this
-    var html = `<div id="gameoverlay-pausemenu">
+    var html = `<div class="pausemenu" id="gameoverlay-pausemenu">
     <div id=""></div>
-    <div id="website"></div>
-    <div id=""></div>
+    <div class="gameoverlay-pausemenu-button" id="website-link">WEBSITE</div>
+    <div class="gameoverlay-pausemenu-button" id="github-link">GITHUB</div>
+    <div class="gameoverlay-pausemenu-button" id="lobby-link">LOBBY</div>
     </div>`
     $("#window").append(html);
     $("#gameoverlay-pausemenu").css("z-index", 5);

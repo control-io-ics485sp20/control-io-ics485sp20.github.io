@@ -73,16 +73,34 @@ function Asteroid (gameWindow, gameMap) {
 
     _this.gamewindow.layers["asteroids"].addChild(_this.assetgroup);
 
-    _this.velocity = spawn(_this);
+    _this.movement = spawn(_this);
 
-    _this.velX = _this.velocity.x;
-    _this.velY = _this.velocity.y;
+    _this.velX = _this.movement.velX;
+    _this.velY = _this.movement.velY;
+
+    _this.hitbox2 = new Bodies.circle(_this.movement.x, _this.movement.y, _this.radius, {
+        friction: 0,
+        frictionStatic: 0,
+        frictionAir: 0,
+        inertia: Infinity,
+        restitution: 1,
+        // velocity: {
+        //     x: _this.velX,
+        //     x: _this.velY,
+        // },
+        render: {
+            fillStyle: "yellow",
+        }
+    });
+    Body.setVelocity(_this.hitbox2, {x: _this.velX, y: _this.velY});
+    _this.hitbox2.collisionFilter.group = matter_hitboxes;
+    World.add(engine.world, [_this.hitbox2]);
 
     function spawn() {
-        var x;
-        var y;
-        var velX;
-        var velY;
+        let x;
+        let y;
+        let velX;
+        let velY;
         //TODO spawn at edge
         var xyspawn = (Math.floor(Math.random() * 4));
         if (xyspawn == 0) { //spawn top side
@@ -118,13 +136,18 @@ function Asteroid (gameWindow, gameMap) {
         // console.log(_this.hitbox2);
         // _this.gamewindow.world.add(_this.gamewindow.engine.world, [_this.hitbox2]);
 
-        return {x: velX, y: velY};
+        return {
+            velX: velX, 
+            velY: velY,
+            x: x,
+            y: y,
+        };
     }
 
     function updatePos() {
         if (_this.assetgroup) {
-            let newx = _this.assetgroup.position.x + _this.velocity.x * _this.velocitymodifier;
-            let newy = _this.assetgroup.position.y + _this.velocity.y * _this.velocitymodifier;
+            let newx = _this.assetgroup.position.x + _this.movement.velX * _this.velocitymodifier;
+            let newy = _this.assetgroup.position.y + _this.movement.velY * _this.velocitymodifier;
 
             if (_this.gamemap.GameObjectIsOutOfBounds(newx, newy)) {
                 remove(_this.hitbox, _this.sprite, _this.assetgroup);
@@ -258,6 +281,7 @@ function Asteroid (gameWindow, gameMap) {
         hitbox: _this.hitbox,
         id: _this.id,
         velocity: _this.velocity,
+        movement: _this.movement,
         mass: _this.mass,
         gamewindow: _this.gameWindow,
     }

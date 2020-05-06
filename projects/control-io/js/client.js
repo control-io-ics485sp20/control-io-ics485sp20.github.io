@@ -15,3 +15,6 @@ console.log(clientType);
 // window.onload = function() {
 var game = new Game();
 // }
+// Render.run(render);
+// runner = Runner.create();
+// Runner.run(runner, engine);

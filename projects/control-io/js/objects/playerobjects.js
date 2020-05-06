@@ -40,6 +40,14 @@ function PlayerObject(g, x, y, c) {
         _this.hitbox.visible = false;
     }
 
+    _this.hitbox2 = new Bodies.circle(x, y, _this.hitboxRadius, {
+        render: {
+            fillStyle: _this.color,
+        }
+    });
+    _this.hitbox2.collisionFilter.group = matter_hitboxes;
+    World.add(engine.world, [_this.hitbox2]);
+
     _this.assetgroup.addChild(_this.sprite_exhaust);
     _this.assetgroup.addChild(_this.sprite);
     _this.assetgroup.addChild(_this.hitbox);
@@ -51,7 +59,7 @@ function PlayerObject(g, x, y, c) {
         // console.log(_this.assetgroup.position);
     // }
 
-    _this.velocity = {
+    _this.movement = {
         x: 0,
         y: 0
     }
@@ -66,6 +74,14 @@ function PlayerObject(g, x, y, c) {
         _this.assetgroup.position.y = ypos;
     }
 
+    function moveX(x) {
+        Body.translate(_this.hitbox2, {x: x, y: 0});
+    }
+
+    function moveY(y) {
+        Body.translate(_this.hitbox2, {x: 0, y: y});
+    }
+
     function point() {
         return _this.assetgroup.position;
     }
@@ -73,13 +89,16 @@ function PlayerObject(g, x, y, c) {
     return {
         rotate: rotate,
         move: move,
+        moveX: moveX,
+        moveY: moveY,
         point: point,
         assetgroup: _this.assetgroup,
         hitbox: _this.hitbox,
+        hitbox2: _this.hitbox2,
         sprite: _this.sprite,
         sprite_exhaust: _this.sprite_exhaust,
         radius: _this.hitboxRadius,
-        velocity: _this.velocity,
+        movement: _this.movement,
         mass: 1
     }
 }

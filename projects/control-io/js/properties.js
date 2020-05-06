@@ -35,8 +35,8 @@ var fpscap = 30;
 //---------------
 var PlayerBaseHP = 150;
 
-var PlayerMinVelocityCap = 3;
-var PlayerMaxVelocityCap = 5;
+var PlayerMinVelocityCap = 4;
+var PlayerMaxVelocityCap = 6;
 var PlayerMinControlPoints = 3;
 var PlayerMaxControlPoints = 6;
 var PlayerHitboxColor = 'white';
@@ -75,7 +75,7 @@ var AsteroidSpawnBorderThreshold = 20;
 var AsteroidSpawnRate = 5; //3
 var AsteroidSpawnCap = 20; //20
 var AsteroidDamageToPlayers = 10; //10
-var AsteroidDamageToForcefields = 4; //7
+var AsteroidDamageToForcefields = 2; //7
 
 var GameObjectBorderMinX = min_x - AsteroidSpawnBorderThreshold;
 var GameObjectBorderMaxX = max_x + AsteroidSpawnBorderThreshold;
@@ -87,3 +87,25 @@ var GameObjectBorderMaxY = max_y + AsteroidSpawnBorderThreshold;
 //-----------------------
 var ForcefieldHPModifier = 1;
 
+//MATTERJS
+//https://stackoverflow.com/questions/50959493/matter-js-for-collision-detection/55484279
+//Create engine - All the game stuff
+var Engine = Matter.Engine,
+    Render = Matter.Render,
+    Runner = Matter.Runner,
+    Composites = Matter.Composites,
+    Common = Matter.Common,
+    World = Matter.World,
+    Bodies = Matter.Bodies,
+    Body = Matter.Body;
+
+// create an engine
+var engine = Engine.create(),
+    world = engine.world;
+
+// create a renderer
+var render;
+
+var runner;
+
+matter_hitboxes = 4;

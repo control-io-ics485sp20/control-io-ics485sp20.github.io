@@ -5,6 +5,14 @@
     height: 100%;
 }
 
+#gamelobby, #gameoverlay-pausemenu {
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    padding: 20px;
+    color: white;
+}
+
 #gamelobby {
     width: 100%;
     height: 100%;
@@ -25,7 +33,7 @@
     animation: animate-roomname 4s linear infinite;
 }
 
-#gamelobby-playerlist {
+#gamelobby-playerlist, #gameoverlay-pausemenu-center {
     width: 75%;
     height: auto;
     /* border: 6px solid white; */
@@ -75,6 +83,9 @@
 
 #gamelobby-readybutton {
     background-color: rgb(158, 158, 158);
+}
+
+#gamelobby-readybutton, .gameoverlay-pausemenu-button {
     font-family: rainfall, sans-serif;
     font-weight: bold;
     font-size: 2em;

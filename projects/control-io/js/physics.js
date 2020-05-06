@@ -30,17 +30,17 @@ function checkPolygonHit(circle1, path) {
 }
 
 //https://www.youtube.com/watch?v=789weryntzM&t=1024s
-function rotate(velocity, angle) {
+function rotate(movement, angle) {
     const rotatedVelocities = {
-        x: velocity.x * Math.cos(angle) - velocity.y * Math.sin(angle),
-        y: velocity.x * Math.sin(angle) + velocity.y * Math.cos(angle)
+        velX: movement.velX * Math.cos(angle) - movement.velY * Math.sin(angle),
+        velY: movement.velX * Math.sin(angle) + movement.velY * Math.cos(angle)
     }
     return rotatedVelocities;
 }
 
 function resolveAsteroidToAsteroidCollision(object1, object2) {
-    const xVelocityDiff = object1.velocity.x - object2.velocity.x;
-    const yVelocityDiff = object1.velocity.y - object2.velocity.y;
+    const xVelocityDiff = object1.movement.velX - object2.movement.velX;
+    const yVelocityDiff = object1.movement.velY - object2.movement.velY;
 
     const xDist = object2.assetgroup.position.x - object1.assetgroup.position.x;
     const yDist = object2.assetgroup.position.y - object1.assetgroup.position.y;
@@ -51,32 +51,32 @@ function resolveAsteroidToAsteroidCollision(object1, object2) {
         const m1 = object1.mass;
         const m2 = object2.mass;
 
-        const u1 = rotate(object1.velocity, angle);
-        const u2 = rotate(object2.velocity, angle);
+        const u1 = rotate(object1.movement, angle);
+        const u2 = rotate(object2.movement, angle);
 
         const v1 = {
-            x: u1.x * (m1 - m2) / (m1 + m2) + u2.x * 2 * m2 / (m1 + m2),
-            y: u1.y
+            velX: u1.velX * (m1 - m2) / (m1 + m2) + u2.velX * 2 * m2 / (m1 + m2),
+            velY: u1.velY
         }
         const v2 = {
-            x: u2.x * (m1 - m2) / (m1 + m2) + u1.x * 2 * m2 / (m1 + m2),
-            y: u2.y
+            velX: u2.velX * (m1 - m2) / (m1 + m2) + u1.velX * 2 * m2 / (m1 + m2),
+            velY: u2.velY
         }
 
         const vFinal1 = rotate(v1, -angle);
         const vFinal2 = rotate(v2, -angle);
 
-        object1.velocity.x = vFinal1.x;
-        object1.velocity.y = vFinal1.y;
+        object1.movement.velX = vFinal1.velX;
+        object1.movement.velY = vFinal1.velY;
 
-        object2.velocity.x = vFinal2.x;
-        object2.velocity.y = vFinal2.y;
+        object2.movement.velX = vFinal2.velX;
+        object2.movement.velY = vFinal2.velY;
     }
 }
 
 function resolveAsteroidToShipCollision(object1, object2) {
-    const xVelocityDiff = object1.velocity.x - object2.velocity.x;
-    const yVelocityDiff = object1.velocity.y - object2.velocity.y;
+    const xVelocityDiff = object1.movement.velX - object2.movement.velX;
+    const yVelocityDiff = object1.movement.velY - object2.movement.velY;
 
     const xDist = object2.assetgroup.position.x - object1.assetgroup.position.x;
     const yDist = object2.assetgroup.position.y - object1.assetgroup.position.y;
@@ -87,23 +87,23 @@ function resolveAsteroidToShipCollision(object1, object2) {
         const m1 = object1.mass;
         const m2 = object2.mass;
 
-        const u1 = rotate(object1.velocity, angle);
-        const u2 = rotate(object2.velocity, angle);
+        const u1 = rotate(object1.movement, angle);
+        const u2 = rotate(object2.movement, angle);
 
         const v1 = {
-            x: u1.x * (m1 - m2) / (m1 + m2) + u2.x * 2 * m2 / (m1 + m2),
-            y: u1.y
+            velX: u1.velX * (m1 - m2) / (m1 + m2) + u2.velX * 2 * m2 / (m1 + m2),
+            velY: u1.velY
         }
         const v2 = {
-            x: u2.x * (m1 - m2) / (m1 + m2) + u1.x * 2 * m2 / (m1 + m2),
-            y: u2.y
+            velX: u2.velX * (m1 - m2) / (m1 + m2) + u1.velX * 2 * m2 / (m1 + m2),
+            velY: u2.velY
         }
 
         const vFinal1 = rotate(v1, -angle);
         const vFinal2 = rotate(v2, -angle);
 
-        object1.velocity.x = vFinal1.x;
-        object1.velocity.y = vFinal1.y;
+        object1.movement.velX = vFinal1.velX;
+        object1.movement.velY = vFinal1.velY;
 
         // object2.velocity.x = vFinal2.x;
         // object2.velocity.y = vFinal2.y;
@@ -111,8 +111,8 @@ function resolveAsteroidToShipCollision(object1, object2) {
 }
 
 function resolveAsteroidToPolygonCollision(object, path) {
-    const xVelocityDiff = object.velocity.x - 0;
-    const yVelocityDiff = object.velocity.y - 0;
+    const xVelocityDiff = object.movement.velX - 0;
+    const yVelocityDiff = object.movement.velY - 0;
 
     let nearestPoint = path.getNearestPoint([object.assetgroup.position.x, object.assetgroup.position.y]); 
 
@@ -141,21 +141,21 @@ function resolveAsteroidToPolygonCollision(object, path) {
         // // // const m2 = object2.mass;
         const m2 = 4
 
-        const u1 = rotate(object.velocity, angle);
-        const u2 = rotate({x: 0, y: 0}, angle);
+        const u1 = rotate(object.movement, angle);
+        const u2 = rotate({velX: 0, velY: 0}, angle);
 
         const v1 = {
-            x: u1.x * (m1 - m2) / (m1 + m2) + u2.x * 2 * m2 / (m1 + m2),
-            y: u1.y
+            x: u1.velX * (m1 - m2) / (m1 + m2) + u2.velX * 2 * m2 / (m1 + m2),
+            y: u1.velY
         }
 
         // const vFinal1 = rotate(v1, -angle);
 
-        // object.velocity.x = vFinal1.x;
-        // object.velocity.y = vFinal1.y;
+        // object.movement.velX = vFinal1.x;
+        // object.movement.velY = vFinal1.y;
         
-        object.velocity.x *= -1;
-        object.velocity.y *= -1;
+        object.movement.velX *= -1;
+        object.movement.velY *= -1;
 
         // object.velocity.x = u1.x;
         // object.velocity.y = u1.y;

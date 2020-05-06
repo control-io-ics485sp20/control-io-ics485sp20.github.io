@@ -81,6 +81,8 @@ function Game() {
         // _this.starttime = _this.then;
         // nextFrame();
 
+        
+
         paper.view.onFrame = function() {
             if (!_this.paused) {
                 updateForcefields();

@@ -3,19 +3,20 @@ function GameWindow(properties) {
     
     var canvas;
     var properties = properties;
-    this.layers = {};
+    _this.layers = {};
 
     // var Render = Matter.Render;
 
-    _this.Engine = Matter.Engine;
-    _this.World = Matter.World;
-    _this.Bodies = Matter.Bodies;
+    // _this.Engine = Matter.Engine;
+    // _this.World = Matter.World;
+    // _this.Bodies = Matter.Bodies;
+
+    
 
     // var engine = _this.Engine.create();
     // _this.Engine.run(engine);
 
     function init() {
-
         html = `
         <canvas id="layer_main" class="gamewindow"></canvas>
         `
@@ -26,25 +27,51 @@ function GameWindow(properties) {
         $("#layer_main").css("width", properties.width);
         $("#layer_main").css("height", properties.height);
 
-        canvas = $("#layer_main")[0];
+        canvasid = "layer_main";
 
+        // canvas = $("#layer_main")[0];
+
+        // setupMatter(canvasid);
+        setupPaper(canvasid);
+    }
+
+    function setupMatter(canvasid) {
+        render = Render.create({
+            canvas: document.getElementById(canvasid),
+            engine: engine,
+            options: {
+                width: max_x,
+                height: max_y,
+                wireframes: false,
+                background: 'blue'
+            }
+        });
+        engine.world.gravity.x = 0;
+        engine.world.gravity.y = 0;
+        Render.run(render);
+        runner = Runner.create();
+        Runner.run(runner, engine);
+    }
+
+    function setupPaper(canvasid) {
+        canvas = $("#" + canvasid)[0];
         paper.setup(canvas);
-        this.layers["background"] = (new paper.Layer({name: 'background'}));
-        this.layers["shaperaster"] = (new paper.Layer({name: 'shaperaster'}));
-        this.layers["shapes"] = (new paper.Layer({name: 'shapes'}));
-        this.layers["playersetlines"] = (new paper.Layer({name: 'playersetlines'}));
-        this.layers["playerguidinglines"] = (new paper.Layer({name: 'playerguidinglines'}));
-        this.layers["players"] = (new paper.Layer({name: 'players'}));
+        _this.layers["background"] = (new paper.Layer({name: 'background'}));
+        _this.layers["shaperaster"] = (new paper.Layer({name: 'shaperaster'}));
+        _this.layers["shapes"] = (new paper.Layer({name: 'shapes'}));
+        _this.layers["playersetlines"] = (new paper.Layer({name: 'playersetlines'}));
+        _this.layers["playerguidinglines"] = (new paper.Layer({name: 'playerguidinglines'}));
+        _this.layers["players"] = (new paper.Layer({name: 'players'}));
 
-        this.layers["asteroids"] = (new paper.Layer({name: 'asteroids'}));
+        _this.layers["asteroids"] = (new paper.Layer({name: 'asteroids'}));
 
-        this.setBackground();
+        setBackground();
     }
 
     function setBackground() {
         var background = new paper.Raster({source: '../img/background/starry_night.png', position: window.center});
         background.scale(2);
-        this.layers["background"].addChild(background);
+        _this.layers["background"].addChild(background);
     }
 
     function removePlayer() {
@@ -56,7 +83,7 @@ function GameWindow(properties) {
         removePlayer: removePlayer,
         setBackground: setBackground,
         canvas: canvas,
-        layers: this.layers,
+        layers: _this.layers,
         engine: _this.Engine,
         bodies: _this.Bodies,
         world: _this.World,

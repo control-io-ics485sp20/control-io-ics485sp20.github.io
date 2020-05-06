@@ -56,7 +56,7 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
             nextxcoord = PlayerMaxX;
         }
         _this.playerobject.assetgroup.position.x = nextxcoord;
-        _this.playerobject.velocity.x = modifier;
+        _this.playerobject.movement.velX = modifier;
         updateVisualGuidingLine(_this.playerobject.assetgroup.position.x, null, 1);
 
         _this.playerobject.sprite_exhaust.visible = true;
@@ -75,7 +75,9 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
             nextycoord = PlayerMaxY;
         }
         _this.playerobject.assetgroup.position.y = nextycoord;
-        _this.playerobject.velocity.y = modifier;
+        _this.translateY = nextycoord - _this.playerobject.assetgroup.position.y;
+        _this.playerobject.moveY(_this.translateY);
+        _this.playerobject.movement.velY = modifier;
         updateVisualGuidingLine(null, _this.playerobject.assetgroup.position.y, 1);
 
         _this.playerobject.sprite_exhaust.visible = true;
