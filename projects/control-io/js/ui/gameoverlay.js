@@ -20,6 +20,36 @@ function GameOverlay() {
             console.log(game.players[i].id);
             console.log(game.players[i].color);
         }
+
+        var html1 = `<div id="timer"></div>`
+        $("#window").append(html1);
+
+        var seconds=60;
+        var timer;
+
+        function myFunction() {
+          if(seconds < 60) {
+            document.getElementById("timer").innerHTML = seconds;
+          }
+          if (seconds >0 ) {
+            seconds--;
+          } else {
+            clearInterval(timer);
+          }
+        }
+
+        if(!timer) {
+          timer = window.setInterval(function() {
+            myFunction();
+          }, 1000);
+        }
+
+      //When a key is pressed in the text area, update the timer using myFunction
+
+      //If seconds are equal or greater than 0, countdown until 1 minute has passed
+      //Else, clear the timer and alert user of how many words they type per minute
+
+      document.getElementById("timer").innerHTML="1:00";
     }
 
     function show() {
@@ -53,7 +83,7 @@ function GameOverlay() {
                 $("#gameoverlay-scorescreen").append(playerdiv);
                 $("#" + scoreobjlist[j].id + "-scorebar").css("width", percentage);
                 $("#" + scoreobjlist[j].id + "-scorebar").css("background-color", scoreobjlist[j].color);
-                
+
             }
         }
     }
