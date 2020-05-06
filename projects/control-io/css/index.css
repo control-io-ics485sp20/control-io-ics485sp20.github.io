@@ -106,29 +106,29 @@
     user-select: none; /* Standard */
 }
 
-#link-website {
+#link-website, #endgame-link-website {
     background-color: red;
 }
 
-#link-github {
+#link-github, #endgame-link-github {
     background-color: purple;
 }
 
-#link-lobby {
+#link-lobby, #endgame-link-lobby {
     background-color: green;
 }
 
-#link-website:hover {
+#link-website:hover, #endgame-link-website:hover {
     background-color: white;
     color: red;
 }
 
-#link-github:hover {
+#link-github:hover, #endgame-link-github:hover {
     background-color: white;
     color:purple;
 }
 
-#link-lobby:hover {
+#link-lobby:hover, #endgame-link-lobby:hover {
     background-color: white;
     color: green;
 }
@@ -193,7 +193,7 @@
     right: 0;
 }
 
-#gameoverlay-pausemenu {
+#gameoverlay-pausemenu, #gameoverlay-endmenu {
     width: 100%;
     height: 100vh;
     position: fixed;

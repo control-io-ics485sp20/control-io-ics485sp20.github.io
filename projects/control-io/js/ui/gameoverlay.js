@@ -69,7 +69,6 @@ function GameOverlay() {
 function GameOverlayPauseMenu() {
     var _this = this
     var html = `<div class="pausemenu" id="gameoverlay-pausemenu">
-    <div id=""></div>
     <div class="gameoverlay-pausemenu-button" id="link-website">WEBSITE</div>
     <div class="gameoverlay-pausemenu-button" id="link-github">GITHUB</div>
     <div class="gameoverlay-pausemenu-button" id="link-lobby">EXIT</div>
@@ -102,23 +101,25 @@ function GameOverlayPauseMenu() {
 function GameOverlayEndMenu() {
     var _this = this
     var html = `<div id="gameoverlay-endmenu">
-    <div id=""></div>
-    <div id="website"></div>
-    <div id=""></div>
+    <div class="gameoverlay-pausemenu-button" id="endgame-link-website">WEBSITE</div>
+    <div class="gameoverlay-pausemenu-button" id="endgame-link-github">GITHUB</div>
+    <div class="gameoverlay-pausemenu-button" id="endgame-link-lobby">PLAY AGAIN</div>
     </div>`
     $("#window").append(html);
-    $("#gameoverlay-pausemenu").css("z-index", 5);
+    $("#gameoverlay-endmenu").css("z-index", 5);
 
-    $("#gameoverlay-pausemenu").css("visibility", "hidden");
+    $("#gameoverlay-endmenu").css("visibility", "hidden");
+
+    $("#endgame-link-website").click(game.goto_website);
+    $("#endgame-link-github").click(game.goto_github);
+    $("#endgame-link-lobby").click(game.goto_lobby);
 
     function show() {
-        console.log("Pausing!");
-        $("#gameoverlay-pausemenu").css("visibility", "visible");
+        $("#gameoverlay-endmenu").css("visibility", "visible");
     }
 
     function hide() {
-        console.log("Resuming!");
-        $("#gameoverlay-pausemenu").css("visibility", "hidden");
+        $("#gameoverlay-endmenu").css("visibility", "hidden");
     }
 
     return {

@@ -62,12 +62,13 @@ function Game() {
 
         _this.scorescreen = new GameOverlay();
         _this.pausemenu = new GameOverlayPauseMenu();
+        _this.endmenu = new GameOverlayEndMenu();
 
-        ingame = new Audio('../music/ingame.wav');
-        ingame.play();
-        ingame.volume = 0.4;
+        _this.music_ingame = new Audio('../music/ingame.wav');
+        _this.music_ingame.play();
+        _this.music_ingame.volume = 0.4;
 
-        setTimeout(finishGame,60000);
+        // setTimeout(finishGame,60000);
 
         // initMap();
 
@@ -81,13 +82,11 @@ function Game() {
         // _this.starttime = _this.then;
         // nextFrame();
 
-        
-
         paper.view.onFrame = function() {
-            if (!_this.paused) {
-                updateForcefields();
-
+            if (!_this.paused && !_this.endgame) {
                 checkGameStatus();
+
+                updateForcefields();
 
                 spawnAsteroids();
 
@@ -96,42 +95,47 @@ function Game() {
                 updatePlayerScores();
             }
             updatePlayers();
-
         }
     }
 
     function finishGame() {
-      togglePauseMenu();
-      ingame.pause();
-      var endgame = new Audio('../music/endgame.wav');
-      endgame.play();
-      endgame.volume = 0.8;
+        // window.cancelAnimationFrame(gameRunning);
+        _this.endgame = true;
+        showEndMenu();
+        // ingame.pause();
+        _this.music_ingame.volume = 0.0;
+
+        _this.music_endgame = new Audio('../music/endgame.wav');
+        _this.music_endgame.play();
+        _this.music_endgame.volume = 0.8;
+        // paper.view.pause();
+        // window.cancelAnimationFrame(_this.gameRunning);
     }
 
-    function nextFrame() {
+    // function nextFrame() {
 
-        requestAnimationFrame(nextFrame);
+    //     _this.gameRunning = requestAnimationFrame(nextFrame);
 
-        _this.now = Date.now();
-        _this.elapsed = _this.now - _this.then;
+    //     _this.now = Date.now();
+    //     _this.elapsed = _this.now - _this.then;
 
-        if (_this.elapsed > _this.fpsInterval) {
-            _this.then = _this.now - (_this.elapsed % _this.fpsInterval);
+    //     if (_this.elapsed > _this.fpsInterval) {
+    //         _this.then = _this.now - (_this.elapsed % _this.fpsInterval);
 
-            if (!_this.paused) {
-                updateForcefields();
+    //         if (!_this.paused) {
+    //             updateForcefields();
 
-                checkGameStatus();
+    //             checkGameStatus();
 
-                spawnAsteroids();
+    //             spawnAsteroids();
 
-                updateAsteroids();
+    //             updateAsteroids();
 
-                updatePlayerScores();
-            }
-            updatePlayers();
-        }
-    }
+    //             updatePlayerScores();
+    //         }
+    //         updatePlayers();
+    //     }
+    // }
 
     function spawnAsteroids() {
         if ((game.asteroids.length < AsteroidSpawnCap) && ((Math.random() * 101) < AsteroidSpawnRate)) {
@@ -191,7 +195,13 @@ function Game() {
 
     function updatePlayers() {
         game.players.forEach(function (player) {
-            player.updatePos(_this.paused);
+            player.updatePos(_this.paused, _this.endgame);
+
+            if (player.alive && player.health <= 0) {
+                player.alive = false;
+                // console.log(player.name + " is dead!");
+                playerCount--;
+            }
         });
     }
 
@@ -247,14 +257,23 @@ function Game() {
     }
 
     function togglePauseMenu() {
-        if (_this.paused) {
-            _this.paused = false;
-            _this.pausemenu.hide();
-            _this.scorescreen.show();
-        } else {
-            _this.paused = true;
-            _this.scorescreen.hide();
-            _this.pausemenu.show();
+        if (!_this.endgame) {
+            if (_this.paused) {
+                _this.paused = false;
+                _this.pausemenu.hide();
+                _this.scorescreen.show();
+            } else {
+                _this.paused = true;
+                _this.scorescreen.hide();
+                _this.pausemenu.show();
+            }
+        }
+    }
+
+    function showEndMenu() {
+        if (_this.endgame && _this.endmenushown == undefined) {
+            _this.endmenu.show();
+            _this.endmenushown = true;
         }
     }
 
@@ -312,19 +331,27 @@ function Game() {
 
         }
     }
+
+    //TODO can't seem to call checkGameStatus
+    function checkGameStatus() {
+        if (TotalPlayers == 1) { //if local singleplayer
+            if (playerCount <= 0) {
+                // window.cancelAnimationFrame(gameRunning);
+                // _this.gameend = true;
+                finishGame();
+            }
+        } else { //if local multiplayer
+            if (playerCount <= 1) { //or timer is up
+                // console.log("Game has finished!");
+                // console.log(playerCount);
+                // window.cancelAnimationFrame(gameRunning);
+                // _this.gameend = true;
+                finishGame();
+            }
+        }
+    }
 }
 
 console.log("[Control.IO] Loaded game module.")
 
-//TODO can't seem to call checkGameStatus
-function checkGameStatus() {
-    if (TotalPlayers == 1) { //if local singleplayer
-        //TODO if timer is up
-    } else { //if local multiplayer
-        if (playerCount <= 1) { //or timer is up
-            console.log("Game has finished!");
-            console.log(playerCount);
-            window.cancelAnimationFrame(gameRunning);
-        }
-    }
-}
+
