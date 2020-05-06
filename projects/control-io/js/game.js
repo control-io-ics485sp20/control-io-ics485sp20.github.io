@@ -140,10 +140,30 @@ function Game() {
         }
     }
 
+    function goto_website() {
+        // console.log("website clicked!");
+        window.open("https://control-io-ics485sp20.github.io/"); 
+
+    }
+
+    function goto_github() {
+        // console.log("github clicked!");
+        window.open("https://github.com/control-io-ics485sp20/control-io-ics485sp20.github.io/tree/master/projects/control-io"); 
+
+    }
+
+    function goto_lobby() {
+        // console.log("lobby clicked!");
+        location.reload();
+    }
+
     return {
         startGame: startGame,
         checkGameStatus: checkGameStatus,
         togglePauseMenu: togglePauseMenu,
+        goto_website: goto_website,
+        goto_github: goto_github,
+        goto_lobby: goto_lobby,
         reg: _this.reg,
         overlay: _this.overlay,
         players: _this.players,

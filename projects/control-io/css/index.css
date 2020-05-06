@@ -112,7 +112,41 @@
     margin-left: auto;
     margin-right: auto;
     margin-top: 30px;
+
+    /* https://stackoverflow.com/questions/6900124/how-to-make-certain-text-not-selectable-with-css */
+    -webkit-user-select: none; /* Safari */        
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
 }
+
+#link-website {
+    background-color: red;
+}
+
+#link-github {
+    background-color: purple;
+}
+
+#link-lobby {
+    background-color: green;
+}
+
+#link-website:hover {
+    background-color: white;
+    color: red;
+}
+
+#link-github:hover {
+    background-color: white;
+    color:purple;
+}
+
+#link-lobby:hover {
+    background-color: white;
+    color: green;
+}
+
 
 #gamelobby-readybutton-playercount {
     display: inline-block;

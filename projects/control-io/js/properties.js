@@ -11,8 +11,8 @@ var readyButtonText = "SPACE / A - START GAME"
 var controllers = []; //list of all controllers
 
 //debugging options
-var debug = true;
-var showHitboxes = true;
+var debug = false;
+var showHitboxes = false;
 
 var MinPlayers = 1;
 // var TotalPlayers;

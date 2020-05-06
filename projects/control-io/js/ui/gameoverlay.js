@@ -80,7 +80,7 @@ function GameOverlay() {
             for(j in scoreobjlist) {
                 let percentage = (Math.floor((scoreobjlist[j].score/topscore) * 100)).toString() + "%";
 
-                let playerdiv = `<div class="gameoverlay-playerdiv" id="` + scoreobjlist[j].id + `-scorebar">` + scoreobjlist[j].name + `</div>`
+                let playerdiv = `<div class="gameoverlay-playerdiv" id="` + scoreobjlist[j].id + `-scorebar">(` + Math.floor(scoreobjlist[j].score) + ") " + scoreobjlist[j].name + `</div>`
                 $("#gameoverlay-scorescreen").append(playerdiv);
                 $("#" + scoreobjlist[j].id + "-scorebar").css("width", percentage);
                 $("#" + scoreobjlist[j].id + "-scorebar").css("background-color", scoreobjlist[j].color);
@@ -101,14 +101,18 @@ function GameOverlayPauseMenu() {
     var _this = this
     var html = `<div class="pausemenu" id="gameoverlay-pausemenu">
     <div id=""></div>
-    <div class="gameoverlay-pausemenu-button" id="website-link">WEBSITE</div>
-    <div class="gameoverlay-pausemenu-button" id="github-link">GITHUB</div>
-    <div class="gameoverlay-pausemenu-button" id="lobby-link">LOBBY</div>
+    <div class="gameoverlay-pausemenu-button" id="link-website">WEBSITE</div>
+    <div class="gameoverlay-pausemenu-button" id="link-github">GITHUB</div>
+    <div class="gameoverlay-pausemenu-button" id="link-lobby">EXIT</div>
     </div>`
     $("#window").append(html);
     $("#gameoverlay-pausemenu").css("z-index", 5);
 
     $("#gameoverlay-pausemenu").css("visibility", "hidden");
+
+    $("#link-website").click(game.goto_website);
+    $("#link-github").click(game.goto_github);
+    $("#link-lobby").click(game.goto_lobby);
 
     function show() {
         console.log("Pausing!");
