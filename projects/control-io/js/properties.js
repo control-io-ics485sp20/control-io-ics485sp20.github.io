@@ -8,10 +8,7 @@ var lobbyPlayerJoinedStatus = "Joined"
 var readyButtonText = "SPACE / A - START GAME"
 
 //object arrays to keep track of items
-// var players = []; //list of all players
-// var asteroids = []; //list of all asteroids
 var controllers = []; //list of all controllers
-var claimed_shapes = [];
 
 //debugging options
 var debug = true;
@@ -19,16 +16,25 @@ var showHitboxes = true;
 
 var MinPlayers = 1;
 // var TotalPlayers;
+var zoom_percent = 100;
+var sensitivity_buffer = 0.08;
+var playerCount = 0
 
 var max_x = window.innerWidth;
 var min_x = 0;
 var max_y = window.innerHeight;
 var min_y = 0;
 
+var pi = Math.PI;
+
+var fpscap = 30;
+
 //game options
 //---------------
 //[ P L A Y E R ]
 //---------------
+var PlayerBaseHP = 150;
+
 var PlayerMinVelocityCap = 3;
 var PlayerMaxVelocityCap = 5;
 var PlayerMinControlPoints = 3;
@@ -57,7 +63,7 @@ var PlayerMaxY = max_y;
 //-------------------
 //[ A S T E R O I D ]
 //-------------------
-var AsteroidMinSpeed = 2
+var AsteroidMinSpeed = 2.5
 var AsteroidMaxSpeed = 3
 var AsteroidMinSpinSpeed = 0.5
 var AsteroidMaxSpinSpeed = 3
@@ -66,28 +72,18 @@ var AsteroidMaxSize = 2
 var AsteroidAllowNoSpin = false;
 var AsteroidHitboxColor = 'yellow';
 var AsteroidSpawnBorderThreshold = 20;
-var AsteroidSpawnRate = 3; //3
+var AsteroidSpawnRate = 5; //3
 var AsteroidSpawnCap = 20; //20
-
+var AsteroidDamageToPlayers = 10; //10
+var AsteroidDamageToForcefields = 7; //7
 
 var GameObjectBorderMinX = min_x - AsteroidSpawnBorderThreshold;
 var GameObjectBorderMaxX = max_x + AsteroidSpawnBorderThreshold;
 var GameObjectBorderMinY = min_y - AsteroidSpawnBorderThreshold;
 var GameObjectBorderMaxY = max_y + AsteroidSpawnBorderThreshold;
 
+//-------------------
+//[ F O R C E F I E L D ]
+//-------------------
+var ForcefieldHPModifier = 1;
 
-// var AsteroidMinX = min_x;
-// var AsteroidMaxX = max_x;
-// var AsteroidMinY = min_y;
-// var AsteroidMaxY = max_y;
-// var AsteroidDespawnUpperLeft = [AsteroidDespawnMinX, AsteroidDespawnMaxY];
-// var AsteroidDespawnUpperRight = [AsteroidDespawnMaxX, AsteroidDespawnMaxY];
-// var AsteroidDespawnLowerLeft = [AsteroidDespawnMinX, AsteroidDespawnMinY];
-// var AsteroidDespawnLowerRight = [AsteroidDespawnMaxX, AsteroidDespawnMinY];
-
-//canvas
-var zoom_percent = 100;
-
-var sensitivity_buffer = 0.08;
-
-var playerCount = 0

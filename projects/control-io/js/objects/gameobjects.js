@@ -6,10 +6,12 @@
 
 function Asteroid (gameWindow, gameMap) {
     var _this = this
-    _this.id = (Date.now() * Math.random()).toString().replace(".", "-");
+    _this.id = "asteroid-" + (Date.now() * Math.random()).toString().replace(".", "-");
 
     _this.gamewindow = gameWindow;
     _this.gamemap = gameMap;
+
+    _this.collisions = {};
 
     //set random size
     _this.sizemodifier = (Math.random() * (AsteroidMaxSize - AsteroidMinSize) + AsteroidMinSize);
@@ -22,6 +24,11 @@ function Asteroid (gameWindow, gameMap) {
         _this.spindirection = ((Math.floor(Math.random() * 2)) * ((Math.floor(Math.random() * 2)) == 1 ? 1 : -1));
     } else { //if spindirection excludes 0
         _this.spindirection = ((Math.floor(Math.random() * 2)) == 1 ? 1 : -1); 
+    }
+
+    _this.damage = {
+        toPlayers: (AsteroidDamageToPlayers * _this.sizemodifier * _this.velocitymodifier),
+        toForcefields: (AsteroidDamageToForcefields * _this.sizemodifier * _this.velocitymodifier),
     }
 
     _this.assetgroup = new paper.Group();
@@ -40,11 +47,8 @@ function Asteroid (gameWindow, gameMap) {
         }
     }
 
-    // console.log(asteroidModel["small"]);
-
     _this.spriteSize = asteroidModel.small.spriteBaseSize * _this.sizemodifier;
     _this.sprite = new paper.Raster({
-        // source: '../img/sprites/asteroid-min.png',
         source: asteroidModel.small.source,
         position: [0, 0],
         scaling: _this.spriteSize,
@@ -71,14 +75,8 @@ function Asteroid (gameWindow, gameMap) {
 
     _this.velocity = spawn(_this);
 
-
-
     _this.velX = _this.velocity.x;
     _this.velY = _this.velocity.y;
-    // }
-
-    // console.log("Creating asteroid!");
-
 
     function spawn() {
         var x;
@@ -148,54 +146,86 @@ function Asteroid (gameWindow, gameMap) {
                     radius: _this.radius
                 }
 
-                Object.keys(game.players).forEach(function (index) {
+                for (i in game.players) {
+                    let player = game.players[i];
+
                     var playerHitbox = {
-                        x: game.players[index].playerobject.assetgroup.position.x,
-                        y: game.players[index].playerobject.assetgroup.position.y,
-                        radius: game.players[index].playerobject.radius
+                        x: player.playerobject.assetgroup.position.x,
+                        y: player.playerobject.assetgroup.position.y,
+                        radius: player.playerobject.radius
                     }
 
                     if (checkHit(playerHitbox, asteroidHitbox)) {
-                        if (game.players[index].playerobject) {
-                            game.players[index].playerobject.hitbox.strokeColor = "red";
-                        }
-                        _this.hitbox.strokeColor = "red";
+                        if ((_this.collisions[(_this.id + "_" + player.id)] == undefined)) {
+                            if (player.hitbox) {
+                                player.hitbox.strokeColor = "red";
+                            }
+                            _this.hitbox.strokeColor = "red";
+    
+                            // console.log(_this.id + " colliding with " + player.id);
+                            // console.log(game.players.filter(obj => {return obj.id === player.id})[0].health);
+                            player.health -= _this.damage.toPlayers;
+                            console.log(player.name + ": " + player.health);
 
-                        //everything here should technically run
-                        // console.log("asteroid colliding with ship!");
-                        resolveAsteroidToShipCollision(_this, game.players[index].playerobject);
+                            resolveAsteroidToShipCollision(_this, player.playerobject);
+    
+                            _this.collisions[(_this.id + "_" + player.id)] = true;
+                        }
                     } else {
-                        if (game.players[index].playerobject) {
-                            game.players[index].playerobject.hitbox.strokeColor = "white";
+                        if (player.hitbox) {
+                            player.hitbox.strokeColor = "white";
                         }
                         _this.hitbox.strokeColor = "yellow";
-                    }
-                });
 
-                Object.keys(game.asteroids).forEach(function (index) {
+                        delete _this.collisions[(_this.id + "_" + player.id)];
+                    }
+                }
+
+                for (i in game.asteroids) {
+                    let asteroid2 = game.asteroids[i]
+                
                     let asteroid2Hitbox = {
-                        id: game.asteroids[index].id,
-                        x: game.asteroids[index].assetgroup.position.x,
-                        y: game.asteroids[index].assetgroup.position.y,
-                        radius: game.asteroids[index].radius,
+                        id: asteroid2.id,
+                        x: asteroid2.assetgroup.position.x,
+                        y: asteroid2.assetgroup.position.y,
+                        radius: asteroid2.radius,
                     }
                     if (asteroidHitbox.id === asteroid2Hitbox.id) {
-                        // console.log("same asteroid!");
                     } else {
                         if (checkHit(asteroidHitbox, asteroid2Hitbox)) {
-                            resolveAsteroidToAsteroidCollision(_this, game.asteroids[index])
+                            resolveAsteroidToAsteroidCollision(_this, asteroid2)
                         } else {
                         }
                     }
-                });
+                };
 
-                Object.keys(claimed_shapes).forEach(function (index) {
-                    if (checkPolygonHit(asteroidHitbox, claimed_shapes[index].asset)) {
+                // console.log(game.forcefields)
+
+                for (i in game.forcefields) {
+                    let claimedShape = game.forcefields[i];
+
+                // Object.keys(game.claimedShapes).forEach(function (index) {
+                    if (checkPolygonHit(asteroidHitbox, claimedShape.asset)) {
+
+                        // console.log(claimedShape);
+                        // claimedShape.removeForcefield();
+                        
+
                         // console.log("polygon hit!");
-                        resolveAsteroidToPolygonCollision(_this, claimed_shapes[index].asset)
+                        claimedShape.health -= _this.damage.toForcefields;
+                        console.log(claimedShape.id + ": " + claimedShape.health);
+
+                        let dmgpercentage = claimedShape.health/claimedShape.maxHealth;
+                        // claimedShape.asset.opacity = (dmgpercentage * (claimedShape.maxOpacity - claimedShape.minOpacity)) + claimedShape.minOpacity;
+                        claimedShape.asset.opacity = (dmgpercentage * (claimedShape.maxOpacity));
+                        // console.log(claimedShape.id + ": " + claimedShape.health);
+
+                        // console.log(claimedShape);
+
+                        resolveAsteroidToPolygonCollision(_this, claimedShape.asset)
                     } else {
                     }
-                });
+                }
             }
             return true;
         } else {

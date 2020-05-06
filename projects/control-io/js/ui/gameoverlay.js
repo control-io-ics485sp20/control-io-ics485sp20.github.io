@@ -17,7 +17,7 @@ function GameOverlay() {
             $("#" + game.players[i].id + "-playerdiv").css("width", "100%");
             $("#" + game.players[i].id + "-playerdiv").css("background-color", game.players[i].color.normal);
             // console.log(game.players[i].id);
-            // console.log(game.players[i].name);
+            console.log(game.players[i].id);
             console.log(game.players[i].color);
         }
     }
@@ -51,10 +51,12 @@ function GameOverlayPauseMenu() {
     $("#gameoverlay-pausemenu").css("visibility", "hidden");
 
     function show() {
+        console.log("Pausing!");
         $("#gameoverlay-pausemenu").css("visibility", "visible");
     }
 
     function hide() {
+        console.log("Resuming!");
         $("#gameoverlay-pausemenu").css("visibility", "hidden");
     }
 

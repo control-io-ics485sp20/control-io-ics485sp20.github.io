@@ -5,14 +5,10 @@
  */
 function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
     var _this = this;
-    _this.id = (Date.now() * Math.random()).toString().replace(".", "-");
+    _this.id = "player-" + (Date.now() * Math.random()).toString().replace(".", "-");
 
-    _this.stats = {
-        score: 0,
-        health: 100,
-    };
-
-    _this.game = game;
+    _this.score = 0;
+    _this.health = PlayerBaseHP;
 
     _this.coordsArray = [];
     _this.linesArray = [];
@@ -86,11 +82,11 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
     }
 
     function setCoord() {
-        if (debug) {
-            console.log(`player.js.Player.setCoord
-    x: ` + _this.playerobject.assetgroup.position.getX() + `
-    y: ` + _this.playerobject.assetgroup.position.getY());
-        }
+    //     if (debug) {
+    //         console.log(`player.js.Player.setCoord
+    // x: ` + _this.playerobject.assetgroup.position.getX() + `
+    // y: ` + _this.playerobject.assetgroup.position.getY());
+    //     }
         if (_this.coordsArray == undefined || _this.coordsArray.length == 0) {
             var tempPoint = new paper.Point(_this.playerobject.assetgroup.position.x, _this.playerobject.assetgroup.position.y);
             if(!checkPointIntersects(tempPoint)) {
@@ -146,7 +142,10 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
             if (!(checkLineIntersects(completingLine) || checkLineIntersects(_this.guidingLine))) {
                 setCoord();
 
-                _this.claimedShapesArray.push(new PlayerPolygon(_this.gamewindow, _this.id, _this.coordsArray, _this.color.dark));
+                // _this.claimedShapesArray.push(new PlayerPolygon(_this.gamewindow, _this.id, _this.coordsArray, _this.color.dark));
+                game.forcefields.push(new PlayerForcefield(_this.gamewindow, _this.id, _this.coordsArray, _this.color.dark));
+
+                // console.log(game.forcefields);
     
                 while (_this.coordsArray.length > 0) {
                     var n = _this.coordsArray.pop();
@@ -271,7 +270,7 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
                 moveX(ljx);
     
                 if (ljx != 0 || ljy != 0) {
-                    let angle = Math.atan2(ljy, ljx) * (180/Math.PI) + 90;
+                    let angle = Math.atan2(ljy, ljx) * (180/pi) + 90;
                     _this.playerobject.rotate(angle);
                     moving = true;
                 }
@@ -311,7 +310,7 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
                 moveX(ljx);
     
                 if (ljx != 0 || ljy != 0) {
-                    let angle = Math.atan2(ljy, ljx) * (180/Math.PI) + 90;
+                    let angle = Math.atan2(ljy, ljx) * (180/pi) + 90;
                     _this.playerobject.rotate(angle);
                     moving = true;
                 }
@@ -398,6 +397,8 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
         keyDown: keyDown,
         keyUp: keyUp,
         id: _this.id,
+        score: _this.score,
+        health: _this.health,
         playerobject: _this.playerobject,
         hitbox: _this.playerobject.hitbox,
         name: _this.name,

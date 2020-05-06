@@ -146,10 +146,11 @@ class PlayerCompletingLine {
 }
 
 /*
- * A polygon that a 
+ * A polygon that a player has claimed
  */
-function PlayerPolygon (gamewindow, id, coordsArray, color) {
+function PlayerForcefield (gamewindow, id, coordsArray, color) {
     var _this = this;
+    _this.id = "forcefield-" + (Date.now() * Math.random()).toString().replace(".", "-");
 
     // constructor (gamewindow, id, coordsArray, color) {
     _this.playerId = id;
@@ -157,6 +158,9 @@ function PlayerPolygon (gamewindow, id, coordsArray, color) {
     _this.asset = new paper.Path();
 
     _this.asset.lineObjects = [];
+
+    _this.maxOpacity = 0.7
+    _this.minOpactiy = 0.3
 
     var i = 0;
     _this.lastCoord = coordsArray[coordsArray.length - 1];
@@ -175,7 +179,7 @@ function PlayerPolygon (gamewindow, id, coordsArray, color) {
     }
     _this.asset.closed = true;
     _this.asset.fillColor = color;
-    _this.asset.opacity = 0.5;
+    _this.asset.opacity = _this.maxOpacity;
 
     if (showHitboxes == true) {
         _this.asset.strokeColor = PlayerHitboxColor;
@@ -186,16 +190,41 @@ function PlayerPolygon (gamewindow, id, coordsArray, color) {
 
     gamewindow.layers["shapes"].addChild(_this.asset);
 
+    // let hpmulti = 1.2;
+
+    _this.area = (Math.abs(_this.asset.area)/100)
+    _this.health = _this.area * ForcefieldHPModifier;
+    _this.maxHealth = _this.health;
+
     if (debug) {
         console.log("playerobjects.js.PlayerPolygon.constructor");
-        console.log("   area: " + (Math.abs(_this.asset.area)/100));
+        console.log("   area: " + _this.area);
+        console.log("   health: " + _this.health);
     }
-    // gamewindow.layers["shaperaster"]
+    // gamewindow.layers["shaperaster"] 
 
-    claimed_shapes.push(_this);
+    // game.claimedShapes.push(_this);
     // }
 
+    function removeForcefield() {
+        console.log("removing forcefield!");
+        _this.asset.remove();
+    }
+
+    this.removeForcefield = removeForcefield;
+    // game.forcefields.push(this);
+
+    // console.log(game.forcefields);
+
     return {
-        lines: _this.asset.lineObjects
+        lines: _this.asset.lineObjects,
+        id: _this.id,
+        health: _this.health,
+        maxHealth: _this.maxHealth,
+        opacity: _this.asset.opacity,
+        maxOpacity: _this.maxOpacity,
+        minOpacity: _this.minOpacity,
+        asset: _this.asset,
+        removeForcefield: removeForcefield,
     }
 }

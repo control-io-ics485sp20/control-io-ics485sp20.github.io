@@ -7,6 +7,7 @@ function Game() {
 
     _this.players = []
     _this.asteroids = []
+    _this.forcefields = []
 
     _this.gameLobby;
     _this.gameWindow;
@@ -71,8 +72,15 @@ function Game() {
 
         _this.scorescreen.init();
 
+        // _this.fpsInterval = 1000/fpscap;
+        // _this.then = Date.now();
+        // _this.starttime = _this.then;
+        // nextFrame();
+
         paper.view.onFrame = function() {
             if (!_this.paused) {
+                updateForcefields();
+
                 checkGameStatus();
 
                 spawnAsteroids();
@@ -83,6 +91,31 @@ function Game() {
             }
             updatePlayers();
 
+        }
+    }
+
+    function nextFrame() {
+
+        requestAnimationFrame(nextFrame);
+
+        _this.now = Date.now();
+        _this.elapsed = _this.now - _this.then;
+
+        if (_this.elapsed > _this.fpsInterval) {
+            _this.then = _this.now - (_this.elapsed % _this.fpsInterval);
+
+            if (!_this.paused) {
+                updateForcefields();
+    
+                checkGameStatus();
+    
+                spawnAsteroids();
+    
+                updateAsteroids();
+    
+                updatePlayerScores();
+            }
+            updatePlayers();
         }
     }
 
@@ -101,6 +134,7 @@ function Game() {
         overlay: _this.overlay,
         players: _this.players,
         asteroids: _this.asteroids,
+        forcefields: _this.forcefields,
     }
 
     /**
@@ -127,8 +161,34 @@ function Game() {
         });
     }
 
+    function updateForcefields() {
+        // for (i in game.forcefields) {
+        //     let forcefield = game.forcefields[i];
+
+        //     if (forcefield.health < 0) {
+        //         console.log(forcefield);
+        //         forcefield.removeForcefield();
+        //         delete game.forcefields[i];
+
+        //         console.log(game.forcefields);
+        //     }
+        // }
+
+        game.forcefields.forEach(function (forcefield, index, object) {
+            if (forcefield.health < 0) {
+                forcefield.removeForcefield();
+                object.splice(index, 1);
+
+                console.log(game.forcefields);
+            }
+            // var result = asteroid.updatePos();
+            // if (!result) {
+            //     object.splice(index, 1);
+            // }
+        })
+    }
+
     function togglePauseMenu() {
-        console.log("Toggling pause menu!");
         if (_this.paused) {
             _this.paused = false;
             _this.pausemenu.hide();
@@ -137,7 +197,6 @@ function Game() {
             _this.paused = true;
             _this.scorescreen.hide();
             _this.pausemenu.show();
-
         }
     }
 
