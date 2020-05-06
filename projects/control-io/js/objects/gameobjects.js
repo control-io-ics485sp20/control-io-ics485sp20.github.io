@@ -23,7 +23,7 @@ function Asteroid (gameWindow, gameMap) {
     if (AsteroidAllowNoSpin) { //if spindirection includes 0
         _this.spindirection = ((Math.floor(Math.random() * 2)) * ((Math.floor(Math.random() * 2)) == 1 ? 1 : -1));
     } else { //if spindirection excludes 0
-        _this.spindirection = ((Math.floor(Math.random() * 2)) == 1 ? 1 : -1); 
+        _this.spindirection = ((Math.floor(Math.random() * 2)) == 1 ? 1 : -1);
     }
 
     _this.damage = {
@@ -161,14 +161,17 @@ function Asteroid (gameWindow, gameMap) {
                                 player.hitbox.strokeColor = "red";
                             }
                             _this.hitbox.strokeColor = "red";
-    
+
                             // console.log(_this.id + " colliding with " + player.id);
                             // console.log(game.players.filter(obj => {return obj.id === player.id})[0].health);
                             player.health -= _this.damage.toPlayers;
                             console.log(player.name + ": " + player.health);
 
+                            var hitsound = new Audio('../music/smash.m4a');
+                            hitsound.play();
+
                             resolveAsteroidToShipCollision(_this, player.playerobject);
-    
+
                             _this.collisions[(_this.id + "_" + player.id)] = true;
                         }
                     } else {
@@ -183,7 +186,7 @@ function Asteroid (gameWindow, gameMap) {
 
                 for (i in game.asteroids) {
                     let asteroid2 = game.asteroids[i]
-                
+
                     let asteroid2Hitbox = {
                         id: asteroid2.id,
                         x: asteroid2.assetgroup.position.x,
@@ -209,11 +212,13 @@ function Asteroid (gameWindow, gameMap) {
 
                         // console.log(claimedShape);
                         // claimedShape.removeForcefield();
-                        
+
 
                         // console.log("polygon hit!");
                         claimedShape.health -= _this.damage.toForcefields;
                         console.log(claimedShape.id + ": " + claimedShape.health);
+                        var hit_sound = new Audio('../music/zzz.m4a');
+                        hit_sound.play();
 
                         let dmgpercentage = claimedShape.health/claimedShape.maxHealth;
                         // claimedShape.asset.opacity = (dmgpercentage * (claimedShape.maxOpacity - claimedShape.minOpacity)) + claimedShape.minOpacity;

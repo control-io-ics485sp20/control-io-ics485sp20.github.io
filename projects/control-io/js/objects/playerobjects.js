@@ -201,7 +201,7 @@ function PlayerForcefield (gamewindow, id, coordsArray, color) {
         console.log("   area: " + _this.area);
         console.log("   health: " + _this.health);
     }
-    // gamewindow.layers["shaperaster"] 
+    // gamewindow.layers["shaperaster"]
 
     var sound = new Audio('../music/claim.wav');
     sound.play();
@@ -210,6 +210,8 @@ function PlayerForcefield (gamewindow, id, coordsArray, color) {
     function removeForcefield() {
         console.log("removing forcefield!");
         _this.asset.remove();
+        var rm_sound = new Audio('../music/lost.m4a');
+        rm_sound.play();
     }
 
     this.removeForcefield = removeForcefield;

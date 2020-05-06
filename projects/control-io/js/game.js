@@ -1,6 +1,7 @@
 function Game() {
     var _this = this
 
+    var ingame;
     console.log("[Control.IO] Starting game instance...");
 
     _this.reg;
@@ -62,9 +63,11 @@ function Game() {
         _this.scorescreen = new GameOverlay();
         _this.pausemenu = new GameOverlayPauseMenu();
 
-        var ingame = new Audio('../music/ingame.wav');
+        ingame = new Audio('../music/ingame.wav');
         ingame.play();
         ingame.volume = 0.4;
+
+        setTimeout(finishGame,60000);
 
         // initMap();
 
@@ -95,6 +98,14 @@ function Game() {
         }
     }
 
+    function finishGame() {
+      togglePauseMenu();
+      ingame.pause();
+      var endgame = new Audio('../music/endgame.wav');
+      endgame.play();
+      endgame.volume = 0.8;
+    }
+
     function nextFrame() {
 
         requestAnimationFrame(nextFrame);
@@ -107,13 +118,13 @@ function Game() {
 
             if (!_this.paused) {
                 updateForcefields();
-    
+
                 checkGameStatus();
-    
+
                 spawnAsteroids();
-    
+
                 updateAsteroids();
-    
+
                 updatePlayerScores();
             }
             updatePlayers();

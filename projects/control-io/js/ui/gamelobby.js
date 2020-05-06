@@ -7,6 +7,7 @@ function GameLobby(roomName) {
     var ButtonPressedStatus = {}
     var controllerCheck;
     var counter = 3;
+    var on = 0;
     // AButtonPressed = {}
     var availablePlayers = [
         { "name": "Player 1", "color": "#ff3c00" },
@@ -117,13 +118,16 @@ function GameLobby(roomName) {
 
         // }
         if (joinedPlayers >= MinPlayers) {
-            console.log("Starting game!");
-            var timer = new Audio('../music/countdown_trim.wav');
-            timer.play();
-            changeName();
-            setTimeout(changeName,1000);
-            setTimeout(changeName,2000);
-            setTimeout(runGame,3000);
+          if (on === 0) {
+            on ++;
+          console.log("Starting game!");
+          var timer = new Audio('../music/countdown_trim.wav');
+          timer.play();
+          changeName();
+          setTimeout(changeName, 1000);
+          setTimeout(changeName, 2000);
+          setTimeout(runGame, 3000);
+          }
         }
     }
 
