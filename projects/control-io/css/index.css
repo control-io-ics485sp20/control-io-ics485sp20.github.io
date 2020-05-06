@@ -5,7 +5,7 @@
     height: 100%;
 }
 
-#gamelobby, #gameoverlay-pausemenu {
+#gamelobby, #gameoverlay-pausemenu, #gameoverlay-endmenu {
     width: 100%;
     height: 100%;
     z-index: 0;

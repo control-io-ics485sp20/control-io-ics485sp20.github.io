@@ -81,6 +81,9 @@ function Game() {
         // _this.then = Date.now();
         // _this.starttime = _this.then;
         // nextFrame();
+        _this.timer = startTimer(60, null, function() {
+            finishGame();
+        })
 
         paper.view.onFrame = function() {
             if (!_this.paused && !_this.endgame) {
@@ -262,10 +265,14 @@ function Game() {
                 _this.paused = false;
                 _this.pausemenu.hide();
                 _this.scorescreen.show();
+                _this.timer.resume();
+                _this.music_ingame.play();
             } else {
                 _this.paused = true;
                 _this.scorescreen.hide();
                 _this.pausemenu.show();
+                _this.timer.pause();
+                _this.music_ingame.pause();
             }
         }
     }
