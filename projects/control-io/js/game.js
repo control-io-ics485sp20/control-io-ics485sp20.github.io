@@ -73,7 +73,7 @@ function Game() {
         // initMap();
 
         addPlayers(controllers);
-        TotalPlayers = game.players.length;
+        _this.TotalPlayers = playerCount;
 
         _this.scorescreen.init();
 
@@ -81,7 +81,7 @@ function Game() {
         // _this.then = Date.now();
         // _this.starttime = _this.then;
         // nextFrame();
-        _this.timer = startTimer(60, null, function() {
+        _this.timer = startTimer(60, "timer", function() {
             finishGame();
         })
 
@@ -103,6 +103,7 @@ function Game() {
 
     function finishGame() {
         // window.cancelAnimationFrame(gameRunning);
+        _this.timer.pause();
         _this.endgame = true;
         showEndMenu();
         // ingame.pause();
@@ -149,13 +150,13 @@ function Game() {
 
     function goto_website() {
         // console.log("website clicked!");
-        window.open("https://control-io-ics485sp20.github.io/"); 
+        window.open("https://control-io-ics485sp20.github.io/", _blank); 
 
     }
 
     function goto_github() {
         // console.log("github clicked!");
-        window.open("https://github.com/control-io-ics485sp20/control-io-ics485sp20.github.io/tree/master/projects/control-io"); 
+        window.open("https://github.com/control-io-ics485sp20/control-io-ics485sp20.github.io/tree/master/projects/control-io", _blank); 
 
     }
 
@@ -176,6 +177,8 @@ function Game() {
         players: _this.players,
         asteroids: _this.asteroids,
         forcefields: _this.forcefields,
+        playerCount: _this.playerCount,
+        totalPlayers: _this.totalPlayers,
     }
 
     /**
@@ -201,9 +204,10 @@ function Game() {
             player.updatePos(_this.paused, _this.endgame);
 
             if (player.alive && player.health <= 0) {
+                player.kill();
                 player.alive = false;
                 // console.log(player.name + " is dead!");
-                playerCount--;
+                // playerCount -= 1;
             }
         });
     }
@@ -341,18 +345,13 @@ function Game() {
 
     //TODO can't seem to call checkGameStatus
     function checkGameStatus() {
-        if (TotalPlayers == 1) { //if local singleplayer
+        // console.log("checking game");
+        if (_this.TotalPlayers == 1) { //if local singleplayer
             if (playerCount <= 0) {
-                // window.cancelAnimationFrame(gameRunning);
-                // _this.gameend = true;
                 finishGame();
             }
         } else { //if local multiplayer
             if (playerCount <= 1) { //or timer is up
-                // console.log("Game has finished!");
-                // console.log(playerCount);
-                // window.cancelAnimationFrame(gameRunning);
-                // _this.gameend = true;
                 finishGame();
             }
         }

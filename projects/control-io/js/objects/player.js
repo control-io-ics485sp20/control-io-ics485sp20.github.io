@@ -9,6 +9,7 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
 
     _this.alive = true;
     _this.score = 0;
+    _this.penalties = 0;
     _this.health = PlayerBaseHP;
 
     _this.coordsArray = [];
@@ -18,6 +19,8 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
     _this.gamewindow = gamewindow;
 
     _this.name = name;
+
+    _this.lastHitBy = "";
 
     _this.color = {
         normal: color,
@@ -133,6 +136,9 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
         if (_this.playerobject.assetgroup != null) {
             _this.playerobject.assetgroup.remove();
         }
+        if (_this.playerobject.hitbox != null) {
+            _this.playerobject.hitbox.remove();
+        }
         if (_this.guidingLine != null && _this.guidingLine.asset != null) {
             _this.guidingLine.asset.remove();
         }
@@ -219,113 +225,117 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
         }
     }
 
-    function die(reason, participant) {
+    function kill() {
+        let reason = _this.lastHitBy
         if (reason == "border") {
             console.log(_this.name + " ran into a wall and died!");
         } else if (reason == "pkill") {
+            //get participant
             console.log(_this.name + " was slain!");
+        } else if (reason == "asteroid") {
+            _this.penalties += -50;
+            console.log(_this.name + " crashed into an asteroid!");
         } else {
             console.log(_this.name + " died!");
         }
-        _this.removeVisuals();
-        game.playerCount -= 1;
-        checkGameStatus();
+        _this.alive = false;
+        removeVisuals();
+        playerCount -= 1;
+        // checkGameStatus();
     }
 
     function updatePos (paused, endgame) {
-        if (!paused && !endgame) {
-            var moving = false;
-            if (_this.gamepad == undefined) { //if keyboard
-                let ljx = 0;
-                let ljy = 0;
+        var moving = false;
+        if (_this.gamepad == undefined) { //if keyboard
+            let ljx = 0;
+            let ljy = 0;
 
-                if (_this.UpPressed) {
-                    ljy = -1;
-                }
-                if (_this.DownPressed) {
-                    ljy = 1;
-                }
-                if (_this.LeftPressed) {
-                    ljx = -1;
-                }
-                if (_this.RightPressed) {
-                    ljx = 1;
-                }
-
-                if (_this.UpPressed && _this.LeftPressed) {
-                    ljx = -PlayerKeyboardDiagonalVelocityCap;
-                    ljy = -PlayerKeyboardDiagonalVelocityCap;
-                }
-                if (_this.UpPressed && _this.RightPressed) {
-                    ljx = PlayerKeyboardDiagonalVelocityCap;
-                    ljy = -PlayerKeyboardDiagonalVelocityCap;
-                }
-                if (_this.DownPressed && _this.LeftPressed) {
-                    ljx = -PlayerKeyboardDiagonalVelocityCap;
-                    ljy = PlayerKeyboardDiagonalVelocityCap;
-                }
-                if (_this.DownPressed && _this.RightPressed) {
-                    ljx = PlayerKeyboardDiagonalVelocityCap;
-                    ljy = PlayerKeyboardDiagonalVelocityCap;
-                }
-
-                if (_this.UpPressed && _this.DownPressed) {
-                    ljy = 0;
-                }
-                if (_this.LeftPressed && _this.RightPressed) {
-                    ljx = 0;
-                }
-
-                    moveY(ljy);
-                    moveX(ljx);
-
-                    if (ljx != 0 || ljy != 0) {
-                        let angle = Math.atan2(ljy, ljx) * (180/pi) + 90;
-                        _this.playerobject.rotate(angle);
-                        moving = true;
-                    }
-
-
-            } else { //if gamepad
-                if (_this.ALocked == false && _this.gamepad.buttons[0].pressed) {
-                    setCoord();
-                    _this.ALocked = true;
-                } else if (!_this.gamepad.buttons[0].pressed) {
-                    _this.ALocked = false;
-                }
-
-                if (_this.BLocked == false && _this.gamepad.buttons[1].pressed) {
-                    attemptClaimShape();
-                    _this.BLocked = true;
-                } else if (!_this.gamepad.buttons[1].pressed) {
-                    _this.BLocked = false;
-                }
-
-                if (_this.StartLocked == false && _this.gamepad.buttons[9].pressed) {
-                    game.togglePauseMenu();
-                    _this.StartLocked = true;
-                } else if (!_this.gamepad.buttons[9].pressed) {
-                    _this.StartLocked = false;
-                }
-
-                let ljx = 0;
-                let ljy = 0;
-
-                ljx = refineAxisValue(_this.gamepad.axes[0]);
-                ljy = refineAxisValue(_this.gamepad.axes[1]);
-
-                    moveY(ljy);
-                    moveX(ljx);
-
-                    if (ljx != 0 || ljy != 0) {
-                        let angle = Math.atan2(ljy, ljx) * (180/pi) + 90;
-                        _this.playerobject.rotate(angle);
-                        moving = true;
-                    }
+            if (_this.UpPressed) {
+                ljy = -1;
             }
-            if (!moving) {
-                _this.playerobject.sprite_exhaust.visible = false;
+            if (_this.DownPressed) {
+                ljy = 1;
             }
+            if (_this.LeftPressed) {
+                ljx = -1;
+            }
+            if (_this.RightPressed) {
+                ljx = 1;
+            }
+
+            if (_this.UpPressed && _this.LeftPressed) {
+                ljx = -PlayerKeyboardDiagonalVelocityCap;
+                ljy = -PlayerKeyboardDiagonalVelocityCap;
+            }
+            if (_this.UpPressed && _this.RightPressed) {
+                ljx = PlayerKeyboardDiagonalVelocityCap;
+                ljy = -PlayerKeyboardDiagonalVelocityCap;
+            }
+            if (_this.DownPressed && _this.LeftPressed) {
+                ljx = -PlayerKeyboardDiagonalVelocityCap;
+                ljy = PlayerKeyboardDiagonalVelocityCap;
+            }
+            if (_this.DownPressed && _this.RightPressed) {
+                ljx = PlayerKeyboardDiagonalVelocityCap;
+                ljy = PlayerKeyboardDiagonalVelocityCap;
+            }
+
+            if (_this.UpPressed && _this.DownPressed) {
+                ljy = 0;
+            }
+            if (_this.LeftPressed && _this.RightPressed) {
+                ljx = 0;
+            }
+
+            if (!paused && !endgame && _this.alive) {
+                moveY(ljy);
+                moveX(ljx);
+                if (ljx != 0 || ljy != 0) {
+                    let angle = Math.atan2(ljy, ljx) * (180/pi) + 90;
+                    _this.playerobject.rotate(angle);
+                    moving = true;
+                }
+            }
+        } else { //if gamepad
+            if (_this.ALocked == false && _this.gamepad.buttons[0].pressed) {
+                setCoord();
+                _this.ALocked = true;
+            } else if (!_this.gamepad.buttons[0].pressed) {
+                _this.ALocked = false;
+            }
+
+            if (_this.BLocked == false && _this.gamepad.buttons[1].pressed) {
+                attemptClaimShape();
+                _this.BLocked = true;
+            } else if (!_this.gamepad.buttons[1].pressed) {
+                _this.BLocked = false;
+            }
+
+            if (_this.StartLocked == false && _this.gamepad.buttons[9].pressed) {
+                game.togglePauseMenu();
+                _this.StartLocked = true;
+            } else if (!_this.gamepad.buttons[9].pressed) {
+                _this.StartLocked = false;
+            }
+
+            let ljx = 0;
+            let ljy = 0;
+
+            ljx = refineAxisValue(_this.gamepad.axes[0]);
+            ljy = refineAxisValue(_this.gamepad.axes[1]);
+
+            if (!paused && !endgame && _this.alive) {
+                moveY(ljy);
+                moveX(ljx);
+                if (ljx != 0 || ljy != 0) {
+                    let angle = Math.atan2(ljy, ljx) * (180/pi) + 90;
+                    _this.playerobject.rotate(angle);
+                    moving = true;
+                }
+            }
+        }
+        if (!moving) {
+            _this.playerobject.sprite_exhaust.visible = false;
         }
 
         // _this.checkOutOfBounds();
@@ -404,6 +414,7 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
         updatePos: updatePos,
         keyDown: keyDown,
         keyUp: keyUp,
+        kill: kill,
         id: _this.id,
         score: _this.score,
         health: _this.health,
@@ -412,5 +423,6 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
         hitbox: _this.playerobject.hitbox,
         name: _this.name,
         color: _this.color,
+        lastHitBy: _this.lastHitBy,
     }
 };

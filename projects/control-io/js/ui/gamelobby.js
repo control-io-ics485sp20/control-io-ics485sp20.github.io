@@ -58,6 +58,9 @@ function GameLobby(roomName) {
             controllers[id]["gamepad"] = event.gamepad;
 
             ButtonPressedStatus[id] = {}
+
+            var audio_in = new Audio('../music/in.wav');
+            audio_in.play();
         }
     }
 
@@ -72,6 +75,9 @@ function GameLobby(roomName) {
         }
 
         delete controllers[id];
+
+        var audio_in = new Audio('../music/in.wav');
+        audio_in.play();
     }
 
     function controllerLock(id, message) {

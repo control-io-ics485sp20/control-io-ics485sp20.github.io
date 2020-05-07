@@ -171,39 +171,41 @@ function Asteroid (gameWindow, gameMap) {
 
                 for (i in game.players) {
                     let player = game.players[i];
+                    if (player.alive) {
+                        var playerHitbox = {
+                            x: player.playerobject.assetgroup.position.x,
+                            y: player.playerobject.assetgroup.position.y,
+                            radius: player.playerobject.radius
+                        }
 
-                    var playerHitbox = {
-                        x: player.playerobject.assetgroup.position.x,
-                        y: player.playerobject.assetgroup.position.y,
-                        radius: player.playerobject.radius
-                    }
+                        if (checkHit(playerHitbox, asteroidHitbox)) {
+                            if ((_this.collisions[(_this.id + "_" + player.id)] == undefined)) {
+                                if (player.hitbox) {
+                                    player.hitbox.strokeColor = "red";
+                                }
+                                _this.hitbox.strokeColor = "red";
 
-                    if (checkHit(playerHitbox, asteroidHitbox)) {
-                        if ((_this.collisions[(_this.id + "_" + player.id)] == undefined)) {
-                            if (player.hitbox) {
-                                player.hitbox.strokeColor = "red";
+                                // console.log(_this.id + " colliding with " + player.id);
+                                // console.log(game.players.filter(obj => {return obj.id === player.id})[0].health);
+                                player.health -= _this.damage.toPlayers;
+                                player.lastHitBy = "asteroid";
+                                console.log(player.name + ": " + player.health);
+
+                                var hitsound = new Audio('../music/smash.m4a');
+                                hitsound.play();
+
+                                resolveAsteroidToShipCollision(_this, player.playerobject);
+
+                                _this.collisions[(_this.id + "_" + player.id)] = true;
                             }
-                            _this.hitbox.strokeColor = "red";
+                        } else {
+                            if (player.hitbox) {
+                                player.hitbox.strokeColor = "white";
+                            }
+                            _this.hitbox.strokeColor = "yellow";
 
-                            // console.log(_this.id + " colliding with " + player.id);
-                            // console.log(game.players.filter(obj => {return obj.id === player.id})[0].health);
-                            player.health -= _this.damage.toPlayers;
-                            console.log(player.name + ": " + player.health);
-
-                            var hitsound = new Audio('../music/smash.m4a');
-                            hitsound.play();
-
-                            resolveAsteroidToShipCollision(_this, player.playerobject);
-
-                            _this.collisions[(_this.id + "_" + player.id)] = true;
+                            delete _this.collisions[(_this.id + "_" + player.id)];
                         }
-                    } else {
-                        if (player.hitbox) {
-                            player.hitbox.strokeColor = "white";
-                        }
-                        _this.hitbox.strokeColor = "yellow";
-
-                        delete _this.collisions[(_this.id + "_" + player.id)];
                     }
                 }
 
@@ -230,14 +232,7 @@ function Asteroid (gameWindow, gameMap) {
                 for (i in game.forcefields) {
                     let claimedShape = game.forcefields[i];
 
-                // Object.keys(game.claimedShapes).forEach(function (index) {
                     if (checkPolygonHit(asteroidHitbox, claimedShape.asset)) {
-
-                        // console.log(claimedShape);
-                        // claimedShape.removeForcefield();
-
-
-                        // console.log("polygon hit!");
                         claimedShape.health -= _this.damage.toForcefields;
                         if (debug) {
                             console.log(claimedShape.id + ": " + claimedShape.health);
@@ -247,11 +242,7 @@ function Asteroid (gameWindow, gameMap) {
                         hit_sound.volume = 0.4;
 
                         let dmgpercentage = claimedShape.health/claimedShape.maxHealth;
-                        // claimedShape.asset.opacity = (dmgpercentage * (claimedShape.maxOpacity - claimedShape.minOpacity)) + claimedShape.minOpacity;
                         claimedShape.asset.opacity = (dmgpercentage * (claimedShape.maxOpacity));
-                        // console.log(claimedShape.id + ": " + claimedShape.health);
-
-                        // console.log(claimedShape);
 
                         resolveAsteroidToPolygonCollision(_this, claimedShape.asset)
                     } else {

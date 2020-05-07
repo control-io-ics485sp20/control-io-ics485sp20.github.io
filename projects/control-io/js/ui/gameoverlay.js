@@ -24,32 +24,32 @@ function GameOverlay() {
         var html1 = `<div id="timer"></div>`
         $("#window").append(html1);
 
-        var seconds=60;
-        var timer;
+        // var seconds=60;
+        // var timer;
 
-        function myFunction() {
-          if(seconds < 60) {
-            document.getElementById("timer").innerHTML = seconds;
-          }
-          if (seconds >0 ) {
-            seconds--;
-          } else {
-            clearInterval(timer);
-          }
-        }
+        // function myFunction() {
+        //   if(seconds < 60) {
+        //     document.getElementById("timer").innerHTML = seconds;
+        //   }
+        //   if (seconds >0 ) {
+        //     seconds--;
+        //   } else {
+        //     clearInterval(timer);
+        //   }
+        // }
 
-        if(!timer) {
-          timer = window.setInterval(function() {
-            myFunction();
-          }, 1000);
-        }
+        // if(!timer) {
+        //   timer = window.setInterval(function() {
+        //     myFunction();
+        //   }, 1000);
+        // }
 
       //When a key is pressed in the text area, update the timer using myFunction
 
       //If seconds are equal or greater than 0, countdown until 1 minute has passed
       //Else, clear the timer and alert user of how many words they type per minute
 
-      document.getElementById("timer").innerHTML="1:00";
+    //   document.getElementById("timer").innerHTML="1:00";
     }
 
     function show() {
@@ -99,7 +99,7 @@ function GameOverlay() {
 function GameOverlayPauseMenu() {
     var _this = this
     var html = `<div class="pausemenu" id="gameoverlay-pausemenu">
-    <div class="gameoverlay-pausemenu-button" id="link-website">WEBSITE</div>
+    <div class="gameoverlay-pausemenu-button" id="link-website">ABOUT US</div>
     <div class="gameoverlay-pausemenu-button" id="link-github">GITHUB</div>
     <div class="gameoverlay-pausemenu-button" id="link-lobby">EXIT</div>
     </div>`
@@ -131,7 +131,7 @@ function GameOverlayPauseMenu() {
 function GameOverlayEndMenu() {
     var _this = this
     var html = `<div id="gameoverlay-endmenu">
-    <div class="gameoverlay-pausemenu-button" id="endgame-link-website">WEBSITE</div>
+    <div class="gameoverlay-pausemenu-button" id="endgame-link-website">ABOUT US</div>
     <div class="gameoverlay-pausemenu-button" id="endgame-link-github">GITHUB</div>
     <div class="gameoverlay-pausemenu-button" id="endgame-link-lobby">PLAY AGAIN</div>
     </div>`
