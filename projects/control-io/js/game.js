@@ -103,7 +103,7 @@ function Game() {
 
     function finishGame() {
         // window.cancelAnimationFrame(gameRunning);
-        _this.timer.pause();
+        // _this.timer.pause();
         _this.endgame = true;
         showEndMenu();
         // ingame.pause();
