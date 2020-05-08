@@ -5,17 +5,6 @@ function GameWindow(properties) {
     var properties = properties;
     _this.layers = {};
 
-    // var Render = Matter.Render;
-
-    // _this.Engine = Matter.Engine;
-    // _this.World = Matter.World;
-    // _this.Bodies = Matter.Bodies;
-
-    
-
-    // var engine = _this.Engine.create();
-    // _this.Engine.run(engine);
-
     function init() {
         html = `
         <canvas id="layer_main" class="gamewindow"></canvas>
@@ -29,21 +18,80 @@ function GameWindow(properties) {
 
         canvasid = "layer_main";
 
-        // canvas = $("#layer_main")[0];
-
-        // setupMatter(canvasid);
-        setupPaper(canvasid);
+        if (renderEngine == "paper") {
+            setupPaper(canvasid);
+        } else if (renderEngine == "matter") {
+            setupMatter(canvasid);
+        }
     }
 
     function setupMatter(canvasid) {
+        canvas = document.getElementById(canvasid);
+        canvas.width = max_x;
+        canvas.height = max_y;
+
+        engine = Engine.create()
+        world = engine.world;
+
+        Events.on(engine, 'collisionStart', function(event) {
+            var pairs = event.pairs;
+
+            for (var i = 0; i < pairs.length; i++) {
+                var pair = pairs[i];
+
+                let oA = pair.bodyA.objectType;
+                let oB = pair.bodyB.objectType;
+
+                if ((oA == "asteroid" && oB == "ship") || (oB == "asteroid" && oA == "ship")) {
+                    if (oA == "asteroid") {
+                        console.log(pair.bodyA.id + " colliding with ship owned by " + pair.bodyB.ownerId);
+                    } else {
+                        console.log(pair.bodyB.id + " colliding with ship owned by " + pair.bodyA.ownerId);
+                    }
+                    SFX.hitsound.play();
+                    // _this.hitsound = new Audio('../music/smash.m4a');
+                    // _this.hitsound.play();
+                }
+
+                if ((oA == "asteroid" && oB == "forcefield_projector") || (oB == "asteroid" && oA == "forcefield_projector")) {
+                    if (oA == "asteroid") {
+                        console.log(pair.bodyA.id + " colliding with forcefield projector owned by " + pair.bodyB.ownerId);
+                    } else {
+                        console.log(pair.bodyB.id + " colliding with forcefield projector owned by " + pair.bodyA.ownerId);
+                    }
+                    SFX.hit_sound.play();
+                }
+
+                if ((oA == "asteroid" && oB == "asteroid_border") || (oB == "asteroid" && oA == "asteroid_border")) {
+                    // console.log("asteroid despawning!");
+                    // console.log(game.asteroids);
+                    if (oA == "asteroid") {
+                        // console.log(pair.bodyA.id)
+                        var result = asteroids.find(obj => {
+                            return obj.id === pair.bodyA.id;
+                        })
+                        result.despawn();
+                        asteroids = _.without(asteroids, _.findWhere(asteroids, {id: pair.bodyA.id}));
+                    } else {
+                        var result = asteroids.find(obj => {
+                            return obj.id === pair.bodyB.id;
+                        })
+                        result.despawn();
+                        asteroids = _.without(asteroids, _.findWhere(asteroids, {id: pair.bodyB.id}));
+                    }
+                }
+            }
+        });
+
         render = Render.create({
             canvas: document.getElementById(canvasid),
+            context: canvas.getContext('2d'),
             engine: engine,
             options: {
                 width: max_x,
                 height: max_y,
                 wireframes: false,
-                background: 'blue'
+                background: '../img/background/starry_night.png'
             }
         });
         engine.world.gravity.x = 0;
@@ -51,6 +99,9 @@ function GameWindow(properties) {
         Render.run(render);
         runner = Runner.create();
         Runner.run(runner, engine);
+
+        var playerWalls = new BorderConstraint(20, 200, 'player_border', 'rgba(255, 0, 0, 0.1)', 0, shipBarrierCategory, shipCategory);
+        var asteroidWalls = new BorderConstraint(20, -100, 'asteroid_border', 'rgba(255, 0, 0, 0.1)', 0, asteroidBarrierCategory, asteroidCategory);
     }
 
     function setupPaper(canvasid) {

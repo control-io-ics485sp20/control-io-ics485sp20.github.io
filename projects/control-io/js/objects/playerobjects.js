@@ -1,67 +1,90 @@
-function PlayerObject(g, x, y, c) {
+function PlayerObject(ownerId, g, x, y, c) {
     var _this = this;
+    _this.ownerId = ownerId;
 
     _this.gamewindow = g;
     _this.color = c;
 
-    _this.assetgroup = new paper.Group();
-    _this.assetgroup.applyMatrix = false;
-    _this.assetgroup.position = [x, y];
-
     _this.playerexhaustspritepath = ("../img/playersprites/playersprite01-base-exhaust.png");
     _this.playerspritepath = ("../img/playersprites/playersprite01-" + _this.color.replace("#", "") + ".png");
-
-    _this.sprite_exhaust = new paper.Raster({
-        source: _this.playerexhaustspritepath,
-        point: [0, 0],
-        scaling: 0.08,
-        applyMatrix: false,
-        width: _this.width,
-        height: _this.height
-    });
-
-    _this.sprite = new paper.Raster({
-        source: _this.playerspritepath,
-        point: [0, 0],
-        scaling: 0.08,
-        applyMatrix: false,
-        width: _this.width,
-        height: _this.height
-    });
-
     _this.hitboxRadius = 11;
-    _this.hitbox = new paper.Path.Circle({
-        radius: _this.hitboxRadius,
-        applyMatrix: false
-    });
-    if (showHitboxes == true) {
-        _this.hitbox.strokeColor = PlayerHitboxColor;
-    } else {
-        _this.hitbox.visible = false;
-    }
 
-    _this.hitbox2 = new Bodies.circle(x, y, _this.hitboxRadius, {
-        render: {
-            fillStyle: _this.color,
+    if (renderEngine == "paper") {
+        _this.assetgroup = new paper.Group();
+        _this.assetgroup.applyMatrix = false;
+        _this.assetgroup.position = [x, y];
+        _this.sprite_exhaust = new paper.Raster({
+            source: _this.playerexhaustspritepath,
+            point: [0, 0],
+            scaling: 0.08,
+            applyMatrix: false,
+            width: _this.width,
+            height: _this.height
+        });
+        _this.sprite = new paper.Raster({
+            source: _this.playerspritepath,
+            point: [0, 0],
+            scaling: 0.08,
+            applyMatrix: false,
+            width: _this.width,
+            height: _this.height
+        });
+        _this.hitbox = new paper.Path.Circle({
+            radius: _this.hitboxRadius,
+            applyMatrix: false
+        });
+        if (showHitboxes == true) {
+            _this.hitbox.strokeColor = PlayerHitboxColor;
+        } else {
+            _this.hitbox.visible = false;
         }
-    });
-    _this.hitbox2.collisionFilter.group = matter_hitboxes;
-    World.add(engine.world, [_this.hitbox2]);
-
-    _this.assetgroup.addChild(_this.sprite_exhaust);
-    _this.assetgroup.addChild(_this.sprite);
-    _this.assetgroup.addChild(_this.hitbox);
-
-    _this.gamewindow.layers["players"].addChild(_this.assetgroup);
-    // g.layers["players"].addChild(_this.assetgroup);
-
-    _this.item = new paper.Item();
-        // console.log(_this.assetgroup.position);
-    // }
+        _this.assetgroup.addChild(_this.sprite_exhaust);
+        _this.assetgroup.addChild(_this.sprite);
+        _this.assetgroup.addChild(_this.hitbox);
+        _this.gamewindow.layers["players"].addChild(_this.assetgroup);
+        _this.item = new paper.Item();
+    } else if (renderEngine == "matter") {
+        _this.matter_assetgroup = new Bodies.circle(x, y, _this.hitboxRadius, {
+            ownerId: _this.ownerId,
+            objectType: "ship",
+            render: {
+                sprite: {
+                    texture: _this.playerspritepath,
+                    xScale: 0.008 * _this.hitboxRadius,
+                    yScale: 0.008 * _this.hitboxRadius,  
+                },
+                fillStyle: _this.color,
+                collisionFilter: {
+                    category: shipCategory,
+                    mask: asteroidCategory | shipBarrierCategory,
+                }
+            },
+        });
+        // _this.matter_assetgroup.collisionFilter.group = ship_hitboxes;
+        World.add(engine.world, [_this.matter_assetgroup]);
+    }
 
     _this.movement = {
         x: 0,
         y: 0
+    }
+
+    function move2(movX, movY) {
+        Body.applyForce(_this.matter_assetgroup, 
+            {
+                x: _this.matter_assetgroup.position.x,
+                y: _this.matter_assetgroup.position.y,
+            },
+            {
+                x: movX,
+                y: movY
+            }
+        );
+    }
+
+    function rotate2(angle) {
+        Body.setAngle(_this.matter_assetgroup, angle)
+        Body.setAngularVelocity(_this.matter_assetgroup, 0);
     }
 
     function rotate(angle) {
@@ -69,18 +92,18 @@ function PlayerObject(g, x, y, c) {
         _this.sprite_exhaust.rotation = angle;
     }
 
-    function move(xpos, ypos) {
-        _this.assetgroup.position.x = xpos;
-        _this.assetgroup.position.y = ypos;
+    function move(movX, movY) {
+        _this.assetgroup.position.x = movX;
+        _this.assetgroup.position.y = movY;
     }
 
-    function moveX(x) {
-        Body.translate(_this.hitbox2, {x: x, y: 0});
-    }
+    // function moveX(x) {
+    //     Body.translate(_this.matter_assetgroup, {x: x, y: 0});
+    // }
 
-    function moveY(y) {
-        Body.translate(_this.hitbox2, {x: 0, y: y});
-    }
+    // function moveY(y) {
+    //     Body.translate(_this.matter_assetgroup, {x: 0, y: y});
+    // }
 
     function point() {
         return _this.assetgroup.position;
@@ -89,12 +112,14 @@ function PlayerObject(g, x, y, c) {
     return {
         rotate: rotate,
         move: move,
-        moveX: moveX,
-        moveY: moveY,
+        rotate2: rotate2,
+        move2: move2,
+        // moveX: moveX,
+        // moveY: moveY,
         point: point,
         assetgroup: _this.assetgroup,
         hitbox: _this.hitbox,
-        hitbox2: _this.hitbox2,
+        matter_assetgroup: _this.matter_assetgroup,
         sprite: _this.sprite,
         sprite_exhaust: _this.sprite_exhaust,
         radius: _this.hitboxRadius,
@@ -106,56 +131,87 @@ function PlayerObject(g, x, y, c) {
 /*
  * A coordinate that a player can create.
  */
-function PlayerCoordinate(gamewindow, x, y, color) {
+function PlayerCoordinate(ownerId, gamewindow, x, y, color) {
     var _this = this;
+    _this.ownerId = ownerId;
 
-    // constructor (gamewindow, x, y, color) {
+    _this.radius = 6;
     _this.x = x;
     _this.y = y;
 
-    _this.asset = new paper.Path.Circle({
-        center: [x, y],
-        radius: 6,
-        fillColor: color
-    });
-
-    gamewindow.layers["playersetlines"].addChild(_this.asset);
-    // }
+    if (renderEngine == "paper") {
+        _this.asset = new paper.Path.Circle({
+            center: [x, y],
+            radius: _this.radius,
+            fillColor: color
+        });
+        gamewindow.layers["playersetlines"].addChild(_this.asset);
+    } else if (renderEngine == "matter") {
+        _this.matter_assetgroup = new Bodies.circle(x, y, _this.radius, {
+            ownerId: _this.ownerId,
+            objectType: "forcefield_projector",
+            render: {
+                fillStyle: color,
+            },
+            collisionFilter: {
+                category: markerCategory,
+                mask: asteroidCategory
+            }
+        });
+        Body.setStatic(_this.matter_assetgroup, true);
+        World.add(engine.world, [_this.matter_assetgroup]);
+    }
 
     return {
         x: _this.x,
         y: _this.y,
-        asset: _this.asset
+        asset: _this.asset,
+        matter_assetgroup: _this.matter_assetgroup
     }
 }
 
 /*
 * A line joining two coordinates.
 */
-class PlayerCoordinateLine {
-    constructor (gamewindow, x1, y1, x2, y2, color) {
+function PlayerCoordinateLine(ownerId, gamewindow, x1, y1, x2, y2, color) {
+    var _this = this;
+    _this.ownerId = ownerId;
 
+    if (renderEngine == "paper") {
         this.asset = new paper.Path.Line(new paper.Point(x1, y1), new paper.Point(x2, y2));
         this.asset.strokeColor = color;
         this.asset.strokeWidth = lineWidth;
         this.asset.strokeCap = 'round';
         gamewindow.layers["playersetlines"].addChild(this.asset);
     }
+
+    function despawn() {
+
+    }
+
+    this.despawn = despawn
 }
 
 /*
  * A guiding line that follows the player, showing where the next face of their polygon will be.
  */
-class PlayerGuidingLine {
-    constructor (gamewindow, x1, y1, x2, y2, color) {
+function PlayerGuidingLine(ownerId, gamewindow, x1, y1, x2, y2, color) {
+    var _this = this;
+    _this.ownerId = ownerId;
 
-        this.asset = new paper.Path.Line(new paper.Point(x1, y1), new paper.Point(x2, y2));
-        this.asset.strokeColor = color;
-        this.asset.strokeWidth = lineWidth;
-        this.asset.strokeCap = 'round';
-        // _this.asset.dashArray = [4, 10]
-        gamewindow.layers["playerguidinglines"].addChild(this.asset);
+    this.asset = new paper.Path.Line(new paper.Point(x1, y1), new paper.Point(x2, y2));
+    this.asset.strokeColor = color;
+    this.asset.strokeWidth = lineWidth;
+    this.asset.strokeCap = 'round';
+    // _this.asset.dashArray = [4, 10]
+    gamewindow.layers["playerguidinglines"].addChild(this.asset);
+    // }
+
+    function despawn() {
+
     }
+
+    this.despawn = despawn
 }
 
 class PlayerCompletingLine {
@@ -167,7 +223,7 @@ class PlayerCompletingLine {
 /*
  * A polygon that a player has claimed
  */
-function PlayerForcefield (gamewindow, id, coordsArray, color) {
+function PlayerForcefield (ownerId, gamewindow, id, coordsArray, color) {
     var _this = this;
     _this.id = "forcefield-" + (Date.now() * Math.random()).toString().replace(".", "-");
 
@@ -222,18 +278,16 @@ function PlayerForcefield (gamewindow, id, coordsArray, color) {
     }
     // gamewindow.layers["shaperaster"]
 
-    var sound = new Audio('../music/claim.wav');
-    sound.play();
-    // }
+    SFX.sound.play();
 
-    function removeForcefield() {
-        console.log("removing forcefield!");
+    function despawn() {
+        // console.log("removing forcefield!");
         _this.asset.remove();
         var rm_sound = new Audio('../music/lost.m4a');
         rm_sound.play();
     }
 
-    this.removeForcefield = removeForcefield;
+    this.removeForcefield = despawn;
     // game.forcefields.push(this);
 
     // console.log(game.forcefields);
@@ -249,6 +303,6 @@ function PlayerForcefield (gamewindow, id, coordsArray, color) {
         asset: _this.asset,
         area: _this.area,
         playerId: _this.playerId,
-        removeForcefield: removeForcefield,
+        despawn: despawn,
     }
 }

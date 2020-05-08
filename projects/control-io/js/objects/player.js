@@ -15,6 +15,7 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
     _this.coordsArray = [];
     _this.linesArray = [];
     _this.claimedShapesArray = [];
+    _this.guidingLine = undefined;
 
     _this.gamewindow = gamewindow;
 
@@ -28,23 +29,16 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
         dark: tinycolor(color).darken(25).toString()
     };
 
-    //maxrange
-    //maxpoints
-
     _this.gamepad = gamepad;
     _this.keybinds = keybinds;
 
-    // _this.player
-
     randomSpawn(gamewindow);
-        // setCoord();
-    // };
 
     function randomSpawn(gamewindow) {
         var random_x = Math.floor(((Math.random() * Math.floor(max_x))));
         var random_y = Math.floor(((Math.random() * Math.floor(max_y))));
 
-        _this.playerobject = new PlayerObject(_this.gamewindow, random_x, random_y, _this.color.normal);
+        _this.playerobject = new PlayerObject(_this.id, _this.gamewindow, random_x, random_y, _this.color.normal);
     }
 
     /*
@@ -80,7 +74,7 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
         }
         _this.playerobject.assetgroup.position.y = nextycoord;
         _this.translateY = nextycoord - _this.playerobject.assetgroup.position.y;
-        _this.playerobject.moveY(_this.translateY);
+        // _this.playerobject.moveY(_this.translateY);
         _this.playerobject.movement.velY = modifier;
         updateVisualGuidingLine(null, _this.playerobject.assetgroup.position.y, 1);
 
@@ -88,34 +82,45 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
     }
 
     function setCoord() {
-    //     if (debug) {
-    //         console.log(`player.js.Player.setCoord
-    // x: ` + _this.playerobject.assetgroup.position.getX() + `
-    // y: ` + _this.playerobject.assetgroup.position.getY());
-    //     }
-    //     if (debug) {
-    //         console.log(`player.js.Player.setCoord
-    // x: ` + _this.playerobject.assetgroup.position.getX() + `
-    // y: ` + _this.playerobject.assetgroup.position.getY());
-
-        var dot_sound = new Audio('../music/dot.wav');
-        dot_sound.play();
+        SFX.dot_sound.play();
         // }
-        if (_this.coordsArray == undefined || _this.coordsArray.length == 0) {
-            var tempPoint = new paper.Point(_this.playerobject.assetgroup.position.x, _this.playerobject.assetgroup.position.y);
-            if(!checkPointIntersects(tempPoint)) {
-                _this.coordsArray.push(new PlayerCoordinate(_this.gamewindow, _this.playerobject.assetgroup.position.x, _this.playerobject.assetgroup.position.y, _this.color.normal));
-                _this.guidingLine = new PlayerGuidingLine(_this.gamewindow, _this.coordsArray[0].x, _this.coordsArray[0].y, _this.playerobject.assetgroup.position.x, _this.playerobject.assetgroup.position.y, _this.color.normal);
+        if (renderEngine == "paper") {
+            if (_this.coordsArray == undefined || _this.coordsArray.length == 0) {
+                var tempPoint = new paper.Point(_this.playerobject.assetgroup.position.x, _this.playerobject.assetgroup.position.y);
+                if(!checkPointIntersects(tempPoint)) {
+                    _this.coordsArray.push(new PlayerCoordinate(_this.id, _this.gamewindow, _this.playerobject.assetgroup.position.x, _this.playerobject.assetgroup.position.y, _this.color.normal));
+                    _this.guidingLine = new PlayerGuidingLine(_this.id, _this.gamewindow, _this.coordsArray[0].x, _this.coordsArray[0].y, _this.playerobject.assetgroup.position.x, _this.playerobject.assetgroup.position.y, _this.color.normal);
+
+                    updateVisualGuidingLine(_this.playerobject.assetgroup.position.x, _this.playerobject.assetgroup.position.y, 0);
+                }
+            } else {
+                if (!checkLineIntersects(_this.guidingLine)) {
+                    _this.lastCoord = _this.coordsArray[_this.coordsArray.length - 1];
+    
+                    _this.coordsArray.push(new PlayerCoordinate(_this.id, _this.gamewindow, _this.playerobject.assetgroup.position.x, _this.playerobject.assetgroup.position.y, _this.color.normal));
+    
+                    _this.linesArray.push(new PlayerCoordinateLine(_this.id, _this.gamewindow, _this.playerobject.assetgroup.position.x, _this.playerobject.assetgroup.position.y, _this.lastCoord.x, _this.lastCoord.y, _this.color.normal));
+    
+                    updateVisualGuidingLine(_this.playerobject.assetgroup.position.x, _this.playerobject.assetgroup.position.y, 0);
+                }
             }
-        } else {
-            if (!checkLineIntersects(_this.guidingLine)) {
-                var lastCoord = _this.coordsArray[_this.coordsArray.length - 1];
-
-                _this.coordsArray.push(new PlayerCoordinate(_this.gamewindow, _this.playerobject.assetgroup.position.x, _this.playerobject.assetgroup.position.y, _this.color.normal));
-
-                _this.linesArray.push(new PlayerCoordinateLine(_this.gamewindow, _this.playerobject.assetgroup.position.x, _this.playerobject.assetgroup.position.y, lastCoord.x, lastCoord.y, _this.color.normal));
-
-                updateVisualGuidingLine(_this.playerobject.assetgroup.position.x, _this.playerobject.assetgroup.position.y, 0);
+        } else if (renderEngine == "matter") {
+            if (_this.coordsArray == undefined || _this.coordsArray.length == 0) {
+                // var tempPoint = new paper.Point(_this.playerobject.assetgroup.position.x, _this.playerobject.assetgroup.position.y);
+                // if(!checkPointIntersects(tempPoint)) {
+                    _this.coordsArray.push(new PlayerCoordinate(_this.id, _this.gamewindow, _this.playerobject.matter_assetgroup.position.x, _this.playerobject.matter_assetgroup.position.y, _this.color.normal));
+                //     _this.guidingLine = new PlayerGuidingLine(_this.gamewindow, _this.coordsArray[0].x, _this.coordsArray[0].y, _this.playerobject.assetgroup.position.x, _this.playerobject.assetgroup.position.y, _this.color.normal);
+                // }
+            } else {
+                // if (!checkLineIntersects(_this.guidingLine)) {
+                //     var lastCoord = _this.coordsArray[_this.coordsArray.length - 1];
+    
+                    _this.coordsArray.push(new PlayerCoordinate(_this.id, _this.gamewindow, _this.playerobject.matter_assetgroup.position.x, _this.playerobject.matter_assetgroup.position.y, _this.color.normal));
+    
+                //     _this.linesArray.push(new PlayerCoordinateLine(_this.gamewindow, _this.playerobject.assetgroup.position.x, _this.playerobject.assetgroup.position.y, lastCoord.x, lastCoord.y, _this.color.normal));
+    
+                //     updateVisualGuidingLine(_this.playerobject.assetgroup.position.x, _this.playerobject.assetgroup.position.y, 0);
+                // }
             }
         }
     }
@@ -154,12 +159,12 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
 
     function attemptClaimShape() {
         if (!(_this.coordsArray == undefined || _this.coordsArray.length < 2)) {
-            var completingLine = new PlayerCoordinateLine(_this.gamewindow, _this.coordsArray[0].asset.position.x, _this.coordsArray[0].asset.position.y, _this.playerobject.assetgroup.position.x, _this.playerobject.assetgroup.position.y, _this.color.normal);
+            var completingLine = new PlayerCoordinateLine(_this.id, _this.gamewindow, _this.coordsArray[0].asset.position.x, _this.coordsArray[0].asset.position.y, _this.playerobject.assetgroup.position.x, _this.playerobject.assetgroup.position.y, _this.color.normal);
 
             if (!(checkLineIntersects(completingLine) || checkLineIntersects(_this.guidingLine))) {
                 setCoord();
 
-                game.forcefields.push(new PlayerForcefield(_this.gamewindow, _this.id, _this.coordsArray, _this.color.dark));
+                game.forcefields.push(new PlayerForcefield(_this.id, _this.gamewindow, _this.id, _this.coordsArray, _this.color.dark));
 
                 // _this.claimedShapesArray.push(new PlayerPolygon(_this.gamewindow, _this.id, _this.coordsArray, _this.color.dark));
 
@@ -287,15 +292,27 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
                 ljx = 0;
             }
 
-            if (!paused && !endgame && _this.alive) {
-                moveY(ljy);
-                moveX(ljx);
-                if (ljx != 0 || ljy != 0) {
-                    let angle = Math.atan2(ljy, ljx) * (180/pi) + 90;
-                    _this.playerobject.rotate(angle);
-                    moving = true;
+            if (renderEngine == "paper") {
+                if (!paused && !endgame && _this.alive) {
+                    moveY(ljy);
+                    moveX(ljx);
+                    if (ljx != 0 || ljy != 0) {
+                        let angle = Math.atan2(ljy, ljx) * (180/pi) + 90;
+                        _this.playerobject.rotate(angle);
+                        moving = true;
+                    }
+                }
+            } else if (renderEngine == "matter") {
+                if (!paused && !endgame && _this.alive) {
+                    _this.playerobject.move2(ljx * 0.00015, ljy * 0.00015);
+                    if (ljx != 0 || ljy != 0) {
+                        let angle = Math.atan2(ljy, ljx) + pi/2;
+                        _this.playerobject.rotate2(angle);
+                        moving = true;
+                    }
                 }
             }
+
         } else { //if gamepad
             if (_this.ALocked == false && _this.gamepad.buttons[0].pressed) {
                 setCoord();
@@ -324,20 +341,32 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
             ljx = refineAxisValue(_this.gamepad.axes[0]);
             ljy = refineAxisValue(_this.gamepad.axes[1]);
 
-            if (!paused && !endgame && _this.alive) {
-                moveY(ljy);
-                moveX(ljx);
-                if (ljx != 0 || ljy != 0) {
-                    let angle = Math.atan2(ljy, ljx) * (180/pi) + 90;
-                    _this.playerobject.rotate(angle);
-                    moving = true;
+            if (renderEngine == "paper") {
+                if (!paused && !endgame && _this.alive) {
+                    moveY(ljy);
+                    moveX(ljx);
+                    if (ljx != 0 || ljy != 0) {
+                        let angle = Math.atan2(ljy, ljx) * (180/pi) + 90;
+                        _this.playerobject.rotate(angle);
+                        moving = true;
+                    }
+                }
+            } else if (renderEngine == "matter") {
+                if (!paused && !endgame && _this.alive) {
+                    _this.playerobject.move2(ljx * 0.00015, ljy * 0.00015);
+                    if (ljx != 0 || ljy != 0) {
+                        let angle = Math.atan2(ljy, ljx) + pi/2;
+                        _this.playerobject.rotate2(angle);
+                        moving = true;
+                    }
                 }
             }
         }
-        if (!moving) {
-            _this.playerobject.sprite_exhaust.visible = false;
+        if (renderEngine == "paper") {
+            if (!moving) {
+                _this.playerobject.sprite_exhaust.visible = false;
+            }
         }
-
         // _this.checkOutOfBounds();
     }
 
@@ -424,5 +453,8 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
         name: _this.name,
         color: _this.color,
         lastHitBy: _this.lastHitBy,
+        coordsArray: _this.coordsArray,
+        linesArray: _this.linesArray,
+        guidingLine: _this.guidingLine,
     }
 };

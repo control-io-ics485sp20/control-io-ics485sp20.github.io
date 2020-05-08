@@ -17,8 +17,8 @@ function GameOverlay() {
             $("#" + game.players[i].id + "-scorebar").css("width", "100%");
             $("#" + game.players[i].id + "-scorebar").css("background-color", game.players[i].color.normal);
             // console.log(game.players[i].id);
-            console.log(game.players[i].id);
-            console.log(game.players[i].color);
+            // console.log(game.players[i].id);
+            // console.log(game.players[i].color);
         }
 
         var html1 = `<div id="timer"></div>`
@@ -101,7 +101,7 @@ function GameOverlayPauseMenu() {
     var html = `<div class="pausemenu" id="gameoverlay-pausemenu">
     <div class="gameoverlay-pausemenu-button" id="link-website">ABOUT US</div>
     <div class="gameoverlay-pausemenu-button" id="link-github">GITHUB</div>
-    <div class="gameoverlay-pausemenu-button" id="link-lobby">EXIT</div>
+    <div class="gameoverlay-pausemenu-button" id="link-lobby">RESTART</div>
     </div>`
     $("#window").append(html);
     $("#gameoverlay-pausemenu").css("z-index", 5);

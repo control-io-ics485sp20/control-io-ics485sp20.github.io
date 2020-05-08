@@ -9,6 +9,10 @@ var readyButtonText = "SPACE / A - START GAME"
 
 //object arrays to keep track of items
 var controllers = []; //list of all controllers
+var asteroids = [];
+
+var renderEngine = "paper" //"matter" or "paper"
+// var renderEngine = "matter" //"matter" or "paper"
 
 //debugging options
 var debug = false;
@@ -16,8 +20,10 @@ var showHitboxes = false;
 
 var MinPlayers = 1;
 // var TotalPlayers;
+var gametime = 120; //120
 var zoom_percent = 100;
 var sensitivity_buffer = 0.08;
+
 var playerCount = 0
 
 var max_x = window.innerWidth;
@@ -67,6 +73,12 @@ var AsteroidMinSpeed = 2.5
 var AsteroidMaxSpeed = 3
 var AsteroidMinSpinSpeed = 0.5
 var AsteroidMaxSpinSpeed = 3
+
+var AsteroidMinSpeed2 = 2
+var AsteroidMaxSpeed2 = 4
+var AsteroidMinSpinSpeed2 = 0.01
+var AsteroidMaxSpinSpeed2 = 0.04
+
 var AsteroidMinSize = 1
 var AsteroidMaxSize = 2
 var AsteroidAllowNoSpin = false;
@@ -87,25 +99,68 @@ var GameObjectBorderMaxY = max_y + AsteroidSpawnBorderThreshold;
 //-----------------------
 var ForcefieldHPModifier = 1;
 
-//MATTERJS
+//MATTER.JS
 //https://stackoverflow.com/questions/50959493/matter-js-for-collision-detection/55484279
 //Create engine - All the game stuff
 var Engine = Matter.Engine,
     Render = Matter.Render,
     Runner = Matter.Runner,
+    Events = Matter.Events,
     Composites = Matter.Composites,
     Common = Matter.Common,
     World = Matter.World,
     Bodies = Matter.Bodies,
     Body = Matter.Body;
 
-// create an engine
-var engine = Engine.create(),
-    world = engine.world;
-
-// create a renderer
+var canvas;
+var engine;
+var world;
 var render;
-
 var runner;
 
-matter_hitboxes = 4;
+var asteroid_hitboxes = 4;
+var ship_hitboxes = 5;
+var marker_hitboxes = 6;
+
+//PRELOAD.JS
+var image_bg = preload.getResult("../img/background/starry_night.png").result;
+var image_playerbase = preload.getResult("../img/sprites/playersprite01-base.png").result;
+
+var asteroidCategory = 0x0001;
+var asteroidBarrierCategory = 0x0002;
+var shipCategory = 0x0004;
+var shipBarrierCategory = 0x0008;
+// var asteroidBarrierCategory = 0x0008;
+
+
+// var shipfilter = {
+        //     group: 0,
+        //     category: 30,
+        //     mask: 30,
+        // }
+        // var shipbarrierfilter = {
+        //     group: 0,
+        //     category: 24,
+        //     mask: 8,
+        // }
+        // var asteroidfilter = {
+        //     group: 0,
+        //     category: 23,
+        //     mask: 23,
+        // }
+        // var asteroidbarrierfilter = {
+        //     group: 0,
+        //     category: 22,
+        //     mask: 22,
+        // }
+        // var markerfilter = {
+        //     group: 0,
+        //     category: 5,
+        //     mask: 1,
+        // }
+        // console.log("true: " + Matter.Detector.canCollide(shipfilter, shipbarrierfilter));
+        // console.log("true: " + Matter.Detector.canCollide(shipfilter, asteroidfilter));
+        // console.log("false: " + Matter.Detector.canCollide(asteroidfilter, shipbarrierfilter));
+        // console.log("true: " + Matter.Detector.canCollide(asteroidfilter, asteroidbarrierfilter));
+        // console.log("false: " + Matter.Detector.canCollide(shipfilter, markerfilter));
+        // console.log("true: " + Matter.Detector.canCollide(asteroidfilter, markerfilter));

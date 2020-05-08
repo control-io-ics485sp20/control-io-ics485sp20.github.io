@@ -59,8 +59,9 @@ function GameLobby(roomName) {
 
             ButtonPressedStatus[id] = {}
 
-            var audio_in = new Audio('../music/in.wav');
-            audio_in.play();
+            // new Audio('../music/in.wav').play();
+            SFX.audio_in.play();
+            // createjs.Sound.play('audio_in')
         }
     }
 
@@ -76,8 +77,10 @@ function GameLobby(roomName) {
 
         delete controllers[id];
 
-        var audio_in = new Audio('../music/in.wav');
-        audio_in.play();
+        // new Audio('../music/in.wav').play();
+        // var audio_in = new Audio('../music/in.wav');
+        SFX.audio_in.play();
+        // createjs.Sound.play('audio_in');
     }
 
     function controllerLock(id, message) {
@@ -127,8 +130,10 @@ function GameLobby(roomName) {
           if (on === 0) {
             on ++;
           console.log("Starting game!");
-          var timer = new Audio('../music/countdown_trim.wav');
-          timer.play();
+
+          SFX.timer.play();
+        //   new Audio('../music/countdown_trim.wav').play();
+
           changeName();
           setTimeout(changeName, 1000);
           setTimeout(changeName, 2000);
@@ -157,8 +162,12 @@ function GameLobby(roomName) {
     function joinLeaveKeyboard(event) {
         if ((event.code == "ShiftLeft") || (event.code == "ShiftRight")) {
             controllerLock("keyboard1", lobbyJoinKeyboardInstructionMessage);
-            var audio_in = new Audio('../music/in.wav');
-            audio_in.play();
+            
+            // new Audio('../music/in.wav').play();
+            // var audio_in = new Audio('../music/in.wav');
+            SFX.audio_in.play();
+            // createjs.Sound.play('audio_in')
+            
             // gameLobby.joinLeaveKeyboard();
         } else if (event.code == "Space") {
             startLock();
@@ -198,9 +207,9 @@ function GameLobby(roomName) {
         joinLeaveKeyboard : joinLeaveKeyboard
     }
 
-    function generateColor() {
+    // function generateColor() {
 
-    }
+    // }
 
     // function generateName() {
     //     var takenNames = [];

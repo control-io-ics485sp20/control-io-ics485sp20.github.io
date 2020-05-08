@@ -6,7 +6,7 @@ function getDistance(x1, y1, x2, y2) {
     return Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2));
 }
 
-function checkHit(circle1, circle2) {
+function checkCircleHit(circle1, circle2) {
     if (circle1 != null & circle2 != null) {
         if (getDistance(circle1.x, circle1.y, circle2.x, circle2.y) < (circle1.radius + circle2.radius)) {
             return true;
@@ -17,7 +17,7 @@ function checkHit(circle1, circle2) {
     return false;
 }
 
-function checkPolygonHit(circle1, path) {
+function checkPathHit(circle1, path) {
     if (circle1 != null & path != null) {
         let nearestPoint = path.getNearestPoint([circle1.x, circle1.y]); 
         if (getDistance(circle1.x, circle1.y, nearestPoint.x, nearestPoint.y) < (circle1.radius)) {

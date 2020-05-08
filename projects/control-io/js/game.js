@@ -1,7 +1,7 @@
 function Game() {
     var _this = this
 
-    var ingame;
+    // var ingame;
     console.log("[Control.IO] Starting game instance...");
 
     _this.reg;
@@ -53,7 +53,6 @@ function Game() {
         _this.gameStatus = "singleplayer-game";
         //start game countdown
         //start game
-        //create start game timer
         let dimensions = {width: window.innerWidth, height: window.innerHeight}
 
         _this.gameWindow = new GameWindow(dimensions);
@@ -64,99 +63,75 @@ function Game() {
         _this.pausemenu = new GameOverlayPauseMenu();
         _this.endmenu = new GameOverlayEndMenu();
 
-        _this.music_ingame = new Audio('../music/ingame.wav');
-        _this.music_ingame.play();
-        _this.music_ingame.volume = 0.4;
-
-        // setTimeout(finishGame,60000);
-
-        // initMap();
+        // _this.music_ingame = new Audio('../music/ingame.wav');
+        // _this.music_endgame = new Audio('../music/endgame.wav');
+        // _this.music_ingame.volume = 0.4;
+        // _this.music_endgame.volume = 0.8;
+        // _this.music_ingame.play();
+        SFX.music_ingame.play();
 
         addPlayers(controllers);
         _this.TotalPlayers = playerCount;
 
         _this.scorescreen.init();
 
-        // _this.fpsInterval = 1000/fpscap;
-        // _this.then = Date.now();
-        // _this.starttime = _this.then;
-        // nextFrame();
-        _this.timer = startTimer(60, "timer", function() {
+        _this.timer = startTimer(gametime, "timer", function() {
             finishGame();
         })
 
-        paper.view.onFrame = function() {
-            if (!_this.paused && !_this.endgame) {
-                checkGameStatus();
-
-                updateForcefields();
-
-                spawnAsteroids();
-
-                updateAsteroids();
-
-                updatePlayerScores();
+        if (renderEngine == "paper") {
+            paper.view.onFrame = function() {
+                if (!_this.paused && !_this.endgame) {
+                    checkGameStatus();
+                    updateForcefields();
+                    addAsteroids();
+                    updateAsteroids();
+                    updatePlayerScores();
+                }
+                updatePlayers();
             }
-            updatePlayers();
+        } else if (renderEngine == "matter") {
+            animate();
         }
     }
 
     function finishGame() {
-        // window.cancelAnimationFrame(gameRunning);
-        // _this.timer.pause();
         _this.endgame = true;
+        _this.timer.pause();
         showEndMenu();
-        // ingame.pause();
-        _this.music_ingame.volume = 0.0;
-
-        _this.music_endgame = new Audio('../music/endgame.wav');
-        _this.music_endgame.play();
-        _this.music_endgame.volume = 0.8;
-        // paper.view.pause();
-        // window.cancelAnimationFrame(_this.gameRunning);
+        SFX.music_ingame.pause();
+        SFX.music_endgame.play();
     }
 
-    // function nextFrame() {
+    function animate() {
+        _this.gameRunning = requestAnimationFrame(animate);
+        if (!_this.paused && !_this.endgame) {
+            checkGameStatus();
+            updateForcefields();
+            addAsteroids();
+            updateAsteroids();
+            updatePlayerScores();
+        }
+        updatePlayers();
+    }
 
-    //     _this.gameRunning = requestAnimationFrame(nextFrame);
-
-    //     _this.now = Date.now();
-    //     _this.elapsed = _this.now - _this.then;
-
-    //     if (_this.elapsed > _this.fpsInterval) {
-    //         _this.then = _this.now - (_this.elapsed % _this.fpsInterval);
-
-    //         if (!_this.paused) {
-    //             updateForcefields();
-
-    //             checkGameStatus();
-
-    //             spawnAsteroids();
-
-    //             updateAsteroids();
-
-    //             updatePlayerScores();
-    //         }
-    //         updatePlayers();
-    //     }
-    // }
-
-    function spawnAsteroids() {
-        if ((game.asteroids.length < AsteroidSpawnCap) && ((Math.random() * 101) < AsteroidSpawnRate)) {
+    function addAsteroids() {
+        if ((asteroids.length < AsteroidSpawnCap) && ((Math.random() * 101) < AsteroidSpawnRate)) {
             let asteroid = new Asteroid(_this.gameWindow, _this.gameMap);
-            game.asteroids.push(asteroid);
+            asteroids.push(asteroid);
+            // console.log(asteroids);
         }
     }
 
     function goto_website() {
         // console.log("website clicked!");
-        window.open("https://control-io-ics485sp20.github.io/", _blank); 
+        window.open("https://control-io-ics485sp20.github.io/"); 
 
     }
 
     function goto_github() {
         // console.log("github clicked!");
-        window.open("https://github.com/control-io-ics485sp20/control-io-ics485sp20.github.io/tree/master/projects/control-io", _blank); 
+        window.open("https://github.com/control-io-ics485sp20/control-io-ics485sp20.github.io/tree/master/projects/control-io"); 
 
     }
 
@@ -215,7 +190,7 @@ function Game() {
     function updateForcefields() {
         game.forcefields.forEach(function (forcefield, index, object) {
             if (forcefield.health < 0) {
-                forcefield.removeForcefield();
+                forcefield.despawn();
                 object.splice(index, 1);
 
                 console.log(game.forcefields);
@@ -228,12 +203,22 @@ function Game() {
     }
 
     function updateAsteroids() {
-        game.asteroids.forEach(function (asteroid, index, object) {
-            var result = asteroid.updatePos();
-            if (!result) {
-                object.splice(index, 1);
-            }
-        })
+        if (renderEngine == "paper") {
+            asteroids.forEach(function (asteroid, index, object) {
+                var result = asteroid.updatePos();
+                if (!result) {
+                    object.splice(index, 1);
+                }
+            });
+        } else if (renderEngine == "matter") {
+            // asteroids.forEach(function (asteroid, index, object) {
+            //     var result = asteroid.despawn;
+            //     console.log(result);
+            //     // if (!result) {
+            //     //     object.splice(index, 1);
+            //     // }
+            // });
+        }
     }
 
     function updatePlayerScores() {
@@ -270,13 +255,24 @@ function Game() {
                 _this.pausemenu.hide();
                 _this.scorescreen.show();
                 _this.timer.resume();
-                _this.music_ingame.play();
+                // _this.music_ingame.play();
+                SFX.music_ingame.play();
+                // engine.enabled = true;
+                if (renderEngine == "matter") {
+                    Runner.start(runner, engine);
+                }
             } else {
                 _this.paused = true;
                 _this.scorescreen.hide();
                 _this.pausemenu.show();
                 _this.timer.pause();
-                _this.music_ingame.pause();
+                // _this.music_ingame.pause();
+                SFX.music_ingame.pause();
+                // engine.enabled = false;
+
+                if (renderEngine == "matter") {
+                    Runner.stop(runner);
+                }
             }
         }
     }
@@ -285,6 +281,8 @@ function Game() {
         if (_this.endgame && _this.endmenushown == undefined) {
             _this.endmenu.show();
             _this.endmenushown = true;
+            // engine.enabled = false;
+            Runner.stop(runner);
         }
     }
 
