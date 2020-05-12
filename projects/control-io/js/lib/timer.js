@@ -13,10 +13,11 @@ function startTimer(seconds, container, oncomplete) {
         clearInterval(timer);
     };
     obj.step = function() {
-        var now = Math.max(0,ms-(new Date().getTime()-startTime)),
-            m = Math.floor(now/60000), s = Math.floor(now/1000)%60;
+        var now = Math.max(0, ms-(new Date().getTime()-startTime));
+        var m = Math.floor(now/60000);
+        var s = Math.floor(now/1000)%60;
         s = (s < 10 ? "0" : "")+s;
-        display.innerHTML = m+":"+s;
+        display.innerHTML = m + ":" + s;
         if( now == 0) {
             clearInterval(timer);
             obj.resume = function() {};

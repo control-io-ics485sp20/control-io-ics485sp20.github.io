@@ -1,3 +1,7 @@
+/**
+ * @name GameWindow
+ * @param {*} properties game properties
+ */
 function GameWindow(properties) {
     var _this = this
     
@@ -25,6 +29,12 @@ function GameWindow(properties) {
         }
     }
 
+    /**
+     * @name setupMatter
+     * @description Sets up the game with matter.js. Not implemented, but can be 
+     * toggled in properties.
+     * @param {*} canvasid the id of the DOM canvas element
+     */
     function setupMatter(canvasid) {
         canvas = document.getElementById(canvasid);
         canvas.width = max_x;
@@ -49,8 +59,6 @@ function GameWindow(properties) {
                         console.log(pair.bodyB.id + " colliding with ship owned by " + pair.bodyA.ownerId);
                     }
                     SFX.hitsound.play();
-                    // _this.hitsound = new Audio('../music/smash.m4a');
-                    // _this.hitsound.play();
                 }
 
                 if ((oA == "asteroid" && oB == "forcefield_projector") || (oB == "asteroid" && oA == "forcefield_projector")) {
@@ -104,6 +112,11 @@ function GameWindow(properties) {
         var asteroidWalls = new BorderConstraint(20, -100, 'asteroid_border', 'rgba(255, 0, 0, 0.1)', 0, asteroidBarrierCategory, asteroidCategory);
     }
 
+    /**
+     * @name setupPaper
+     * @description Sets up the game with paper.js.
+     * @param {*} canvasid the id of the DOM canvas element
+     */
     function setupPaper(canvasid) {
         canvas = $("#" + canvasid)[0];
         paper.setup(canvas);
@@ -116,10 +129,14 @@ function GameWindow(properties) {
 
         _this.layers["asteroids"] = (new paper.Layer({name: 'asteroids'}));
 
-        setBackground();
+        setupPaperBackground();
     }
 
-    function setBackground() {
+    /**
+     * @name setupPaperBackground
+     * @description Sets up the background when using paper.js.
+     */
+    function setupPaperBackground() {
         var background = new paper.Raster({source: '../img/background/starry_night.png', position: paper.view.center});
         // background.scale(2);
         background.width = max_x;
@@ -127,21 +144,18 @@ function GameWindow(properties) {
         _this.layers["background"].addChild(background);
     }
 
+    //not implemented
     function removePlayer() {
-
     }
 
     return {
         init: init,
         removePlayer: removePlayer,
-        setBackground: setBackground,
+        setupPaperBackground: setupPaperBackground,
         canvas: canvas,
         layers: _this.layers,
         engine: _this.Engine,
         bodies: _this.Bodies,
         world: _this.World,
     }
-    
-
-    //adds item to body. Probably belongs in render library.
 }

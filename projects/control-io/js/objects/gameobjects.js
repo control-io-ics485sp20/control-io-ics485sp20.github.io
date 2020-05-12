@@ -173,6 +173,8 @@ function Asteroid (gameWindow, gameMap) {
                 for (i in players) {
                     let player = players[i];
                     if (player.alive) {
+                        let deleteprogress = false;
+ 
                         var playerHitbox = {
                             x: player.playerobject.assetgroup.position.x,
                             y: player.playerobject.assetgroup.position.y,
@@ -190,6 +192,8 @@ function Asteroid (gameWindow, gameMap) {
                                 // console.log(game.players.filter(obj => {return obj.id === player.id})[0].health);
                                 player.health -= _this.damage.toPlayers;
                                 player.lastHitBy = "asteroid";
+                                player.removeTempItems();
+
                                 console.log(player.name + ": " + player.health);
 
                                 SFX.hitsound.play();
@@ -207,7 +211,6 @@ function Asteroid (gameWindow, gameMap) {
                             delete _this.collisions[(_this.id + "_" + player.id)];
                         }
 
-                        let deleteprogress = false;
 
                         //check points
                         for (j in player.coordsArray) {
@@ -238,7 +241,7 @@ function Asteroid (gameWindow, gameMap) {
                         //TODO if deleteprogress == true, 
                         //  delete player's progress
                         if (deleteprogress == true) {
-                            console.log("Deleting progress...");
+                            // console.log("Deleting progress...");
 
                             player.removeTempItems();
                         }

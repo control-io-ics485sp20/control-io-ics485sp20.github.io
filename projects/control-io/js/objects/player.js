@@ -14,7 +14,7 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
 
     _this.coordsArray = [];
     _this.linesArray = [];
-    _this.guidingLine;
+    _this.guidingLine = {};
 
     _this.claimedShapesArray = [];
 
@@ -42,11 +42,11 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
         _this.playerobject = new PlayerObject(_this.id, _this.gamewindow, random_x, random_y, _this.color.normal);
     }
 
-    /*
-        * moveX
-        *
-        * Given a float modifier value, updates the player's position on the X axis for a frame.
-        */
+    /**
+     * @name moveX
+     * @description Given a float modifier value, updates the player's position on the X 
+     * axis for a frame.
+     */
     function moveX (modifier) {
         let nextxcoord = (_this.playerobject.assetgroup.position.x + (PlayerMinVelocityCap * modifier));
         if (nextxcoord < PlayerMinX) {
@@ -61,11 +61,11 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
         _this.playerobject.sprite_exhaust.visible = true;
     }
 
-    /*
-        * moveY
-        *
-        * Given a float modifier value, updates the player's position on the Y axis for a frame.
-        */
+    /**
+     * @name moveY
+     * @description Given a float modifier value, updates the player's position on the Y 
+     * axis for a frame.
+     */
     function moveY (modifier) {
         let nextycoord = (_this.playerobject.assetgroup.position.y + (PlayerMinVelocityCap * modifier));
         if (nextycoord < PlayerMinY) {
@@ -126,8 +126,20 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
         }
     }
 
+    /**
+     * @name updateVisualGuidingLine
+     * @description updates the guiding line to lead from the last position
+     * @param {*} x 
+     * @param {*} y 
+     * @param {*} index 
+     */
     function updateVisualGuidingLine(x, y, index) {
-        if (_this.guidingLine != null) {
+        if (
+            _this.guidingLine != undefined && 
+            _this.guidingLine != null && 
+            _this.guidingLine.asset != undefined &&
+            _this.guidingLine.asset != null
+        ) {
             if (x != null) {
                 _this.guidingLine.asset.segments[index].point.x = x;
             }
@@ -138,6 +150,10 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
         }
     }
 
+    /**
+     * @name removeVisuals
+     * @description removes all objects of the player
+     */
     function removeVisuals() {
         if (_this.playerobject.assetgroup != null) {
             _this.playerobject.assetgroup.remove();
@@ -158,6 +174,10 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
         }
     }
 
+    /**
+     * @name attemptClaimShape
+     * @description attempt to claim a shape
+     */
     function attemptClaimShape() {
         if (!(_this.coordsArray == undefined || _this.coordsArray.length < 2)) {
             var completingLine = new PlayerCoordinateLine(_this.id, _this.gamewindow, _this.coordsArray[0].asset.position.x, _this.coordsArray[0].asset.position.y, _this.playerobject.assetgroup.position.x, _this.playerobject.assetgroup.position.y, _this.color.normal);
@@ -170,12 +190,18 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
                 // _this.claimedShapesArray.push(new PlayerPolygon(_this.gamewindow, _this.id, _this.coordsArray, _this.color.dark));
 
                 removeTempItems();
+
+                //TODO remove any shapes within this shape
             }
 
             completingLine.asset.remove();
         }
     }
 
+    /**
+     * @name removeTempItems
+     * @description
+     */
     function removeTempItems() {
         while (_this.coordsArray.length > 0) {
             var n = _this.coordsArray.pop();
@@ -187,16 +213,13 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
             n.asset.remove();
         }
 
-        _this.guidingLine.asset.remove();
-        _this.guidingLine = null;
-    }
-
-    //debug
-    function printCoordinates() {
-        console.log(_this.playerobject.assetgroup.position.x);
-        console.log(_this.playerobject.assetgroup.position.y);
-
-        _this.checkOutOfBounds();
+        if (_this.guidingLine != undefined && 
+            _this.guidingLine != null && 
+            _this.guidingLine.asset != undefined &&
+            _this.guidingLine.asset != null) {
+            _this.guidingLine.asset.remove();
+            _this.guidingLine = null;
+        }
     }
 
     function checkLineIntersects(line) {
@@ -480,4 +503,12 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
     // this.coordsArray = _this.coordsArray;
     // this.linesArray = _this.linesArray;
     // this.guidingLine = _this.guidingLine;
+
+    //debug
+    function printCoordinates() {
+        console.log(_this.playerobject.assetgroup.position.x);
+        console.log(_this.playerobject.assetgroup.position.y);
+
+        _this.checkOutOfBounds();
+    }
 };

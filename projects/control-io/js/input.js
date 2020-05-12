@@ -3,9 +3,8 @@ class Gamepad {
 }
 
 /**
- * refineAxisValue
- *
- * Given a float value, returns a rounded float to the nearedst .00. If this
+ * @name refineAxisValue
+ * @description Given a float value, returns a rounded float to the nearedst .00. If this
  * value is within a .05 threshold or over 1, it returns the closest whole value
  * to ensure maximum values/controller idle.
  */

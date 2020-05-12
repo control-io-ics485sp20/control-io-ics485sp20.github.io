@@ -35,6 +35,11 @@ function Game() {
 
     };
 
+
+    /**
+     * @name runLocalGame
+     * @description Starts a local lobby session.
+     */
     function runLocalGame() {
         console.log("Starting a local session...")
         _this.gameLobby = new GameLobby("Starting Local Session...");
@@ -42,11 +47,20 @@ function Game() {
         var gameLobbyResult = _this.gameLobby.create();
     }
 
-    function runMultiPlayer() {
+    /**
+     * @name runOnlineGame
+     * @description Not implemented. Starts an online lobby session.
+     */
+    function runOnlineGame() {
         console.log("Joining a multiplayer session...");
-        //totally optional
+        console.log("Not implemented!");
     }
 
+    /**
+     * @name startGame
+     * @description Starts the game session and calls animate.
+     * @param {*} controllers game controllers collected from the lobby
+     */
     function startGame(controllers) {
         // console.log(controllers);
         _this.gameStatus = "singleplayer-game";
@@ -94,14 +108,22 @@ function Game() {
         }
     }
 
+    /**
+     * @name finishGame
+     * @description calls procedures that finish the game.
+     */
     function finishGame() {
         _this.endgame = true;
-        _this.timer.pause();
+        // _this.timer.pause();
         showEndMenu();
         SFX.music_ingame.pause();
         SFX.music_endgame.play();
     }
 
+    /**
+     * @name animate
+     * @description runs an animation using requestAnimationFrame
+     */
     function animate() {
         _this.gameRunning = requestAnimationFrame(animate);
         if (!_this.paused && !_this.endgame) {
@@ -114,6 +136,10 @@ function Game() {
         updatePlayers();
     }
 
+    /**
+     * @name addAsteroids
+     * @description adds asteroids to the game map
+     */
     function addAsteroids() {
         if ((asteroids.length < AsteroidSpawnCap) && ((Math.random() * 101) < AsteroidSpawnRate)) {
             let asteroid = new Asteroid(_this.gameWindow, _this.gameMap);
@@ -122,20 +148,29 @@ function Game() {
         }
     }
 
+    /**
+     * @name goto_website
+     * @description Sends the user to our website
+     */
     function goto_website() {
-        // console.log("website clicked!");
         window.open("https://control-io-ics485sp20.github.io/"); 
 
     }
 
+    /**
+     * @name goto_github
+     * @description Sends the user to our github
+     */
     function goto_github() {
-        // console.log("github clicked!");
         window.open("https://github.com/control-io-ics485sp20/control-io-ics485sp20.github.io/tree/master/projects/control-io"); 
 
     }
 
+    /**
+     * @name goto_lobby
+     * @description Sends the user back to the lobby
+     */
     function goto_lobby() {
-        // console.log("lobby clicked!");
         location.reload();
     }
 
@@ -153,12 +188,13 @@ function Game() {
         forcefields: _this.forcefields,
         playerCount: _this.playerCount,
         totalPlayers: _this.totalPlayers,
+        this: this,
     }
 
     /**
-     * addPlayers
-     *
-     * Adds players to the game
+     * @name addPlayers
+     * @description adds players to the game
+     * @param {*} controllers 
      */
     function addPlayers(controllers) { //TODO only add players from lobby
         Object.keys(controllers).forEach(function (id) {
@@ -173,6 +209,10 @@ function Game() {
         });
     }
 
+    /**
+     * @name updatePlayers
+     * @description on called frame, updates each player
+     */
     function updatePlayers() {
         players.forEach(function (player) {
             player.updatePos(_this.paused, _this.endgame);
@@ -186,6 +226,10 @@ function Game() {
         });
     }
 
+    /**
+     * @name updateForceFields
+     * @description on called frame, updates each forcefield
+     */
     function updateForcefields() {
         game.forcefields.forEach(function (forcefield, index, object) {
             if (forcefield.health < 0) {
@@ -201,6 +245,10 @@ function Game() {
         })
     }
 
+    /**
+     * @name updateAsteroids
+     * @description on called frame, updates each asteroid
+     */
     function updateAsteroids() {
         if (renderEngine == "paper") {
             asteroids.forEach(function (asteroid, index, object) {
@@ -220,6 +268,10 @@ function Game() {
         }
     }
 
+    /**
+     * @name updatePlayerScores
+     * @description on called frame, updates the list of player scores in the UI
+     */
     function updatePlayerScores() {
         let scoreobj = {};
 
@@ -247,6 +299,10 @@ function Game() {
         }
     }
 
+    /**
+     * @name togglePauseMenu
+     * @description calls procedures when a player toggles the pause menu
+     */
     function togglePauseMenu() {
         if (!_this.endgame) {
             if (_this.paused) {
@@ -276,6 +332,10 @@ function Game() {
         }
     }
 
+    /**
+     * @name showEndMenu
+     * @description calls procedures when the end of game menu is shown
+     */
     function showEndMenu() {
         if (_this.endgame && _this.endmenushown == undefined) {
             _this.endmenu.show();
@@ -285,12 +345,11 @@ function Game() {
         }
     }
 
-    
-
     //Literally from https://developer.mozilla.org/en-US/docs/Web/API/Gamepad_API/Using_the_Gamepad_API
     /**
-     * controllerConnectedEvent
-     * Detects when a gamepad is connected and announces it.
+     * @name controllerConnectedEvent
+     * @description Detects when a gamepad is connected
+     * @param {*} event 
      */
     function controllerConnectedEvent(event) {
         if (_this.gameStatus == "local-lobby") {
@@ -311,6 +370,11 @@ function Game() {
         }
     };
 
+    /**
+     * @name controllerDisconnectedEvent
+     * @description Detects when a gamepad is disconnected
+     * @param {*} event 
+     */
     function controllerDisconnectedEvent(event) {
         if (_this.gameStatus == "local-lobby") {
             _this.gameLobby.controllerLeave(event);
@@ -345,10 +409,12 @@ function Game() {
         // console.log("checking game");
         if (_this.TotalPlayers == 1) { //if local singleplayer
             if (playerCount <= 0) {
+                _this.timer.pause();
                 finishGame();
             }
         } else { //if local multiplayer
             if (playerCount <= 1) { //or timer is up
+                _this.timer.pause();
                 finishGame();
             }
         }

@@ -3,7 +3,7 @@ var gameName = "Control.IO"
 var lobbyWaitingMessage = "Waiting for players..."
 var lobbyJoinInstructionMessage = "Join by keyboard or connect a controller."
 var lobbyJoinKeyboardInstructionMessage = "Keyboard detected.<br><br>Press <b>SHIFT</b> to join this controller."
-var lobbyJoinControllerInstructionMessage = "Controller detected.<br><br>Press <b>START</b> to join this controller."
+var lobbyJoinControllerInstructionMessage = "Controller detected.<br><br>Press <b>START</b> to join this controller.<br><br>(Firefox only.)"
 var lobbyPlayerJoinedStatus = "Joined"
 var readyButtonText = "SPACE / A - START GAME"
 
@@ -21,7 +21,7 @@ var debug = false;
 var showHitboxes = false;
 
 var MinPlayers = 1;
-var gametime = 120; //120
+var gametime = 20; //90 or 120
 var zoom_percent = 100;
 var sensitivity_buffer = 0.08;
 

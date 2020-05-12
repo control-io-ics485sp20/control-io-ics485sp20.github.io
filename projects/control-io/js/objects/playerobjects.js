@@ -211,6 +211,11 @@ function PlayerGuidingLine(ownerId, gamewindow, x1, y1, x2, y2, color) {
     }
 
     this.despawn = despawn
+
+    return {
+        this: this,
+        asset: this.asset,
+    }
 }
 
 class PlayerCompletingLine {
