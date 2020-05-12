@@ -21,7 +21,7 @@ var debug = false;
 var showHitboxes = false;
 
 var MinPlayers = 1;
-var gametime = 10; //90 or 120
+var gametime = 60; //90 or 120
 var zoom_percent = 100;
 var sensitivity_buffer = 0.08;
 
