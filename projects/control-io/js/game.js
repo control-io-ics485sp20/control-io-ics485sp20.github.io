@@ -6,7 +6,6 @@ function Game() {
 
     _this.reg;
 
-    _this.players = []
     _this.asteroids = []
     _this.forcefields = []
 
@@ -149,7 +148,7 @@ function Game() {
         goto_lobby: goto_lobby,
         reg: _this.reg,
         overlay: _this.overlay,
-        players: _this.players,
+        // players: _thplayers,
         asteroids: _this.asteroids,
         forcefields: _this.forcefields,
         playerCount: _this.playerCount,
@@ -165,9 +164,9 @@ function Game() {
         Object.keys(controllers).forEach(function (id) {
             if (controllers[id]["player"] != null) {
                 if (controllers[id]["gamepad"] != null) {
-                    game.players.push(new Player(_this.gameWindow, _this.gameMap, controllers[id]["player"]["color"], controllers[id]["player"]["name"], controllers[id]["gamepad"], null));
+                    players.push(new Player(_this.gameWindow, _this.gameMap, controllers[id]["player"]["color"], controllers[id]["player"]["name"], controllers[id]["gamepad"], null));
                 } else if (id == "keyboard1") {
-                    game.players.push(new Player(_this.gameWindow, _this.gameMap, controllers[id]["player"]["color"], controllers[id]["player"]["name"], null, {up: "ArrowUp", down: "ArrowDown", left: "ArrowLeft", right: "ArrowRight", abutton: "Space", bbutton: "ShiftLeft", startbutton: "Escape"}) );
+                    players.push(new Player(_this.gameWindow, _this.gameMap, controllers[id]["player"]["color"], controllers[id]["player"]["name"], null, {up: "ArrowUp", down: "ArrowDown", left: "ArrowLeft", right: "ArrowRight", abutton: "Space", bbutton: "ShiftLeft", startbutton: "Escape"}) );
                 }
                 playerCount++;
             }
@@ -175,7 +174,7 @@ function Game() {
     }
 
     function updatePlayers() {
-        game.players.forEach(function (player) {
+        players.forEach(function (player) {
             player.updatePos(_this.paused, _this.endgame);
 
             if (player.alive && player.health <= 0) {
@@ -237,10 +236,10 @@ function Game() {
             _this.lastScoreObj = scoreobj;
             _this.lastforcefieldslength = game.forcefields.length;
             
-            for (j in game.players) {
-                if (game.players[j].id != undefined && scoreobj[game.players[j].id] != undefined) {
-                    scoreobj[game.players[j].id].name = game.players[j].name;
-                    scoreobj[game.players[j].id].color = game.players[j].color.normal;
+            for (j in players) {
+                if (players[j].id != undefined && scoreobj[players[j].id] != undefined) {
+                    scoreobj[players[j].id].name = players[j].name;
+                    scoreobj[players[j].id].color = players[j].color.normal;
                 }
             }
 
@@ -300,11 +299,11 @@ function Game() {
             //TODO allow for reconnect of disconnected player
         } else if (_this.gameStatus == "debug") {
             var i = 0;
-            while(i < _this.players.length) {
-                if (_this.players[i].gamepad == undefined) {
-                    _this.players[i].gamepad = event.gamepad;
+            while(i < players.length) {
+                if (players[i].gamepad == undefined) {
+                    players[i].gamepad = event.gamepad;
                     console.log("Gamepad connected and assigned to %s with index %d: %s. %d buttons, %d axes.",
-                    _this.players[i].name, event.gamepad.index, event.gamepad.id, event.gamepad.buttons.length, event.gamepad.axes.length);
+                    players[i].name, event.gamepad.index, event.gamepad.id, event.gamepad.buttons.length, event.gamepad.axes.length);
                     break;
                 }
                 i++;

@@ -133,14 +133,13 @@ function PlayerObject(ownerId, g, x, y, c) {
  */
 function PlayerCoordinate(ownerId, gamewindow, x, y, color) {
     var _this = this;
-    _this.ownerId = ownerId;
-
-    _this.radius = 6;
-    _this.x = x;
-    _this.y = y;
+    this.ownerId = ownerId;
+    this.radius = 6;
+    this.x = x;
+    this.y = y;
 
     if (renderEngine == "paper") {
-        _this.asset = new paper.Path.Circle({
+        this.asset = new paper.Path.Circle({
             center: [x, y],
             radius: _this.radius,
             fillColor: color
@@ -162,12 +161,12 @@ function PlayerCoordinate(ownerId, gamewindow, x, y, color) {
         World.add(engine.world, [_this.matter_assetgroup]);
     }
 
-    return {
-        x: _this.x,
-        y: _this.y,
-        asset: _this.asset,
-        matter_assetgroup: _this.matter_assetgroup
-    }
+    // return {
+    //     x: _this.x,
+    //     y: _this.y,
+    //     asset: _this.asset,
+    //     matter_assetgroup: _this.matter_assetgroup
+    // }
 }
 
 /*
@@ -175,7 +174,7 @@ function PlayerCoordinate(ownerId, gamewindow, x, y, color) {
 */
 function PlayerCoordinateLine(ownerId, gamewindow, x1, y1, x2, y2, color) {
     var _this = this;
-    _this.ownerId = ownerId;
+    this.ownerId = ownerId;
 
     if (renderEngine == "paper") {
         this.asset = new paper.Path.Line(new paper.Point(x1, y1), new paper.Point(x2, y2));
@@ -197,7 +196,7 @@ function PlayerCoordinateLine(ownerId, gamewindow, x1, y1, x2, y2, color) {
  */
 function PlayerGuidingLine(ownerId, gamewindow, x1, y1, x2, y2, color) {
     var _this = this;
-    _this.ownerId = ownerId;
+    this.ownerId = ownerId;
 
     this.asset = new paper.Path.Line(new paper.Point(x1, y1), new paper.Point(x2, y2));
     this.asset.strokeColor = color;

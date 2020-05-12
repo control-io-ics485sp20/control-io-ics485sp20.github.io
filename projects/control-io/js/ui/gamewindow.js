@@ -120,8 +120,10 @@ function GameWindow(properties) {
     }
 
     function setBackground() {
-        var background = new paper.Raster({source: '../img/background/starry_night.png', position: window.center});
-        background.scale(2);
+        var background = new paper.Raster({source: '../img/background/starry_night.png', position: paper.view.center});
+        // background.scale(2);
+        background.width = max_x;
+        background.height = max_y;
         _this.layers["background"].addChild(background);
     }
 

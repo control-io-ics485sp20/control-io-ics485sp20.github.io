@@ -170,8 +170,8 @@ function Asteroid (gameWindow, gameMap) {
                     radius: _this.radius
                 }
 
-                for (i in game.players) {
-                    let player = game.players[i];
+                for (i in players) {
+                    let player = players[i];
                     if (player.alive) {
                         var playerHitbox = {
                             x: player.playerobject.assetgroup.position.x,
@@ -211,26 +211,36 @@ function Asteroid (gameWindow, gameMap) {
 
                         //check points
                         for (j in player.coordsArray) {
-                            // console.log(player.coordsArray[j].asset);
-
-                            if (checkCircleHit(asteroidHitbox, player.coordsArray[j].asset)) {
-                                console.log("coord hit!");
+                            if (checkPathHit(asteroidHitbox, player.coordsArray[j].asset)) {
                                 deleteprogress = true;
+                                resolveAsteroidToPolygonCollision(_this, player.coordsArray[j].asset)
                             }
                         }
 
                         //check lines
                         for (k in player.linesArray) {
                             if (checkPathHit(asteroidHitbox, player.linesArray[k].asset)) {
-                                console.log("line hit!");
                                 deleteprogress = true;
+
+                                resolveAsteroidToPolygonCollision(_this, player.linesArray[k].asset)
                             }
                         }
 
                         //check guiding line
-                        // console.log(player.guidingLine);
-                        if (player.guidingLine && checkPathHit(asteroidHitbox, player.guidingLine)) {
+                        if (player.guidingLine) {
+                            console.log(player.guidingLine.asset);
+                        }
+                        if (player.guidingLine && checkPathHit(asteroidHitbox, player.guidingLine.asset)) {
                             console.log("guiding line hit!");
+                            deleteprogress = true;
+                        }
+
+                        //TODO if deleteprogress == true, 
+                        //  delete player's progress
+                        if (deleteprogress == true) {
+                            console.log("Deleting progress...");
+
+                            player.removeTempItems();
                         }
                     }
                 }

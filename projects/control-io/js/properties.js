@@ -10,6 +10,8 @@ var readyButtonText = "SPACE / A - START GAME"
 //object arrays to keep track of items
 var controllers = []; //list of all controllers
 var asteroids = [];
+var players = [];
+// var totalPlayers = 0;
 
 var renderEngine = "paper" //"matter" or "paper"
 // var renderEngine = "matter" //"matter" or "paper"
@@ -19,7 +21,6 @@ var debug = false;
 var showHitboxes = false;
 
 var MinPlayers = 1;
-// var TotalPlayers;
 var gametime = 120; //120
 var zoom_percent = 100;
 var sensitivity_buffer = 0.08;

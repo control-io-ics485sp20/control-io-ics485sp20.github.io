@@ -14,8 +14,9 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
 
     _this.coordsArray = [];
     _this.linesArray = [];
+    _this.guidingLine;
+
     _this.claimedShapesArray = [];
-    _this.guidingLine = undefined;
 
     _this.gamewindow = gamewindow;
 
@@ -168,22 +169,26 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
 
                 // _this.claimedShapesArray.push(new PlayerPolygon(_this.gamewindow, _this.id, _this.coordsArray, _this.color.dark));
 
-                while (_this.coordsArray.length > 0) {
-                    var n = _this.coordsArray.pop();
-                    n.asset.remove();
-                }
-
-                while (_this.linesArray.length > 0) {
-                    var n = _this.linesArray.pop();
-                    n.asset.remove();
-                }
-
-                _this.guidingLine.asset.remove();
-                _this.guidingLine = null;
+                removeTempItems();
             }
 
             completingLine.asset.remove();
         }
+    }
+
+    function removeTempItems() {
+        while (_this.coordsArray.length > 0) {
+            var n = _this.coordsArray.pop();
+            n.asset.remove();
+        }
+
+        while (_this.linesArray.length > 0) {
+            var n = _this.linesArray.pop();
+            n.asset.remove();
+        }
+
+        _this.guidingLine.asset.remove();
+        _this.guidingLine = null;
     }
 
     //debug
@@ -456,5 +461,23 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
         coordsArray: _this.coordsArray,
         linesArray: _this.linesArray,
         guidingLine: _this.guidingLine,
+        removeTempItems: removeTempItems,
     }
+
+    // this.updatePos = updatePos;
+    // this.keyDown = keyDown;
+    // this.keyUp = keyUp;
+    // this.kill = kill;
+    // this.id = _this.id;
+    // this.score = _this.score;
+    // this.health = _this.health;
+    // this.alive = _this.alive;
+    // this.playerobject = _this.playerobject;
+    // this.hitbox = _this.playerobject.hitbox;
+    // this.name = _this.name;
+    // this.color = _this.color;
+    // this.lastHitBy = _this.lastHitBy;
+    // this.coordsArray = _this.coordsArray;
+    // this.linesArray = _this.linesArray;
+    // this.guidingLine = _this.guidingLine;
 };

@@ -27,13 +27,13 @@ window.addEventListener('keydown', keyDownEvent);
 window.addEventListener('keyup', keyUpEvent);
 
 function keyDownEvent(event) {
-    game.players.forEach(function (player) {
+    players.forEach(function (player) {
         player.keyDown(event);
     });
 }
 
 function keyUpEvent(event) {
-    game.players.forEach(function (player) {
+    players.forEach(function (player) {
         player.keyUp(event);
     });
 }
