@@ -7,3 +7,7 @@
 {% if site.data.bio.basics.email %}
   <a href="mailto:{{ site.data.bio.basics.email }}"> <i class="big mail square icon icon-color"></i> </a>
 {% endif %}
+
+{% for profile in site.data.bio.basics.profiles %}
+<a href="{{ profile.url2 }}"> <i class="big mail youtube icon icon-color"></i> </a>
+{% endfor %}
