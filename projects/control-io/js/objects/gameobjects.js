@@ -241,9 +241,9 @@ function Asteroid (gameWindow, gameMap) {
                         }
 
                         //check guiding line
-                        if (player.guidingLine) {
-                            console.log(player.guidingLine.asset);
-                        }
+                        // if (player.guidingLine) {
+                        //     console.log(player.guidingLine.asset);
+                        // }
                         if (player.guidingLine && checkPathHit(asteroidHitbox, player.guidingLine.asset)) {
                             console.log("guiding line hit!");
                             deleteprogress = true;

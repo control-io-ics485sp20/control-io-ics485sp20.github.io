@@ -120,6 +120,16 @@
     user-select: none; /* Standard */
 }
 
+.scoremenu {
+    text-align: center;
+    vertical-align: middle;
+    padding: 20px;
+    /* height: 100px; */
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 30px;
+}
+
 #link-website, #endgame-link-website {
     background-color: red;
 }
@@ -214,4 +224,17 @@
     z-index: 5;
     background: rgba(0, 0, 0, 0.7);
 }
+
+#scoreresult {
+    margin-right: auto;
+    margin-left: auto;
+    max-width: 50%;
+    text-align: center;
+    font-size: 4em;
+}
+
+.scoreamt {
+    font-size: 0.5em;
+}
+
 

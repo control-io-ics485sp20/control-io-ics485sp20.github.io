@@ -131,6 +131,7 @@ function GameOverlayPauseMenu() {
 function GameOverlayEndMenu() {
     var _this = this
     var html = `<div id="gameoverlay-endmenu">
+    <div id="scoreresult"></div>
     <div class="gameoverlay-pausemenu-button" id="endgame-link-website">ABOUT US</div>
     <div class="gameoverlay-pausemenu-button" id="endgame-link-github">GITHUB</div>
     <div class="gameoverlay-pausemenu-button" id="endgame-link-lobby">PLAY AGAIN</div>
@@ -144,7 +145,27 @@ function GameOverlayEndMenu() {
     $("#endgame-link-github").click(game.goto_github);
     $("#endgame-link-lobby").click(game.goto_lobby);
 
-    function show() {
+    function show(scoreobj) {
+        let scoreobjlist = []
+
+        for (i in scoreobj) {
+            let obj = scoreobj[i];
+            obj.id = i;
+            scoreobjlist.push(obj);
+        }
+
+        scoreobjlist.sort((a, b) => (a.score < b.score) ? 1 : -1);
+
+        let html = "";
+        if (scoreobjlist.length == 0) {
+            html = "No one won!"
+        } else {
+            console.log(scoreobjlist[0]);
+
+            html = "<div class='scorename'>" + scoreobjlist[0].name + " wins!</div><div class='scoreamt'>Score: " + Math.floor(scoreobjlist[j].score) + " points</div>";
+        }
+        $("#scoreresult").html(html);
+
         $("#gameoverlay-endmenu").css("visibility", "visible");
     }
 

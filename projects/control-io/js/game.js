@@ -17,6 +17,8 @@ function Game() {
 
     _this.gameStatus;
 
+    _this.lastScoreObj = {};
+
     init();
 
     function init() {
@@ -339,10 +341,12 @@ function Game() {
      */
     function showEndMenu() {
         if (_this.endgame && _this.endmenushown == undefined) {
-            _this.endmenu.show();
+            _this.endmenu.show(_this.lastScoreObj);
             _this.endmenushown = true;
             // engine.enabled = false;
-            Runner.stop(runner);
+            if (renderEngine == "matter") {
+                Runner.stop(runner);
+            }
         }
     }
 
