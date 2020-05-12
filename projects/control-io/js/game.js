@@ -285,15 +285,16 @@ function Game() {
         }
 
         if ((_this.lastforcefieldslength != game.forcefields.length) && !(_.isEqual(_this.lastScoreObj,scoreobj))) {
-            _this.lastScoreObj = scoreobj;
-            _this.lastforcefieldslength = game.forcefields.length;
-            
             for (j in players) {
                 if (players[j].id != undefined && scoreobj[players[j].id] != undefined) {
                     scoreobj[players[j].id].name = players[j].name;
+                    scoreobj[players[j].id].penalty = players[j].penalty;
                     scoreobj[players[j].id].color = players[j].color.normal;
                 }
             }
+
+            _this.lastScoreObj = scoreobj;
+            _this.lastforcefieldslength = game.forcefields.length;
 
             _this.scorescreen.update(scoreobj);
         }

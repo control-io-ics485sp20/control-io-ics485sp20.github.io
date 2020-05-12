@@ -92,6 +92,11 @@ function PlayerObject(ownerId, g, x, y, c) {
         _this.sprite_exhaust.rotation = angle;
     }
 
+    function spin(vel) {
+        _this.sprite.rotation += vel;
+        _this.sprite_exhaust.rotation += vel;
+    }
+
     function move(movX, movY) {
         _this.assetgroup.position.x = movX;
         _this.assetgroup.position.y = movY;
@@ -117,6 +122,7 @@ function PlayerObject(ownerId, g, x, y, c) {
         // moveX: moveX,
         // moveY: moveY,
         point: point,
+        spin: spin,
         assetgroup: _this.assetgroup,
         hitbox: _this.hitbox,
         matter_assetgroup: _this.matter_assetgroup,

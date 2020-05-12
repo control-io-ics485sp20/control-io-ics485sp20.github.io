@@ -159,7 +159,8 @@ function Asteroid (gameWindow, gameMap) {
                 _this.assetgroup.position.x = newx;
                 _this.assetgroup.position.y = newy;
 
-                _this.assetgroup.rotate(_this.spindirection * _this.spinmodifier);
+                _this.spinVel = _this.spindirection * _this.spinmodifier;
+                _this.assetgroup.rotate(_this.spinVel);
 
                 _this.asteroidHitboxRadius = _this.radius;
 
@@ -198,7 +199,7 @@ function Asteroid (gameWindow, gameMap) {
                                 }
 
                                 if (AsteroidHitMode.toLowerCase().includes("disable")) {
-                                    player.disable();
+                                    player.disable(-_this.spindirection);
                                     console.log(player.name + " disabled!");
                                 }
 

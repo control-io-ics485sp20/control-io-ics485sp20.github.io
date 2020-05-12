@@ -22,6 +22,8 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
 
     _this.name = name;
 
+    _this.penalty = 0;
+
     _this.lastHitBy = "";
 
     _this.color = {
@@ -179,13 +181,16 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
      * @description
      * 
      */
-    function disable() {
+    function disable(disabledSpinDir) {
         if (_this.disableTimeout) {
             clearTimeout(_this.disableTimeout);
         }
+        _this.penalty -= 20;
         _this.disabled = true;
+        _this.disabledSpinVel = disabledSpinDir * 2;
         _this.disableTimeout = setTimeout(function () {
             _this.disabled = false;
+            _this.disabledSpinVel = 0;
         }, PlayerDisableTimeout)
     }
      
@@ -345,8 +350,16 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
                         _this.playerobject.rotate(angle);
                         moving = true;
                     }
-                } else if (!paused && !endgame && _this.alive && _this.disabled) {
 
+                    _this.lastljx = ljx;
+                    _this.lastljy = ljy;
+                } else if (!paused && !endgame && _this.alive && _this.disabled) {
+                    _this.lastljy = _this.lastljy*.98
+                    _this.lastljx = _this.lastljx*.98
+                    _this.disabledSpinVel = _this.disabledSpinVel*.98
+                    moveY(_this.lastljy);
+                    moveX(_this.lastljx);
+                    _this.playerobject.spin(_this.disabledSpinVel);
                 }
             } else if (renderEngine == "matter") {
                 if (!paused && !endgame && _this.alive && !_this.disabled) {
@@ -396,8 +409,16 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
                         _this.playerobject.rotate(angle);
                         moving = true;
                     }
-                } else if (!paused && !endgame && _this.alive && _this.disabled) {
 
+                    _this.lastljx = ljx;
+                    _this.lastljy = ljy;
+                } else if (!paused && !endgame && _this.alive && _this.disabled) {
+                    _this.lastljy = _this.lastljy*.98
+                    _this.lastljx = _this.lastljx*.98
+                    _this.disabledSpinVel = _this.disabledSpinVel*.98
+                    moveY(_this.lastljy);
+                    moveX(_this.lastljx);
+                    _this.playerobject.spin(_this.disabledSpinVel);
                 }
             } else if (renderEngine == "matter") {
                 if (!paused && !endgame && _this.alive && !_this.disabled) {
@@ -506,6 +527,7 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
         coordsArray: _this.coordsArray,
         linesArray: _this.linesArray,
         guidingLine: _this.guidingLine,
+        penalty: _this.penalty,
     }
 
     // this.updatePos = updatePos;
