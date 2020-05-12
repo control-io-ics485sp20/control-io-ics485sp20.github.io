@@ -175,6 +175,22 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
     }
 
     /**
+     * @name disable
+     * @description
+     * 
+     */
+    function disable() {
+        if (_this.disableTimeout) {
+            clearTimeout(_this.disableTimeout);
+        }
+        _this.disabled = true;
+        _this.disableTimeout = setTimeout(function () {
+            _this.disabled = false;
+        }, PlayerDisableTimeout)
+    }
+     
+
+    /**
      * @name attemptClaimShape
      * @description attempt to claim a shape
      */
@@ -321,7 +337,7 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
             }
 
             if (renderEngine == "paper") {
-                if (!paused && !endgame && _this.alive) {
+                if (!paused && !endgame && _this.alive && !_this.disabled) {
                     moveY(ljy);
                     moveX(ljx);
                     if (ljx != 0 || ljy != 0) {
@@ -329,9 +345,11 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
                         _this.playerobject.rotate(angle);
                         moving = true;
                     }
+                } else if (!paused && !endgame && _this.alive && _this.disabled) {
+
                 }
             } else if (renderEngine == "matter") {
-                if (!paused && !endgame && _this.alive) {
+                if (!paused && !endgame && _this.alive && !_this.disabled) {
                     _this.playerobject.move2(ljx * 0.00015, ljy * 0.00015);
                     if (ljx != 0 || ljy != 0) {
                         let angle = Math.atan2(ljy, ljx) + pi/2;
@@ -370,7 +388,7 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
             ljy = refineAxisValue(_this.gamepad.axes[1]);
 
             if (renderEngine == "paper") {
-                if (!paused && !endgame && _this.alive) {
+                if (!paused && !endgame && _this.alive && !_this.disabled) {
                     moveY(ljy);
                     moveX(ljx);
                     if (ljx != 0 || ljy != 0) {
@@ -378,9 +396,11 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
                         _this.playerobject.rotate(angle);
                         moving = true;
                     }
+                } else if (!paused && !endgame && _this.alive && _this.disabled) {
+
                 }
             } else if (renderEngine == "matter") {
-                if (!paused && !endgame && _this.alive) {
+                if (!paused && !endgame && _this.alive && !_this.disabled) {
                     _this.playerobject.move2(ljx * 0.00015, ljy * 0.00015);
                     if (ljx != 0 || ljy != 0) {
                         let angle = Math.atan2(ljy, ljx) + pi/2;
@@ -471,6 +491,8 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
         updatePos: updatePos,
         keyDown: keyDown,
         keyUp: keyUp,
+        removeTempItems: removeTempItems,
+        disable: disable,
         kill: kill,
         id: _this.id,
         score: _this.score,
@@ -484,7 +506,6 @@ function Player (gamewindow, gameMap, color, name, gamepad, keybinds) {
         coordsArray: _this.coordsArray,
         linesArray: _this.linesArray,
         guidingLine: _this.guidingLine,
-        removeTempItems: removeTempItems,
     }
 
     // this.updatePos = updatePos;

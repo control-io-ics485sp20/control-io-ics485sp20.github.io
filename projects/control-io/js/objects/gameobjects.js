@@ -190,11 +190,21 @@ function Asteroid (gameWindow, gameMap) {
 
                                 // console.log(_this.id + " colliding with " + player.id);
                                 // console.log(game.players.filter(obj => {return obj.id === player.id})[0].health);
-                                player.health -= _this.damage.toPlayers;
-                                player.lastHitBy = "asteroid";
-                                player.removeTempItems();
+                                if (AsteroidHitMode.toLowerCase().includes("damage")) {
+                                    player.health -= _this.damage.toPlayers;
+                                    player.lastHitBy = "asteroid";
+                                    console.log(player.name + ": " + player.health);
 
-                                console.log(player.name + ": " + player.health);
+                                }
+
+                                if (AsteroidHitMode.toLowerCase().includes("disable")) {
+                                    player.disable();
+                                    console.log(player.name + " disabled!");
+                                }
+
+                                // player.health -= _this.damage.toPlayers;
+                                // player.lastHitBy = "asteroid";
+                                player.removeTempItems();
 
                                 SFX.hitsound.play();
 

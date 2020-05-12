@@ -21,7 +21,7 @@ var debug = false;
 var showHitboxes = false;
 
 var MinPlayers = 1;
-var gametime = 20; //90 or 120
+var gametime = 90; //90 or 120
 var zoom_percent = 100;
 var sensitivity_buffer = 0.08;
 
@@ -36,11 +36,13 @@ var pi = Math.PI;
 
 var fpscap = 30;
 
+
 //game options
 //---------------
 //[ P L A Y E R ]
 //---------------
 var PlayerBaseHP = 150;
+var PlayerDisableTimeout = 3000;
 
 var PlayerMinVelocityCap = 4;
 var PlayerMaxVelocityCap = 6;
@@ -89,6 +91,7 @@ var AsteroidSpawnRate = 5; //3
 var AsteroidSpawnCap = 20; //20
 var AsteroidDamageToPlayers = 10; //10
 var AsteroidDamageToForcefields = 2; //7
+var AsteroidHitMode = "disable"; //damage, disable
 
 var GameObjectBorderMinX = min_x - AsteroidSpawnBorderThreshold;
 var GameObjectBorderMaxX = max_x + AsteroidSpawnBorderThreshold;
